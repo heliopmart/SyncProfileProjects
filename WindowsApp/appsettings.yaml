@@ -1,0 +1,6 @@
+DefaultPathForProjects: D:/SyncProfileProjects/Projects
+MetaDataPath: config/
+SyncInterval: 300
+APIConfigs:
+  BaseURL: https://api.example.com
+  APIKey: 12345-abcde
