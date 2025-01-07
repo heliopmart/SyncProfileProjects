@@ -31,6 +31,7 @@ namespace WindowsApp.Helpers
     public class APPConfig
     {
         public string DefaultPathForProjects { get; set; }
+        public string MetaDataPath { get; set; }
         public int SyncInterval { get; set; }
         public APIConfigs APIConfigs { get; set; }
     }

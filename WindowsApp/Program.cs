@@ -1,11 +1,12 @@
 ﻿using System;
 using WindowsApp.Managers;
+using WindowsApp.Models.Class; // temp
 using WindowsApp.Test.Class;
 
 namespace WindowsApp{
     class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             // Instancia o ProjectManager
             var projectManager = new ProjectManager();
@@ -61,6 +62,18 @@ namespace WindowsApp{
                         // Sair do programa
                         Console.WriteLine("Saindo...");
                         return;
+
+                    case "GLog":
+                        var getLogsInstance = new getLogs();
+                        var metadata = await getLogsInstance.GetProjectsLogFile();
+
+                        if (metadata == null){
+                            Console.WriteLine("Nenhum projeto encontrado");
+                        }
+                        else{
+                            Console.WriteLine("Projetos carregados com sucesso.");
+                        }
+                        break;
     
                     case "Test":
                         Console.WriteLine("Teste de Listagem de arquivo");

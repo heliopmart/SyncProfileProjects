@@ -1,0 +1,12 @@
+LocalProjects: 
+  - Project:
+      Name: "Nome Teste 1" 
+      DateTime: "10/10/10 20:00"
+      Device: "DeviceName"
+      Status: 0
+  - Project:
+      Name: "Nome Teste 2" 
+      DateTime: "10/10/12 20:00"
+      Device: "DeviceNames"
+      Status: 1
+  
