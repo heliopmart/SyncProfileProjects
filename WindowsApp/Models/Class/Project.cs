@@ -4,8 +4,10 @@ namespace WindowsApp.Models.Class
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public string DirectoryPath { get; set; }
         public List<FileModel> Files { get; set; }
+        public DateTime DateTime { get; set; }
+        public string Device { get; set; }
+        public int Status { get; set; }
 
         public Project()
         {
@@ -16,8 +18,14 @@ namespace WindowsApp.Models.Class
         {
             Id = Guid.NewGuid().ToString();
             Name = name;
-            DirectoryPath = directoryPath;
             Files = new List<FileModel>();
         }
+    }
+
+    public class DataProjectForLog{
+        public string Name { get; set; }
+        public DateTime DateTime { get; set; }
+        public string Device { get; set; }
+        public int Status { get; set; }
     }
 }

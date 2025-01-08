@@ -57,3 +57,18 @@ windows-app/
 ├── Program.cs           (Ponto de entrada da aplicação)
 └── NomeDoProjeto.csproj
 ```
+
+
+--------------------------
+
+## TODO: 
+
+-> Geraçao de logs de projetos locais | Precisa de sincronização em nuvem |
+-> Criar função que cria o projeto | Sincronização com Banco de dados | 
+-> Criar função que cria a pasta localmente do projeto | Sincronização em nuvem | 
+-> Criar função que faz a sincronização em nuvem
+   => Criar função que verifica qual arquivo precisa ser sincronizado 
+   => Criar função Upload
+   => Criar função Download 
+-> Criar função que consome a API do Box.com
+-> Criar função que consome a API do firebase

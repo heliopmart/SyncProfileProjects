@@ -1,7 +1,8 @@
 ﻿using System;
 using WindowsApp.Managers;
-using WindowsApp.Models.Class; // temp
+using WindowsApp.Models; // temp
 using WindowsApp.Test.Class;
+using WindowsApp.Models.Class;
 
 namespace WindowsApp{
     class Program
@@ -17,8 +18,8 @@ namespace WindowsApp{
                 Console.WriteLine("\nSelecione uma opção:");
                 Console.WriteLine("1. Adicionar Projeto");
                 Console.WriteLine("2. Listar Projetos");
-                Console.WriteLine("3. Mapear Arquivos do Projeto");
-                Console.WriteLine("4. Listar Arquivos Mapeados");
+                Console.WriteLine("3. Remover Projeto");
+                Console.WriteLine("4. Listar Projeto por Nome");
                 Console.WriteLine("5. Sair");
                 Console.WriteLine("Test. Testar Listagem");
                 Console.Write("Opção: ");
@@ -27,54 +28,64 @@ namespace WindowsApp{
     
                 switch (opcao)
                 {
-                    case "1":
-                        // Adicionar um novo projeto
-                        Console.Write("Digite o nome do projeto: ");
-                        var name = Console.ReadLine();
-                        // Console.Write("Digite o caminho do diretório do projeto: ");
-                        // var directoryPath = Console.ReadLine();
-    
-                        projectManager.AddProject(name);
+                    case "1": 
+                        // Adicionar projeto
+                        Console.WriteLine("\n Adicione o Nome do projeto: ");
+                        string NameProject = Console.ReadLine();
+
+                        if(NameProject != null){
+                            var addingProject = await projectManager.AddProject(NameProject);
+                            if(addingProject){
+                                Console.WriteLine("Projeto Adicionado com sucesso!");
+                            }else{
+                                Console.WriteLine("Algum erro deve ter acontecido!");
+                            }
+                        }
                         break;
-    
-                    case "2":
-                        // Listar todos os projetos
-                        projectManager.ListProjects();
+
+                    case "2": 
+                        // Listar todos os projeto
+                        var dataProjects = await new getLogs().GetProjectsLogFile();
+                        if(dataProjects != null){
+                            foreach (var project in dataProjects.LocalProjects)
+                            {
+                                Console.WriteLine($"Nome: {project.Value.Name}, Data: {project.Value.DateTime}, Dispositivo: {project.Value.Device}, Status: {project.Value.Status}");
+                            }
+                        }else{
+                            Console.WriteLine("Nenhum projeto encontrado.");
+                        }
                         break;
-    
-                    case "3":
-                        // Mapear arquivos de um projeto
-                        Console.Write("Digite o Nome do projeto: ");
-                        var Name = Console.ReadLine();
-    
-                        projectManager.MapFiles(Name);
+                    case "3": 
+                        // remover projeto
+                        Console.WriteLine("\n Adicione o Nome do projeto: ");
+                        NameProject = Console.ReadLine();
+
+                        if(NameProject != null){
+                            if(await projectManager.DeleteProject(NameProject)){
+                                Console.WriteLine("Projeto Removido com sucesso!");
+                            }else{
+                                Console.WriteLine("Algum erro deve ter acontecido!");
+                            }
+                        }
+
+                        Console.WriteLine(await new UpdateMetaData().DeleteMetaDataByName("Teste"));
                         break;
-                
-                    case "4":
-                        // Listar arquivos mapeados
-                        Console.Write("Digite o Nome do projeto: ");
-                        var NameProject = Console.ReadLine();
-    
-                        projectManager.ListFiles(NameProject);
+                    
+                    case "4": 
+                        // Listar projeto por nome
+                        var ProjectData = await new getLogs().GetProjectsByName("Teste");
+                        if(ProjectData != null){
+                            Console.WriteLine($"Nome: {ProjectData.Name}, Data: {ProjectData.DateTime}, Dispositivo: {ProjectData.Device}, Status: {ProjectData.Status}");
+                        }else{
+                            Console.WriteLine("Nenhum projeto encontrado.");
+                        }
                         break;
-    
+
                     case "5":
                         // Sair do programa
                         Console.WriteLine("Saindo...");
                         return;
 
-                    case "GLog":
-                        var getLogsInstance = new getLogs();
-                        var metadata = await getLogsInstance.GetProjectsLogFile();
-
-                        if (metadata == null){
-                            Console.WriteLine("Nenhum projeto encontrado");
-                        }
-                        else{
-                            Console.WriteLine("Projetos carregados com sucesso.");
-                        }
-                        break;
-    
                     case "Test":
                         Console.WriteLine("Teste de Listagem de arquivo");
                         var test = new WindowsApp.Test.Class.ListFilesTest();

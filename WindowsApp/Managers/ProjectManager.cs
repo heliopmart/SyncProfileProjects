@@ -2,31 +2,37 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using WindowsApp.Models.Class; // Importa FileModel e Project
-using WindowsApp.Helpers;
+using WindowsApp.Managers;
 
 namespace WindowsApp.Managers{
-    public class ProjectManager{
+        public class ProjectManager{
         private List<Project> Projects { get; set; } = new List<Project>();
 
-        public void AddProject(string name){ // Adiciona um novo projeto - Variavel Local
-
-            var config = ConfigHelper.Instance.GetConfig();
-            var directoryPath = $"{config.DefaultPathForProjects}/{name}";
-
-            if(Directory.Exists(directoryPath)){
-                var project = new Project{
-                    Id = Guid.NewGuid().ToString(),
-                    Name = name,
-                    DirectoryPath = directoryPath,
-                    Files = new List<FileModel>() // usa o filemodel aqui 
-                };
-
-                Projects.Add(project);
-                Console.WriteLine($"Projeto '{name}' adicionado com sucesso");
+        public async Task<bool> AddProject(string NameProject){ // Adiciona um novo projeto - Variavel Local
+            
+            var DataProject = new Project {
+                Id = Guid.NewGuid().ToString(),
+                Name = NameProject,
+                DateTime = DateTime.Now,
+                Device = Environment.MachineName.ToString(),
+                Status = 0
+            };
+            
+            if(await new ManagerProject().CreateProject(DataProject)){
+                return true;
             }else{
-                Console.WriteLine($"Diretório '{directoryPath}' não encontrado");
+                return false;
             }
         }
+
+        public async Task<bool> DeleteProject(string NameProject){
+            if(await new ManagerProject().DeleteProject(NameProject)){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
 
         public void ListProjects(){ // Lista todos os projetos - Variavel Local
             if(Projects.Count == 0){
@@ -35,32 +41,32 @@ namespace WindowsApp.Managers{
             }
 
             foreach (var project in Projects){
-                Console.WriteLine($"ID: {project.Id}, Nome: {project.Name}, Diretório: {project.DirectoryPath}");
+                // Console.WriteLine($"ID: {project.Id}, Nome: {project.Name}, Diretório: {project.DirectoryPath}");
             }
         }
 
         public void MapFiles(string Name){ // Mapeia arquivos de um projeto - Variavel Local
             var project = Projects.Find(p => p.Name == Name);
 
-            if(project != null){
-                project.Files.Clear(); // limpa a lista de arquivos antigos
-                var files = Directory.GetFiles(project.DirectoryPath); // Obtém arquivos da pasta
-                foreach (var filePath in files){
-                    var fileInfo = new FileInfo(filePath);
+            // if(project != null){
+            //     project.Files.Clear(); // limpa a lista de arquivos antigos
+            //     var files = Directory.GetFiles(project.DirectoryPath); // Obtém arquivos da pasta
+            //     foreach (var filePath in files){
+            //         var fileInfo = new FileInfo(filePath);
 
-                    project.Files.Add(new FileModel{
-                        FileName = fileInfo.Name,
-                        FilePath = filePath,
-                        FileSize = fileInfo.Length,
-                        LastModified = fileInfo.LastWriteTime,
-                        Status = 0 // Status 0 => Padrão 
-                    });
-                }
+            //         project.Files.Add(new FileModel{
+            //             FileName = fileInfo.Name,
+            //             FilePath = filePath,
+            //             FileSize = fileInfo.Length,
+            //             LastModified = fileInfo.LastWriteTime,
+            //             Status = 0 // Status 0 => Padrão 
+            //         });
+            //     }
 
-                Console.WriteLine($"Os arquivos do projeto '{project.Name}' foram mapeados com sucesso");
-            }else{
-                Console.WriteLine($"Projeto '{Name}' não encontrado.");
-            }
+            //     Console.WriteLine($"Os arquivos do projeto '{project.Name}' foram mapeados com sucesso");
+            // }else{
+            //     Console.WriteLine($"Projeto '{Name}' não encontrado.");
+            // }
         }
 
         public void ListFiles(string Name){ // Lista arquivos mapeados - Variavel Local
