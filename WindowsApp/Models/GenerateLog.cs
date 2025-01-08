@@ -50,7 +50,7 @@ namespace WindowsApp.Models
 
     public class UpdateMetaData
     {
-        public async Task<bool> UpdateMetaDataLog(string ProjectName, DataProjectForLog DataProject)
+        public async Task<bool> UpdateMetaDataLog(string ProjectName, ProjectData DataProject)
         {
             var getLogsInstance = new getLogs();
             var metaDataProject = await getLogsInstance.GetProjectsLogFile();
@@ -73,7 +73,6 @@ namespace WindowsApp.Models
                     {
                         await writer.WriteAsync(serializer.Serialize(metaDataProject));
                     }
-                    Console.WriteLine("Arquivo metadata.yaml atualizado com sucesso.");
                     return true;
                 }
                 catch (UnauthorizedAccessException ex)
@@ -117,7 +116,6 @@ namespace WindowsApp.Models
                     {
                         await writer.WriteAsync(serializer.Serialize(metaDataProject));
                     }
-                    Console.WriteLine("Arquivo metadata.yaml atualizado com sucesso.");
                     return true;
                 }
                 catch (UnauthorizedAccessException ex)

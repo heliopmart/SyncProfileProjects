@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Reflection;
 using WindowsApp.Models; // Importa FileModel e Project
 using WindowsApp.Helpers;
 using WindowsApp.Models.Class; // Importa FileModel e Project
@@ -79,7 +80,7 @@ namespace WindowsApp.Managers{
                 }
             }
         }
-        
+
         public async Task<bool> CreateProject(Project DataProject){
             var DefaultPathForProjects = _config.DefaultPathForProjects;
 
@@ -91,7 +92,7 @@ namespace WindowsApp.Managers{
 
             async Task<bool> CreateMetaDataProject_Local(Project DataProject){
                 
-                var DataProjectForLog = new DataProjectForLog{
+                var DataProjectForLog = new ProjectData{
                     Name = DataProject.Name,
                     DateTime = DataProject.DateTime,
                     Device = DataProject.Device,
@@ -164,6 +165,47 @@ namespace WindowsApp.Managers{
             }
         }
 
+        public async Task<bool> ChangeProjectData(string NameProject, string KeyForChange, int ValueForChange){
+
+            var changedProjectData = await ChangeMetaDataProject_Local(NameProject, KeyForChange, ValueForChange);
+            if(changedProjectData != null){
+                return await new UpdateMetaData().UpdateMetaDataLog(NameProject, changedProjectData);
+            }else{
+                Console.WriteLine("Erro! Não foi possivel alterar o Projeto no metadata local. Código de erro: |3263|");
+                return false;
+            }
+
+            async Task<ProjectData?> ChangeMetaDataProject_Local(string NameProject, string KeyForChange, int ValueForChange){
+                var projects = await new getLogs().GetProjectsLogFile();
+                var metadataSingleProject = projects?.LocalProjects[NameProject];
+
+
+                if(metadataSingleProject != null && projects != null){
+                    var property = typeof(ProjectData).GetProperty(KeyForChange, BindingFlags.Public | BindingFlags.Instance);
+                    if (property != null && property.CanWrite){
+                        try
+                        {
+                            // Converte o ValueForChange para o tipo correto da propriedade
+                            var convertedValue = Convert.ChangeType(ValueForChange, property.PropertyType);
+                            property.SetValue(metadataSingleProject, convertedValue);
+
+                            return metadataSingleProject;
+                        }catch{
+                            Console.WriteLine("Erro ao alterar o valor da propriedade.");
+                            return null;
+                        }
+                    }else{
+                        Console.WriteLine("Propriedade não encontrada ou não pode ser alterada.");
+                        return null;
+                    }
+                }else{
+                    Console.WriteLine("Projeto não encontrado.");
+                    return null;
+                }
+            }
+
+            
+        }
 
         public static string SanitizeString(string input){
             if (string.IsNullOrWhiteSpace(input))

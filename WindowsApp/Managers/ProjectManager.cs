@@ -33,6 +33,13 @@ namespace WindowsApp.Managers{
             }
         }
 
+        public async Task<bool> ChangeProjectData(string NameProject, string KeyForChange, int ValueForChange){
+            if(await new ManagerProject().ChangeProjectData(NameProject, KeyForChange, ValueForChange)){
+                return true;
+            }else{
+                return false;
+            }
+        }
 
         public void ListProjects(){ // Lista todos os projetos - Variavel Local
             if(Projects.Count == 0){

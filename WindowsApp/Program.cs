@@ -20,7 +20,8 @@ namespace WindowsApp{
                 Console.WriteLine("2. Listar Projetos");
                 Console.WriteLine("3. Remover Projeto");
                 Console.WriteLine("4. Listar Projeto por Nome");
-                Console.WriteLine("5. Sair");
+                Console.WriteLine("5. Atualizar Status do projeto");
+                Console.WriteLine("S. Sair");
                 Console.WriteLine("Test. Testar Listagem");
                 Console.Write("Opção: ");
                 
@@ -81,7 +82,23 @@ namespace WindowsApp{
                         }
                         break;
 
-                    case "5":
+                    case "5": 
+                        // remover projeto
+                        Console.WriteLine("\nAdicione o Nome do projeto: ");
+                        NameProject = Console.ReadLine();
+
+                        if(NameProject != null){
+                            if(await projectManager.ChangeProjectData(NameProject, "Status", 2)){
+                                Console.WriteLine("Projeto Alterado com sucesso!");
+                            }else{
+                                Console.WriteLine("Algum erro deve ter acontecido!");
+                            }
+                        }
+
+                        Console.WriteLine(await new UpdateMetaData().DeleteMetaDataByName("Teste"));
+                        break;
+
+                    case "S":
                         // Sair do programa
                         Console.WriteLine("Saindo...");
                         return;
