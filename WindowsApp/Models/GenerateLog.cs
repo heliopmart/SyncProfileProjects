@@ -5,7 +5,6 @@ using YamlDotNet.Serialization;
 using WindowsApp.Helpers;
 using WindowsApp.Models.Class;
 
-// TODO: Percorrer as função que retorna um objeto ou false e fazer o método "Either"
 
 namespace WindowsApp.Models
 {
@@ -63,7 +62,8 @@ namespace WindowsApp.Models
                     Name = DataProject.Name,
                     DateTime = DataProject.DateTime,
                     Device = DataProject.Device,
-                    Status = DataProject.Status
+                    Status = DataProject.Status,
+                    AsyncTime = DateTime.Now
                 };
 
                 try

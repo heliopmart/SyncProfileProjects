@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using WindowsApp.Models.Class; // Importa FileModel e Project
-using WindowsApp.Managers;
+using WindowsApp.Helpers;
+using WindowsApp.Utils;
 
 namespace WindowsApp.Managers{
-        public class ProjectManager{
+    public class ProjectManager{
         private List<Project> Projects { get; set; } = new List<Project>();
+
+        // Gerenciamento e criaçao de projetos Pastas e MetaData
 
         public async Task<bool> AddProject(string NameProject){ // Adiciona um novo projeto - Variavel Local
             
@@ -41,16 +44,44 @@ namespace WindowsApp.Managers{
             }
         }
 
-        public void ListProjects(){ // Lista todos os projetos - Variavel Local
-            if(Projects.Count == 0){
-                Console.WriteLine("Nenhum projeto encontrado");
-                return;
-            }
-
-            foreach (var project in Projects){
-                // Console.WriteLine($"ID: {project.Id}, Nome: {project.Name}, Diretório: {project.DirectoryPath}");
-            }
+        public async Task<bool> ListProjects(){ // Lista todos os projetos - Variavel Local
+           if(await new ManagerProject().ListProjects()){
+                return true;
+           }else{
+            return false;
+           }
         }
+
+
+        // Verificação de mudanças de arquivo em determinado projeto
+
+        public void OpenProjectForMonitory(string NameProject){
+            var _config = ConfigHelper.Instance.GetConfig().DefaultPathForProjects;
+            string ProjectPath = $"{_config}/{StringUtils.SanitizeString(NameProject)}";
+
+            CentralCache.Instance.AddToCache("NameProject", NameProject); // adiciona dados importante em cache
+            CentralCache.Instance.AddToCache("ProjectPath", ProjectPath);
+            
+            InitProjectFolderMonitory(ProjectPath);
+        }
+
+        public bool InitProjectFolderMonitory(string Path){
+            new DirectoryMonitor(Path);
+            return true;
+        }
+
+        public bool CloseProjectFolderMonitory(){
+            var Path = CentralCache.Instance.GetFromCache("ProjectPath")?.ToString();
+            new DirectoryMonitor(Path).StopMonitoring();
+
+            CentralCache.Instance.ClearCache(); // remove os dados em cash
+            return true;
+        }
+
+        // Upload de arquivos modificados e sincronização
+
+
+        // Download de arquivos modificados e sincronização
 
         public void MapFiles(string Name){ // Mapeia arquivos de um projeto - Variavel Local
             var project = Projects.Find(p => p.Name == Name);

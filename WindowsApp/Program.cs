@@ -21,6 +21,8 @@ namespace WindowsApp{
                 Console.WriteLine("3. Remover Projeto");
                 Console.WriteLine("4. Listar Projeto por Nome");
                 Console.WriteLine("5. Atualizar Status do projeto");
+                Console.WriteLine("6. Abrir Projeto");
+                Console.WriteLine("7. Fechar Projeto");
                 Console.WriteLine("S. Sair");
                 Console.WriteLine("Test. Testar Listagem");
                 Console.Write("Opção: ");
@@ -45,16 +47,7 @@ namespace WindowsApp{
                         break;
 
                     case "2": 
-                        // Listar todos os projeto
-                        var dataProjects = await new getLogs().GetProjectsLogFile();
-                        if(dataProjects != null){
-                            foreach (var project in dataProjects.LocalProjects)
-                            {
-                                Console.WriteLine($"Nome: {project.Value.Name}, Data: {project.Value.DateTime}, Dispositivo: {project.Value.Device}, Status: {project.Value.Status}");
-                            }
-                        }else{
-                            Console.WriteLine("Nenhum projeto encontrado.");
-                        }
+                        await new ProjectManager().ListProjects();
                         break;
                     case "3": 
                         // remover projeto
@@ -68,8 +61,6 @@ namespace WindowsApp{
                                 Console.WriteLine("Algum erro deve ter acontecido!");
                             }
                         }
-
-                        Console.WriteLine(await new UpdateMetaData().DeleteMetaDataByName("Teste"));
                         break;
                     
                     case "4": 
@@ -94,8 +85,26 @@ namespace WindowsApp{
                                 Console.WriteLine("Algum erro deve ter acontecido!");
                             }
                         }
+                        break;
+                    
+                    case "6": 
+                        // remover projeto
+                        Console.WriteLine("\nAdicione o Nome do projeto: ");
+                        NameProject = Console.ReadLine();
 
-                        Console.WriteLine(await new UpdateMetaData().DeleteMetaDataByName("Teste"));
+                        if(NameProject != null){
+                            projectManager.OpenProjectForMonitory(NameProject);
+                        }
+                        break;
+
+                    case "7": 
+                        // remover projeto
+                        Console.WriteLine("\nAdicione o Nome do projeto: ");
+                        NameProject = Console.ReadLine();
+
+                        if(NameProject != null){
+                            projectManager.OpenProjectForMonitory(NameProject);
+                        }
                         break;
 
                     case "S":

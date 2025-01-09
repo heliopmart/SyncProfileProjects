@@ -6,6 +6,8 @@ using System.Reflection;
 using WindowsApp.Models; // Importa FileModel e Project
 using WindowsApp.Helpers;
 using WindowsApp.Models.Class; // Importa FileModel e Project
+using WindowsApp.Utils;
+
 
 namespace WindowsApp.Managers{
     public class ManagerProject{
@@ -26,9 +28,10 @@ namespace WindowsApp.Managers{
             }
 
             bool DeleteFolderProject_Local(string NameProject, string Path){
-                var ProjectPath = $"{DefaultPathForProjects}/{SanitizeString(ProjectName)}";
-                var HasFiles = false;
-                if(HasFilesInFolder(ProjectPath)){
+                var ProjectPath = $"{Path}/{StringUtils.SanitizeString(NameProject)}";
+                var (hasFiles, hasFolders) = CheckFolderContents(ProjectPath);
+                bool HasFiles = false;
+                if(hasFiles || hasFolders){
                     HasFiles = true;
                 }
 
@@ -39,27 +42,29 @@ namespace WindowsApp.Managers{
                     return false;
                 }
 
-                bool HasFilesInFolder(string folderPath){
+                (bool hasFiles, bool hasFolders) CheckFolderContents(string folderPath){
                     try
                     {
                         if (Directory.Exists(folderPath))
                         {
-                            // Obtém os arquivos na pasta
-                            string[] files = Directory.GetFiles(folderPath);
+                            // Verifica arquivos
+                            bool hasFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories).Length > 0;
 
-                            // Retorna true se houver arquivos, caso contrário, false
-                            return files.Length > 0;
+                            // Verifica pastas
+                            bool hasFolders = Directory.GetDirectories(folderPath).Length > 0;
+
+                            return (hasFiles, hasFolders);
                         }
                         else
                         {
                             Console.WriteLine($"A pasta '{folderPath}' não existe.");
-                            return false;
+                            return (false, false);
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Erro ao verificar arquivos na pasta: {ex.Message}");
-                        return false;
+                        Console.WriteLine($"Erro ao verificar conteúdo da pasta: {ex.Message}");
+                        return (false, false);
                     }
                 }
 
@@ -109,7 +114,7 @@ namespace WindowsApp.Managers{
 
             bool CreateFolderProject_Local(string NameProject, string Path){
                 
-                string folderPath = $"{Path}/{SanitizeString(NameProject)}";
+                string folderPath = $"{Path}/{StringUtils.SanitizeString(NameProject)}";
 
                 try{
                     // Verifica se a pasta já existe
@@ -207,23 +212,22 @@ namespace WindowsApp.Managers{
             
         }
 
-        public static string SanitizeString(string input){
-            if (string.IsNullOrWhiteSpace(input))
-                return string.Empty;
+        public async Task<bool> ListProjects(){
+            var dataProjects = await new getLogs().GetProjectsLogFile();
 
-            // 1. Converte a string para minúsculas
-            string sanitized = input.ToLower();
+            if(dataProjects != null){
+                foreach (var project in dataProjects.LocalProjects)
+                {
+                    Console.WriteLine($"Nome: {project.Value.Name}, Data: {project.Value.DateTime}, Dispositivo: {project.Value.Device}, Status: {project.Value.Status}");
+                }
+                return true;
+            }else{
+                Console.WriteLine("Nenhum projeto encontrado.");
+                return false;
+            }
 
-            // 2. Remove caracteres especiais usando Regex
-            sanitized = Regex.Replace(sanitized, @"[^\w\s]", ""); // Remove tudo que não for letra, número ou espaço
-
-            // 3. Substitui espaços por "_"
-            sanitized = Regex.Replace(sanitized, @"\s+", "_"); // Substitui múltiplos espaços por "_"
-
-            return sanitized;
         }
     }
-
-
+        
     
 }

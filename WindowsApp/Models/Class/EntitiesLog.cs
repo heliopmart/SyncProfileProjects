@@ -10,6 +10,7 @@ namespace WindowsApp.Models.Class
         public string Name { get; set; }
         public DateTime DateTime { get; set; }
         public string Device { get; set; }
+        public DateTime AsyncTime { get; set; }
         public int Status { get; set; }
     }
     // Outras classes similares podem ser adicionadas aqui.
