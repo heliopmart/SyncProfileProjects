@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
+// using System;
+// using System.Collections.Generic;
+// using System.IO;
 using WindowsApp.Models.Class; // Importa FileModel e Project
 using WindowsApp.Helpers;
 using WindowsApp.Utils;
+using WindowsApp.Helpers.Watchers;
 
 namespace WindowsApp.Managers{
     public class ProjectManager{

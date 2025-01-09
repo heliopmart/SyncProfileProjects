@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace WindowsApp.Helpers
+namespace WindowsApp.Helpers.Watchers
 {
     public class DirectoryMonitor
     {
