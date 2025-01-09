@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using WindowsApp.Managers;
+using WindowsApp.Models;
 
 namespace WindowsApp.Helpers.Watchers
 {
@@ -66,6 +68,8 @@ namespace WindowsApp.Helpers.Watchers
         private void HandleFileChange(string filePath, WatcherChangeTypes changeType)
         {
             // Aqui você pode implementar a lógica para lidar com as mudanças no arquivo
+            // new QueueManager().Enqueue();
+
             Console.WriteLine($"Arquivo alterado: {filePath}, Tipo de mudança: {changeType}");
         }
     }

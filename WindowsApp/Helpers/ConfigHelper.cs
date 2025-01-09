@@ -38,7 +38,11 @@ namespace WindowsApp.Helpers
     
     public class APIConfigs
     {
-        public string BaseURL { get; set; }
-        public string APIKey { get; set; }
+        public string ClientId {get; set;}
+        public string ClientSecret {get; set;}
+        public string EnterpriseId {get; set;}
+        public string JwtPrivateKeyPassword {get; set;}
+        public string JwtPublicKeyId {get; set;}
+
     }
 }

@@ -1,4 +1,4 @@
-namespace WindowsApp.Models.Class // Namespace reflete a estrutura da pasta
+namespace WindowsApp.Models // Namespace reflete a estrutura da pasta
 {
     public class FileModel
     {
@@ -7,5 +7,12 @@ namespace WindowsApp.Models.Class // Namespace reflete a estrutura da pasta
         public long FileSize { get; set; }
         public DateTime LastModified { get; set; }
         public int Status { get; set; } = 0;
+    }
+
+    public class FileChange
+    {
+        public string FilePath { get; set; }
+        public string ChangeType { get; set; } // Exemplo: "Created", "Modified", "Deleted"
+        public DateTime ChangeTime { get; set; }
     }
 }

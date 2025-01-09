@@ -3,6 +3,7 @@ using WindowsApp.Managers;
 using WindowsApp.Models; // temp
 using WindowsApp.Test.Class;
 using WindowsApp.Models.Class;
+using WindowsAppSync.Services.API;
 
 namespace WindowsApp{
     class Program
@@ -23,8 +24,8 @@ namespace WindowsApp{
                 Console.WriteLine("5. Atualizar Status do projeto");
                 Console.WriteLine("6. Abrir Projeto");
                 Console.WriteLine("7. Fechar Projeto");
+                Console.WriteLine("8. Testar Conexão com Box.com");
                 Console.WriteLine("S. Sair");
-                Console.WriteLine("Test. Testar Listagem");
                 Console.Write("Opção: ");
                 
                 var opcao = Console.ReadLine();
@@ -107,16 +108,14 @@ namespace WindowsApp{
                         }
                         break;
 
+                    case "8": 
+                        await new Authenticator().Auth();
+                        break;
+
                     case "S":
                         // Sair do programa
                         Console.WriteLine("Saindo...");
                         return;
-
-                    case "Test":
-                        Console.WriteLine("Teste de Listagem de arquivo");
-                        var test = new WindowsApp.Test.Class.ListFilesTest();
-                        test.RunTest();
-                        break;
                     default:
                         Console.WriteLine("Opção inválida. Tente novamente.");
                         break;
