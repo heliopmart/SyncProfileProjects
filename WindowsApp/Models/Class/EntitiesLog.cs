@@ -11,6 +11,7 @@ namespace WindowsApp.Models.Class
         public DateTime DateTime { get; set; }
         public string Device { get; set; }
         public DateTime AsyncTime { get; set; }
+        public string FolderId {get; set;}
         public int Status { get; set; }
     }
     // Outras classes similares podem ser adicionadas aqui.

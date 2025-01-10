@@ -4,10 +4,19 @@ LocalProjects:
     DateTime: 2010-10-10T20:00:00.0000000
     Device: DeviceName
     AsyncTime: 0001-01-01T00:00:00.0000000
+    FolderId: 
     Status: 0
   NomeProjeto2:
     Name: Nome Teste 2
     DateTime: 2012-10-10T20:00:00.0000000
     Device: DeviceNames
     AsyncTime: 0001-01-01T00:00:00.0000000
+    FolderId: 
     Status: 1
+  Teste 1:
+    Name: Teste 1
+    DateTime: 2025-01-09T19:26:33.3831074-03:00
+    Device: DESKTOP-7P120MF
+    AsyncTime: 2025-01-09T19:26:34.6900301-03:00
+    FolderId: 302035218842
+    Status: 0

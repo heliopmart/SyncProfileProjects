@@ -1,7 +1,6 @@
 ﻿using System;
 using WindowsApp.Managers;
 using WindowsApp.Models; // temp
-using WindowsApp.Test.Class;
 using WindowsApp.Models.Class;
 using WindowsAppSync.Services.API;
 
@@ -80,7 +79,7 @@ namespace WindowsApp{
                         NameProject = Console.ReadLine();
 
                         if(NameProject != null){
-                            if(await projectManager.ChangeProjectData(NameProject, "Status", 2)){
+                            if(await projectManager.ChangeProjectData(NameProject, "Status", "0")){
                                 Console.WriteLine("Projeto Alterado com sucesso!");
                             }else{
                                 Console.WriteLine("Algum erro deve ter acontecido!");

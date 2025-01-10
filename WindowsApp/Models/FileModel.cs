@@ -13,6 +13,7 @@ namespace WindowsApp.Models // Namespace reflete a estrutura da pasta
     {
         public string FilePath { get; set; }
         public string ChangeType { get; set; } // Exemplo: "Created", "Modified", "Deleted"
+        public string OldFilePath { get; set; } // Caminho antigo, se houver
         public DateTime ChangeTime { get; set; }
     }
 }

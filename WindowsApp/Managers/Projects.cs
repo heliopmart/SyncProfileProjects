@@ -7,7 +7,7 @@ using WindowsApp.Models; // Importa FileModel e Project
 using WindowsApp.Helpers;
 using WindowsApp.Models.Class; // Importa FileModel e Project
 using WindowsApp.Utils;
-
+using WindowsApp.Managers.Uploaders;
 
 namespace WindowsApp.Managers{
     public class ManagerProject{
@@ -88,9 +88,13 @@ namespace WindowsApp.Managers{
 
         public async Task<bool> CreateProject(Project DataProject){
             var DefaultPathForProjects = _config.DefaultPathForProjects;
+            string folderPath = $"{DefaultPathForProjects}/{StringUtils.SanitizeString(DataProject.Name)}";
 
-            if(CreateFolderProject_Local(DataProject.Name, DefaultPathForProjects)){
-                return await CreateMetaDataProject_Local(DataProject);
+
+            if(CreateFolderProject_Local(folderPath)){
+                if(await CreateMetaDataProject_Local(DataProject)){
+                    return await CloudProjectSync_Sync(DataProject, folderPath);
+                }
             }
 
             return false; 
@@ -101,7 +105,8 @@ namespace WindowsApp.Managers{
                     Name = DataProject.Name,
                     DateTime = DataProject.DateTime,
                     Device = DataProject.Device,
-                    Status = DataProject.Status
+                    Status = DataProject.Status,
+                    FolderId = ""
                 };
                 var MetaData = await new UpdateMetaData().UpdateMetaDataLog(DataProjectForLog.Name, DataProjectForLog);
                 if(MetaData){
@@ -112,10 +117,7 @@ namespace WindowsApp.Managers{
                 }
             }
 
-            bool CreateFolderProject_Local(string NameProject, string Path){
-                
-                string folderPath = $"{Path}/{StringUtils.SanitizeString(NameProject)}";
-
+            bool CreateFolderProject_Local(string folderPath){
                 try{
                     // Verifica se a pasta já existe
                     if (!Directory.Exists(folderPath))
@@ -162,15 +164,12 @@ namespace WindowsApp.Managers{
                 }
             }
 
-            async Task<bool> CloudProjectSync_Sync(Project DataProject){
-                // TODO: 
-                // Adicionar o projeto em nuvem 
-                // sincronizar os arquivos com o Box.com
-                return false;
+            async Task<bool> CloudProjectSync_Sync(Project DataProject, string DefaultPathForProjects){
+                return await new BoxUploader().UploadManager(DefaultPathForProjects,"mainFolder", DataProject.Name);
             }
         }
 
-        public async Task<bool> ChangeProjectData(string NameProject, string KeyForChange, int ValueForChange){
+        public async Task<bool> ChangeProjectData(string NameProject, string KeyForChange, string ValueForChange){
 
             var changedProjectData = await ChangeMetaDataProject_Local(NameProject, KeyForChange, ValueForChange);
             if(changedProjectData != null){
@@ -180,7 +179,7 @@ namespace WindowsApp.Managers{
                 return false;
             }
 
-            async Task<ProjectData?> ChangeMetaDataProject_Local(string NameProject, string KeyForChange, int ValueForChange){
+            async Task<ProjectData?> ChangeMetaDataProject_Local(string NameProject, string KeyForChange, string ValueForChange){
                 var projects = await new getLogs().GetProjectsLogFile();
                 var metadataSingleProject = projects?.LocalProjects[NameProject];
 
@@ -227,7 +226,22 @@ namespace WindowsApp.Managers{
             }
 
         }
-    }
-        
     
+        public async Task<ProjectData> GetProject(string NameProject){
+            var dataProjects = await new getLogs().GetProjectsLogFile();
+
+            if(dataProjects != null){
+                if(dataProjects.LocalProjects.ContainsKey(NameProject)){
+                    return dataProjects.LocalProjects[NameProject];
+                }else{
+                    Console.WriteLine("Projeto não encontrado.");
+                    return null;
+                }
+            }else{
+                Console.WriteLine("Nenhum projeto encontrado.");
+                return null;
+            }
+        }
+
+    }
 }

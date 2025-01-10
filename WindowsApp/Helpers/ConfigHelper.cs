@@ -41,6 +41,7 @@ namespace WindowsApp.Helpers
         public string ClientId {get; set;}
         public string ClientSecret {get; set;}
         public string EnterpriseId {get; set;}
+        public string JwtPrivateKey { get; set; }
         public string JwtPrivateKeyPassword {get; set;}
         public string JwtPublicKeyId {get; set;}
 

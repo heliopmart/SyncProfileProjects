@@ -63,7 +63,8 @@ namespace WindowsApp.Models
                     DateTime = DataProject.DateTime,
                     Device = DataProject.Device,
                     Status = DataProject.Status,
-                    AsyncTime = DateTime.Now
+                    AsyncTime = DateTime.Now,
+                    FolderId = DataProject.FolderId
                 };
 
                 try

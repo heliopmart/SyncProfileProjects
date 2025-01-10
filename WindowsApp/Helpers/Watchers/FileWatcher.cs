@@ -3,74 +3,136 @@ using System.IO;
 using WindowsApp.Managers;
 using WindowsApp.Models;
 
-namespace WindowsApp.Helpers.Watchers
-{
-    public class DirectoryMonitor
-    {
-        private readonly FileSystemWatcher _fileSystemWatcher;
+namespace WindowsApp.Helpers.Watchers{
+    public class FileWatcher{
+        private readonly string _pathToWatch;
+        private readonly QueueManager _queueManager;
+        private readonly SyncManager _syncManager;
 
-        public DirectoryMonitor(string path)
+        public FileWatcher(string pathToWatch, QueueManager queueManager, SyncManager syncManager)
         {
-            // Configura o FileSystemWatcher para monitorar o diretório
-            _fileSystemWatcher = new FileSystemWatcher
+            _pathToWatch = pathToWatch;
+            _queueManager = queueManager;
+            _syncManager = syncManager;
+        }
+
+        public void StartWatching()
+        {
+            var watcher = new FileSystemWatcher(_pathToWatch)
             {
-                Path = path, // Diretório a ser monitorado
-                IncludeSubdirectories = true, // Monitora subpastas
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.CreationTime // Eventos a serem monitorados
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite,
+                IncludeSubdirectories = true
             };
 
-            // Associa os eventos ao manipulador
-            _fileSystemWatcher.Created += OnFileChanged;
-            _fileSystemWatcher.Changed += OnFileChanged;
-            _fileSystemWatcher.Deleted += OnFileDeleted;
-            _fileSystemWatcher.Renamed += OnFileRenamed;
+            watcher.Created += OnCreated;
+            watcher.Changed += OnChanged;
+            watcher.Deleted += OnDeleted;
+            watcher.Renamed += OnRenamed;
 
-            // Inicia o monitoramento
-            _fileSystemWatcher.EnableRaisingEvents = true;
+            watcher.EnableRaisingEvents = true;
 
-            Console.WriteLine($"Monitorando mudanças em: {path}");
+            Console.WriteLine("FileWatcher started...");
         }
 
-        public void StopMonitoring()
+        private void OnCreated(object sender, FileSystemEventArgs e)
         {
-            // Desativa o monitoramento
-            _fileSystemWatcher.EnableRaisingEvents = false;
-
-            // Remove os manipuladores de eventos
-            _fileSystemWatcher.Created -= OnFileChanged;
-            _fileSystemWatcher.Changed -= OnFileChanged;
-            _fileSystemWatcher.Deleted -= OnFileDeleted;
-            _fileSystemWatcher.Renamed -= OnFileRenamed;
-
-            // Libera os recursos usados pelo FileSystemWatcher
-            _fileSystemWatcher.Dispose();
+            // Verifique se é uma pasta
+            if (Directory.Exists(e.FullPath))
+            {
+                Console.WriteLine($"Folder created: {e.FullPath}");
+                HandleFolder(e.FullPath, "FolderCreated");
+            }
+            // Caso contrário, é um arquivo
+            else if (File.Exists(e.FullPath))
+            {
+                Console.WriteLine($"File created: {e.FullPath}");
+                HandleFile(e.FullPath, "FileCreated");
+            }
+            else
+            {
+                Console.WriteLine($"Unknown item created: {e.FullPath}");
+            }
         }
 
-        private void OnFileChanged(object sender, FileSystemEventArgs e)
+        private void OnChanged(object sender, FileSystemEventArgs e)
         {
-            // Evento acionado quando um arquivo é criado ou modificado
-            Console.WriteLine($"Arquivo {e.ChangeType}: {e.FullPath}");
-            HandleFileChange(e.FullPath, e.ChangeType);
+            if (Directory.Exists(e.FullPath))
+            {
+                Console.WriteLine($"Folder changed: {e.FullPath}");
+                HandleFolder(e.FullPath, "FolderChanged");
+            }
+            else if (File.Exists(e.FullPath))
+            {
+                Console.WriteLine($"File changed: {e.FullPath}");
+                HandleFile(e.FullPath, "FileChanged");
+            }
+            else
+            {
+                Console.WriteLine($"Unknown item changed: {e.FullPath}");
+            }
         }
 
-        private void OnFileDeleted(object sender, FileSystemEventArgs e)
+        private void OnDeleted(object sender, FileSystemEventArgs e)
         {
-            // Evento acionado quando um arquivo é excluído
-            Console.WriteLine($"Arquivo deletado: {e.FullPath}");
+            if (Directory.Exists(e.FullPath))
+            {
+                Console.WriteLine($"Folder deleted: {e.FullPath}");
+                HandleFolder(e.FullPath, "FolderDeleted");
+            }
+            else
+            {
+                Console.WriteLine($"File deleted: {e.FullPath}");
+                HandleFile(e.FullPath, "FileDeleted");
+            }
         }
 
-        private void OnFileRenamed(object sender, RenamedEventArgs e)
+        private void OnRenamed(object sender, RenamedEventArgs e)
         {
-            // Evento acionado quando um arquivo é renomeado
-            Console.WriteLine($"Arquivo renomeado de {e.OldFullPath} para {e.FullPath}");
+            if (Directory.Exists(e.FullPath))
+            {
+                Console.WriteLine($"Folder renamed from {e.OldFullPath} to {e.FullPath}");
+                HandleFolderRenamed(e.OldFullPath, e.FullPath);
+            }
+            else if (File.Exists(e.FullPath))
+            {
+                Console.WriteLine($"File renamed from {e.OldFullPath} to {e.FullPath}");
+                HandleFileRenamed(e.OldFullPath, e.FullPath);
+            }
+            else
+            {
+                Console.WriteLine($"Unknown item renamed: {e.OldFullPath} to {e.FullPath}");
+            }
         }
 
-        private void HandleFileChange(string filePath, WatcherChangeTypes changeType)
-        {
-            // Aqui você pode implementar a lógica para lidar com as mudanças no arquivo
-            // new QueueManager().Enqueue();
+        private void HandleFolder(string folderPath, string type){
+            AddEventToQueue("FolderCreated", folderPath);
+        }
 
-            Console.WriteLine($"Arquivo alterado: {filePath}, Tipo de mudança: {changeType}");
+        private void HandleFile(string filePath, string type){
+            AddEventToQueue("FileCreated", filePath);
+        }
+
+        private void HandleFolderRenamed(string oldFolderPath, string newFolderPath){
+            AddEventToQueue("FolderRenamed", newFolderPath, oldFolderPath);
+        }
+
+        private void HandleFileRenamed(string oldFilePath, string newFilePath){
+            AddEventToQueue("FileRenamed", newFilePath, oldFilePath);
+        }       
+
+        private void AddEventToQueue(string changeType, string path, string oldPath = null)
+        {
+            var fileChange = new FileChange
+            {
+                ChangeType = changeType,
+                FilePath = path,
+                OldFilePath = oldPath,
+                ChangeTime = DateTime.Now
+            };
+
+            _queueManager.Enqueue(fileChange);
+            // Processa a fila automaticamente
+            _syncManager.ProcessQueueAsync().Wait();
         }
     }
 }
