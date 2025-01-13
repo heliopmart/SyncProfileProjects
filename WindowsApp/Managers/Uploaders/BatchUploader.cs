@@ -1,6 +1,3 @@
-using System;
-using System.Threading.Tasks;
-
 namespace WindowsAppSync.Managers.Uploaders
 {
     public class BatchUploader

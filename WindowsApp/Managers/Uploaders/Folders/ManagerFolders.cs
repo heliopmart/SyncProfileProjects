@@ -6,15 +6,13 @@ using WindowsAppSync.Services.API;
 using WindowsAppSync.Managers.Uploaders;
 using WindowsApp.Managers.Uploaders.Files;
 
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Managers.Uploaders.Folders{
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
     public class ManagerFolders{
         private static readonly Authenticator authenticator = new Authenticator();
         public static async Task<bool> DeleteFolderRecursivelyAsync(string folderId){
             try{
                 // Obtenha o cliente autenticado
-                BoxClient client = await authenticator.Auth();
+                BoxClient client = Authenticator.Auth();
                 // Obtenha os itens da pasta
                 var folderItems = await client.Folders.GetFolderItemsAsync(folderId);
                 if (folderItems?.Entries != null)
@@ -50,7 +48,7 @@ namespace WindowsApp.Managers.Uploaders.Folders{
             static async Task<bool> Delete(string folderId){
                 try
                 {
-                    BoxClient client = await authenticator.Auth();
+                    BoxClient client = Authenticator.Auth();
                     // Exclua a pasta e todo o seu conteúdo
                     await client.Folders.DeleteFolderByIdAsync(folderId);
                     Console.WriteLine("Exclued");
@@ -76,7 +74,7 @@ namespace WindowsApp.Managers.Uploaders.Folders{
         }
 
         public static async Task<string?> GetOrCreateFolderByPathAsync(string folderPath, string parentFolderId){
-            BoxClient client = await authenticator.Auth();
+            BoxClient client = Authenticator.Auth();
 
             string relativePath = BoxUploader.GetRelativePathFromRoot(folderPath);
 
@@ -138,7 +136,7 @@ namespace WindowsApp.Managers.Uploaders.Folders{
         }
     
         public static async Task<string?> GetFolderIdForSubPasta(string folderPath, string parentFolderId){
-            BoxClient client = await authenticator.Auth();
+            BoxClient client = Authenticator.Auth();
             
             if(parentFolderId == "0"){
                 return "0";
@@ -149,7 +147,7 @@ namespace WindowsApp.Managers.Uploaders.Folders{
             if(relativePath == null || relativePath == ""){
                 return parentFolderId;
             }
-
+            
             string[] pathSegments = relativePath.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
 
             // Verifique o comprimento e retorne o elemento apropriado
@@ -161,6 +159,7 @@ namespace WindowsApp.Managers.Uploaders.Folders{
 
             // Obtenha os itens na pasta atual
             IReadOnlyList<FileFullOrFolderMiniOrWebLink>? Entries = (await client.Folders.GetFolderItemsAsync(parentFolderId)).Entries;
+
 
             string? subFolderId = parentFolderId;
             if (Entries != null)
@@ -179,14 +178,16 @@ namespace WindowsApp.Managers.Uploaders.Folders{
                         var name = root.GetProperty("name").GetString();
                         if(name == result){
                             subFolderId = id;
-                        }else{
-                            subFolderId = parentFolderId;
                         }
                     }
                 }
             }else{
                 throw new InvalidOperationException("ManagerFolders: GetFolderIdForSubPasta(), Error: Entries is Null");
             }
+
+
+            // TODO: Mudança de else dentro de (name == result) para: 
+            subFolderId ??= parentFolderId;
 
             return subFolderId;
         }
@@ -214,7 +215,7 @@ namespace WindowsApp.Managers.Uploaders.Folders{
                 throw new InvalidOperationException($"ManagerFiles : RenameFile(), Erro: OldFilePath is null");
             }
 
-            BoxClient client = await authenticator.Auth();
+            BoxClient client = Authenticator.Auth();
             var folderIdObj = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
             string parentFolderId = folderIdObj?.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
 

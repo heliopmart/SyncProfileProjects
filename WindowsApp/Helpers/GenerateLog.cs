@@ -1,14 +1,8 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using WindowsApp.Helpers;
 using WindowsApp.Models.Class;
 
-
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Models
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
 {
     public class GenerateLog
     {
@@ -25,37 +19,28 @@ namespace WindowsApp.Models
                 {
                     await writer.WriteAsync(conteudo);
                 }
-                Console.WriteLine("Arquivo metadata.yaml criado com sucesso.");
                 return true;
             }
             catch (UnauthorizedAccessException ex)
             {
-                Console.WriteLine("Erro, código: |1293| - Acesso não autorizado ao arquivo.");
-                Console.WriteLine(ex.Message);
-                return false;
+                throw new Exception($"GetLogs : DeleteMetaDataByName(), error: Unauthorized access to the file during upgrade. {ex.Message}");
             }
             catch (IOException ex)
             {
-                Console.WriteLine("Erro, código: |1294| - Problema de I/O ao criar metadata.yaml.");
-                Console.WriteLine(ex.Message);
-                return false;
+                throw new Exception($"GetLogs : DeleteMetaDataByName(), error: I/O problem trying change metadata {ex.Message}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Erro, código: |1295| - Erro desconhecido ao criar metadata.yaml.");
-                Console.WriteLine(ex.Message);
-                return false;
+                throw new Exception($"GetLogs : DeleteMetaDataByName(), error: chanding metadata error. {ex.Message}");
             }
         }
     }
 
     public class UpdateMetaData
     {
-        public async Task<bool> UpdateMetaDataLog(string ProjectName, ProjectData DataProject)
+        public static async Task<bool> UpdateMetaDataLog(string ProjectName, ProjectData DataProject)
         {
-            var getLogsInstance = new getLogs();
-            var metaDataProject = await getLogsInstance.GetProjectsLogFile();
-            var config = ConfigHelper.Instance.GetConfig();
+            var metaDataProject = await GetLogs.GetProjectsLogFile();
 
             if ((metaDataProject?.LocalProjects != null) && ProjectName != null)
             {
@@ -69,33 +54,7 @@ namespace WindowsApp.Models
                     FolderId = DataProject.FolderId
                 };
 
-                try
-                {
-                    var serializer = new SerializerBuilder().Build();
-                    using (StreamWriter writer = new StreamWriter($"{config.MetaDataPath}/metadata.yaml", false))
-                    {
-                        await writer.WriteAsync(serializer.Serialize(metaDataProject));
-                    }
-                    return true;
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    Console.WriteLine("Erro, código: |2293| - Acesso não autorizado ao arquivo durante atualização.");
-                    Console.WriteLine(ex.Message);
-                    return false;
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine("Erro, código: |2294| - Problema de I/O ao atualizar metadata.yaml.");
-                    Console.WriteLine(ex.Message);
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Erro, código: |2295| - Erro desconhecido ao atualizar metadata.yaml.");
-                    Console.WriteLine(ex.Message);
-                    return false;
-                }
+                return await ChangeMetaData(metaDataProject);
             }
             else
             {
@@ -104,52 +63,48 @@ namespace WindowsApp.Models
             }
         }
 
-        public async Task<bool> DeleteMetaDataByName(string ProjectName){
-            var getLogsInstance = new getLogs();
-            var metaDataProject = await getLogsInstance.GetProjectsLogFile();
-            var config = ConfigHelper.Instance.GetConfig();
+        public static async Task<bool> DeleteMetaDataByName(string ProjectName){
+            var metaDataProject = await GetLogs.GetProjectsLogFile();
             
             if(metaDataProject?.LocalProjects != null && ProjectName != null){
                 metaDataProject.LocalProjects.Remove(ProjectName); // remove pelo nome do projeto (index key)
 
-                try
-                {
-                    var serializer = new SerializerBuilder().Build();
-                    using (StreamWriter writer = new StreamWriter($"{config.MetaDataPath}/metadata.yaml", false))
-                    {
-                        await writer.WriteAsync(serializer.Serialize(metaDataProject));
-                    }
-                    return true;
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    Console.WriteLine("Erro, código: |2293| - Acesso não autorizado ao arquivo durante atualização.");
-                    Console.WriteLine(ex.Message);
-                    return false;
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine("Erro, código: |2294| - Problema de I/O ao atualizar metadata.yaml.");
-                    Console.WriteLine(ex.Message);
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Erro, código: |2295| - Erro desconhecido ao atualizar metadata.yaml.");
-                    Console.WriteLine(ex.Message);
-                    return false;
-                }
+                return await ChangeMetaData(metaDataProject);
             }else
             {
-                Console.WriteLine("Erro, código: |2242| - Metadados ou nome do projeto inválido.");
-                return false;
+                throw new Exception($"GetLogs : DeleteMetaDataByName(), error: Metadata or Project Name not invalid.");
+            }
+        }
+
+        private static async Task<bool> ChangeMetaData(Metadata metaDataProject){
+            var config = ConfigHelper.Instance.GetConfig();
+            try
+            {
+                var serializer = new SerializerBuilder().Build();
+                using (StreamWriter writer = new StreamWriter($"{config.MetaDataPath}/metadata.yaml", false))
+                {
+                    await writer.WriteAsync(serializer.Serialize(metaDataProject));
+                }
+                return true;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                throw new Exception($"GetLogs : DeleteMetaDataByName(), error: Unauthorized access to the file during upgrade. {ex.Message}");
+            }
+            catch (IOException ex)
+            {
+                throw new Exception($"GetLogs : DeleteMetaDataByName(), error: I/O problem trying change metadata {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"GetLogs : DeleteMetaDataByName(), error: chanding metadata error. {ex.Message}");
             }
         }
     }
 
-    public class getLogs
+    public class GetLogs
     {
-        public async Task<Metadata?> GetProjectsLogFile()
+        public static async Task<Metadata> GetProjectsLogFile()
         {
             var config = ConfigHelper.Instance.GetConfig();
             string caminhoCompleto = $"{config.MetaDataPath}/metadata.yaml";
@@ -166,21 +121,15 @@ namespace WindowsApp.Models
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    Console.WriteLine("Erro, código: |2283| - Acesso não autorizado ao arquivo ao ler metadados.");
-                    Console.WriteLine(ex.Message);
-                    return null;
+                    throw new Exception($"GetLogs : GetProjectsLogFile(), error: {ex.Message}");
                 }
                 catch (IOException ex)
                 {
-                    Console.WriteLine("Erro, código: |2284| - Problema de I/O ao ler metadata.yaml.");
-                    Console.WriteLine(ex.Message);
-                    return null;
+                   throw new Exception($"GetLogs : GetProjectsLogFile(), error: {ex.Message}");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Erro, código: |2285| - Erro desconhecido ao ler metadata.yaml.");
-                    Console.WriteLine(ex.Message);
-                    return null;
+                    throw new Exception($"GetLogs : GetProjectsLogFile(), error: {ex.Message}");
                 }
             }
             else
@@ -189,25 +138,22 @@ namespace WindowsApp.Models
                 var created = await generateLog.GenerateMetaDataLog();
                 if (!created)
                 {
-                    Console.WriteLine("Erro, código: |2286| - Falha ao criar arquivo metadata.yaml.");
-                    return null;
+                    throw new Exception($"GetLogs : GetProjectsLogFile(), error:  Falha ao criar arquivo metadata.yaml.");
                 }
                 return await GetProjectsLogFile();
             }
         }
 
-        public async Task<ProjectData?> GetProjectsByName(string ProjectName){
-            var metaDataProject = await new getLogs().GetProjectsLogFile();
+        public static async Task<ProjectData> GetProjectsByName(string ProjectName){
+            var metaDataProject = await GetProjectsLogFile();
             if(metaDataProject?.LocalProjects != null && ProjectName != null){
                 if(metaDataProject.LocalProjects.ContainsKey(ProjectName)){
                     return metaDataProject.LocalProjects[ProjectName];
                 }else{
-                    Console.WriteLine("Erro, código: |2243| - Projeto não encontrado.");
-                    return null;
+                    throw new Exception($"GetLogs : GetProjectsByName(), error: Project not found.");
                 }            
             }else{  
-                Console.WriteLine("Erro, código: |2242| - Metadados ou nome do projeto inválido.");
-                return null;
+                throw new Exception($"GetLogs : GetProjectsByName(), error: Metadata or Project Name not invalid.");
             }            
         }
     }

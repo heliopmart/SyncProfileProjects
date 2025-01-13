@@ -1,10 +1,7 @@
 using WindowsApp.Managers;
 using WindowsApp.Models;
-using System.Text.Json;
 
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Helpers.Watchers{
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
     public class FileWatcher{
         private readonly string _pathToWatch;
         private readonly QueueManager _queueManager;
@@ -166,7 +163,7 @@ namespace WindowsApp.Helpers.Watchers{
             }
         }
 
-        private void AddEventToQueue(string changeType, string path, string oldPath = null)
+        private void AddEventToQueue(string changeType, string path, string? oldPath = null)
         {
 
             var fileChange = new FileChange

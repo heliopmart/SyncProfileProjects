@@ -1,6 +1,5 @@
 using Box.Sdk.Gen;
 using Box.Sdk.Gen.Managers;
-using System.Threading.Tasks;
 using WindowsAppSync.Services.API;
 
 namespace WindowsAppSync.Managers.Uploaders{
@@ -10,7 +9,7 @@ namespace WindowsAppSync.Managers.Uploaders{
 
         public static async Task<string> SyncFolderToCloud(string localFolderPath, string parentFolderId)
         {
-            BoxClient client = await new Authenticator().Auth();
+            BoxClient client = Authenticator.Auth();
 
             // Verifique se a pasta já foi sincronizada
             if (FolderMapping.TryGetValue(localFolderPath, out var cloudFolderId))
@@ -32,7 +31,6 @@ namespace WindowsAppSync.Managers.Uploaders{
 
             // Salve o mapeamento local ↔ nuvem
             FolderMapping[localFolderPath] = folder.Id;
-            Console.WriteLine($"Folder synced. Local: {localFolderPath}, Cloud ID: {folder.Id}");
             return folder.Id;
         }
     }

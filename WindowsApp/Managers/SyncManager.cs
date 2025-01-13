@@ -26,7 +26,7 @@ namespace WindowsApp.Managers
             }
         }
         private static async Task ProcessFileChangeAsync(FileChange fileChange){
-            
+            Console.WriteLine("Uploading...");
             if(fileChange.ChangeType == "FolderRenamed" || fileChange.ChangeType == "FileRenamed"){
                 if(!await new BoxUploader().UploadManager(fileChange.FilePath, fileChange.ChangeType, fileChange.OldFilePath)){
                     throw new InvalidOperationException($"SyncManager : ProcessFileChangeAsync() => UploadManager(), Erro: Upload Rename não concluido!");

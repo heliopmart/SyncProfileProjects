@@ -1,12 +1,9 @@
-﻿using System;
-using WindowsApp.Managers;
+﻿using WindowsApp.Managers;
 using WindowsApp.Models; // temp
 using WindowsApp.Models.Class;
 using WindowsAppSync.Services.API;
 
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp{
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
     class Program
     {
         public static async Task Main(string[] args)
@@ -36,7 +33,7 @@ namespace WindowsApp{
                     case "1": 
                         // Adicionar projeto
                         Console.WriteLine("\n Adicione o Nome do projeto: ");
-                        string NameProject = Console.ReadLine();
+                        string? NameProject = Console.ReadLine();
 
                         if(NameProject != null){
                             var addingProject = await projectManager.AddProject(NameProject);
@@ -67,7 +64,7 @@ namespace WindowsApp{
                     
                     case "4": 
                         // Listar projeto por nome
-                        var ProjectData = await new getLogs().GetProjectsByName("Teste");
+                        var ProjectData = await GetLogs.GetProjectsByName("Teste");
                         if(ProjectData != null){
                             Console.WriteLine($"Nome: {ProjectData.Name}, Data: {ProjectData.DateTime}, Dispositivo: {ProjectData.Device}, Status: {ProjectData.Status}");
                         }else{
@@ -108,11 +105,6 @@ namespace WindowsApp{
                             projectManager.OpenProjectForMonitory(NameProject);
                         }
                         break;
-
-                    case "8": 
-                        await new Authenticator().Auth();
-                        break;
-
                     case "S":
                         // Sair do programa
                         Console.WriteLine("Saindo...");

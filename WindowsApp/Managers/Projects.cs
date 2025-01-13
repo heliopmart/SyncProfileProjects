@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
 using System.Reflection;
 using WindowsApp.Models; // Importa FileModel e Project
 using WindowsApp.Helpers;
@@ -9,9 +5,7 @@ using WindowsApp.Models.Class; // Importa FileModel e Project
 using WindowsApp.Utils;
 using WindowsApp.Managers.Uploaders;
 
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Managers{
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
     public class ManagerProject{
         
         private static readonly APPConfig _config = ConfigHelper.Instance.GetConfig();
@@ -26,7 +20,7 @@ namespace WindowsApp.Managers{
             return false;
             
             async Task<bool> DeleteMetaDataProject_Local(string ProjectName){
-                return await new UpdateMetaData().DeleteMetaDataByName(ProjectName);
+                return await UpdateMetaData.DeleteMetaDataByName(ProjectName);
             }
 
             bool DeleteFolderProject_Local(string NameProject, string Path){
@@ -110,7 +104,7 @@ namespace WindowsApp.Managers{
                     Status = DataProject.Status,
                     FolderId = ""
                 };
-                var MetaData = await new UpdateMetaData().UpdateMetaDataLog(DataProjectForLog.Name, DataProjectForLog);
+                var MetaData = await UpdateMetaData.UpdateMetaDataLog(DataProjectForLog.Name, DataProjectForLog);
                 if(MetaData){
                     return true;
                 }else{
@@ -172,19 +166,21 @@ namespace WindowsApp.Managers{
             }
         }
 
-        public async Task<bool> ChangeProjectData(string NameProject, string KeyForChange, string ValueForChange){
+        public static async Task<bool> ChangeProjectData(string NameProject, string KeyForChange, string ValueForChange){
 
             var changedProjectData = await ChangeMetaDataProject_Local(NameProject, KeyForChange, ValueForChange);
             if(changedProjectData != null){
-                return await new UpdateMetaData().UpdateMetaDataLog(NameProject, changedProjectData);
+                return await UpdateMetaData.UpdateMetaDataLog(NameProject, changedProjectData);
             }else{
                 Console.WriteLine("Erro! Não foi possivel alterar o Projeto no metadata local. Código de erro: |3263|");
                 return false;
             }
 
-            async Task<ProjectData?> ChangeMetaDataProject_Local(string NameProject, string KeyForChange, string ValueForChange){
-                var projects = await new getLogs().GetProjectsLogFile();
-                var metadataSingleProject = projects?.LocalProjects[NameProject];
+            static async Task<ProjectData> ChangeMetaDataProject_Local(string NameProject, string KeyForChange, string ValueForChange){
+                Metadata projects = await GetLogs.GetProjectsLogFile();
+                var metadataSingleProject = projects.LocalProjects != null && projects.LocalProjects.ContainsKey(NameProject) 
+                    ? projects.LocalProjects[NameProject] 
+                    : null;
 
 
                 if(metadataSingleProject != null && projects != null){
@@ -198,26 +194,23 @@ namespace WindowsApp.Managers{
 
                             return metadataSingleProject;
                         }catch{
-                            Console.WriteLine("Erro ao alterar o valor da propriedade.");
-                            return null;
+                            throw new Exception($"ManagerProject : ChangeMetaDataProject_Local(), error: chanding prop value of metadata");
                         }
                     }else{
-                        Console.WriteLine("Propriedade não encontrada ou não pode ser alterada.");
-                        return null;
+                        throw new Exception($"ManagerProject : ChangeMetaDataProject_Local(), error: prop not found or impossible change");
                     }
                 }else{
-                    Console.WriteLine("Projeto não encontrado.");
-                    return null;
+                    throw new Exception($"ManagerProject : ChangeMetaDataProject_Local(), error: project not found");
                 }
             }
 
             
         }
 
-        public async Task<bool> ListProjects(){
-            var dataProjects = await new getLogs().GetProjectsLogFile();
+        public static async Task<bool> ListProjects(){
+            var dataProjects = await GetLogs.GetProjectsLogFile();
 
-            if(dataProjects != null){
+            if(dataProjects != null && dataProjects.LocalProjects != null){
                 foreach (var project in dataProjects.LocalProjects)
                 {
                     Console.WriteLine($"Nome: {project.Value.Name}, Data: {project.Value.DateTime}, Dispositivo: {project.Value.Device}, Status: {project.Value.Status}");
@@ -230,11 +223,11 @@ namespace WindowsApp.Managers{
 
         }
     
-        public async Task<ProjectData> GetProject(string NameProject){
-            var dataProjects = await new getLogs().GetProjectsLogFile();
+        public async Task<ProjectData?> GetProject(string NameProject){
+            var dataProjects = await GetLogs.GetProjectsLogFile();
 
             if(dataProjects != null){
-                if(dataProjects.LocalProjects.ContainsKey(NameProject)){
+                if(dataProjects.LocalProjects != null && dataProjects.LocalProjects.ContainsKey(NameProject)){
                     return dataProjects.LocalProjects[NameProject];
                 }else{
                     Console.WriteLine("Projeto não encontrado.");

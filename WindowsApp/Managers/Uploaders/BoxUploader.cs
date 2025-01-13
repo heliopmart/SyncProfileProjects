@@ -1,9 +1,7 @@
 using WindowsApp.Utils;
 using WindowsApp.Managers.Uploaders.Folders;
 using WindowsApp.Managers.Uploaders.Files;
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Managers.Uploaders{
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
     public class BoxUploader
     {
         public async Task<bool> UploadManager(string filePath, string type, string? OldFilePath){
@@ -37,7 +35,7 @@ namespace WindowsApp.Managers.Uploaders{
             string? NameProject = nameProjectObj != null ? nameProjectObj.ToString() : string.Empty;
 
             var folderId = await ManagerFolders.UploadFolder(filePath, "0");
-            return await new ManagerProject().ChangeProjectData(NameProject, "FolderId", folderId);
+            return await ManagerProject.ChangeProjectData(NameProject, "FolderId", folderId);
         }
 
         static async Task<bool> UploadFile(string filePath){
@@ -73,7 +71,7 @@ namespace WindowsApp.Managers.Uploaders{
             string rootFolderName = StringUtils.SanitizeString(nameProjectObj != null ? nameProjectObj.ToString() : string.Empty);
             // Obtenha o caminho relativo completo
             string relativePath = Path.GetRelativePath("BaseFolderPath", folderPath);
-
+            
             // Divida o caminho em segmentos
             string[] pathSegments = relativePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
 
@@ -99,12 +97,11 @@ namespace WindowsApp.Managers.Uploaders{
         }
 
         public static async Task<bool> UpdateMetaDataProject(){
-            var FunManagerProjects = new ManagerProject();
             var nameProjectObj = CentralCache.Instance.GetFromCache("NameProject");
             string? NameProject = nameProjectObj != null ? nameProjectObj.ToString() : string.Empty;
             
-            bool ChangeStatus = await FunManagerProjects.ChangeProjectData(NameProject, "Status", "1");
-            bool ChangeAsnyc = await FunManagerProjects.ChangeProjectData(NameProject, "AsyncTime", DateTime.Now.ToString());
+            bool ChangeStatus = await ManagerProject.ChangeProjectData(NameProject, "Status", "1");
+            bool ChangeAsnyc = await ManagerProject.ChangeProjectData(NameProject, "AsyncTime", DateTime.Now.ToString());
 
             if(ChangeAsnyc && ChangeStatus){
                 return true;

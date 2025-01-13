@@ -1,12 +1,7 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using WindowsApp.Models;
 
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Managers
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
 {   
     public class QueueManager
     {
@@ -29,7 +24,7 @@ namespace WindowsApp.Managers
         }
 
         // Remover o próximo arquivo da fila
-        public bool TryDequeue(out FileChange fileChange)
+        public bool TryDequeue(out FileChange? fileChange)
         {
             return _queue.TryDequeue(out fileChange);
         }
@@ -37,6 +32,7 @@ namespace WindowsApp.Managers
         // Verificar se a fila está vazia
         public bool IsEmpty()
         {
+            // !_queue.Any();
             return !_queue.Any();
         }
 

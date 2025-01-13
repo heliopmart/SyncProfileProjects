@@ -1,8 +1,6 @@
 using System.Text.RegularExpressions;
 
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Utils
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
 {
     public static class StringUtils
     {

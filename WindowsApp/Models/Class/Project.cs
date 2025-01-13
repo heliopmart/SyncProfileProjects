@@ -13,14 +13,26 @@ namespace WindowsApp.Models.Class
 
         public Project()
         {
-            Files = new List<FileModel>();
+            // Files = new List<FileModel>(); 
+            Id = Guid.NewGuid().ToString();
+            Name = string.Empty;
+            Device = string.Empty;
+            Files = [];
         }
+
+        // public Project(string name, string directoryPath)
+        // {
+        //     Id = Guid.NewGuid().ToString();
+        //     Name = name;
+        //     Files = new List<FileModel>();
+        // }
 
         public Project(string name, string directoryPath)
         {
             Id = Guid.NewGuid().ToString();
             Name = name;
-            Files = new List<FileModel>();
+            Device = string.Empty;
+            Files = [];
         }
     }
     public class Either<TLeft, TRight>{

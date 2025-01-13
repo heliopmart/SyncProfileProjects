@@ -4,7 +4,7 @@ using WindowsApp.Helpers;
 namespace WindowsAppSync.Services.API{
 
     public class Authenticator{
-        public async Task<BoxClient> Auth(){
+        public static BoxClient Auth(){
             var _config = ConfigHelper.Instance.GetConfig();
 
             var auth = new BoxDeveloperTokenAuth(token:  _config.APIConfigs.ClientId);

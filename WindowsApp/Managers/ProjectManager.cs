@@ -1,15 +1,9 @@
-// using System;
-// using System.Collections.Generic;
-// using System.IO;
 using WindowsApp.Models.Class; // Importa FileModel e Project
 using WindowsApp.Helpers;
 using WindowsApp.Utils;
 using WindowsApp.Helpers.Watchers;
-using WindowsApp.Managers;
 
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Managers{
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
     public class ProjectManager{
 
         public async Task<bool> AddProject(string NameProject){ // Adiciona um novo projeto - Variavel Local
@@ -38,7 +32,7 @@ namespace WindowsApp.Managers{
         }
 
         public async Task<bool> ChangeProjectData(string NameProject, string KeyForChange, string ValueForChange){
-            if(await new ManagerProject().ChangeProjectData(NameProject, KeyForChange, ValueForChange)){
+            if(await ManagerProject.ChangeProjectData(NameProject, KeyForChange, ValueForChange)){
                 return true;
             }else{
                 return false;
@@ -46,15 +40,20 @@ namespace WindowsApp.Managers{
         }
 
         public async Task<bool> ListProjects(){ // Lista todos os projetos - Variavel Local
-           if(await new ManagerProject().ListProjects()){
+           if(await ManagerProject.ListProjects()){
                 return true;
            }else{
             return false;
            }
         }
 
-        public async Task<ProjectData> GetProject(string NameProject){ // Pega um projeto especifico - Variavel Local
-            return await new ManagerProject().GetProject(NameProject);
+        public static async Task<ProjectData> GetProject(string NameProject){ // Pega um projeto especifico - Variavel Local
+            var project = await new ManagerProject().GetProject(NameProject);
+            if (project == null)
+            {
+                throw new Exception("Project not found");
+            }
+            return project;
         }
 
 
