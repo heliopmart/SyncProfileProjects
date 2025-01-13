@@ -2,5 +2,12 @@ DefaultPathForProjects: D:/SyncProfileProjects/Projects
 MetaDataPath: config/
 SyncInterval: 300
 APIConfigs:
-  BaseURL: https://api.example.com
-  APIKey: 12345-abcde
+  ClientId: "ERQejmLhp7KMr4EGQeDc2XtXKME1DdZR"
+  ClientSecret: "SEU_CLIENT_SECRET"
+  EnterpriseId: "SEU_ENTERPRISE_ID"
+  JwtPrivateKey: "|
+    -----BEGIN PRIVATE KEY-----
+    SUA_CHAVE_PRIVADA_AQUI
+    -----END PRIVATE KEY-----"
+  JwtPrivateKeyPassword: "SENHA_DA_CHAVE"
+  JwtPublicKeyId: "ID_DA_CHAVE_PUBLICA"
