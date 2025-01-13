@@ -2,7 +2,7 @@ DefaultPathForProjects: D:/SyncProfileProjects/Projects
 MetaDataPath: config/
 SyncInterval: 300
 APIConfigs:
-  ClientId: "ERQejmLhp7KMr4EGQeDc2XtXKME1DdZR"
+  ClientId: "o4fwgrVQg0QLZzEand4gZ1oagWJfbGhn"
   ClientSecret: "SEU_CLIENT_SECRET"
   EnterpriseId: "SEU_ENTERPRISE_ID"
   JwtPrivateKey: "|

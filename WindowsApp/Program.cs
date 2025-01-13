@@ -22,7 +22,7 @@ namespace WindowsApp{
                 Console.WriteLine("5. Atualizar Status do projeto");
                 Console.WriteLine("6. Abrir Projeto");
                 Console.WriteLine("7. Fechar Projeto");
-                Console.WriteLine("8. Testar Conexão com Box.com");
+                Console.WriteLine("8. Sincronização programada");
                 Console.WriteLine("S. Sair");
                 Console.Write("Opção: ");
                 
@@ -87,7 +87,7 @@ namespace WindowsApp{
                         break;
                     
                     case "6": 
-                        // remover projeto
+                        // Abrir Projeto
                         Console.WriteLine("\nAdicione o Nome do projeto: ");
                         NameProject = Console.ReadLine();
 

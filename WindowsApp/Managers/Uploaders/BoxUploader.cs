@@ -13,7 +13,8 @@ namespace WindowsApp.Managers.Uploaders{
                     return await UploadFolder(filePath);
                 case "FileChanged":
                     return await ChangeFiles(filePath);
-                case "FolderChanged":
+                case "FileOffChange":
+                    // TODO: Fazer o upload de um arquivo que foi modificado em local para nuvem
                     return true;
                 case "FileDeleted":
                     return await DeleteFiles(filePath);

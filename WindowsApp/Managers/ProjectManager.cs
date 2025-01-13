@@ -59,9 +59,9 @@ namespace WindowsApp.Managers{
 
         // Verificação de mudanças de arquivo em determinado projeto
 
-        public async void OpenProjectForMonitory(string NameProject){
-            var _config = ConfigHelper.Instance.GetConfig().DefaultPathForProjects;
-            string ProjectPath = $"{_config}/{StringUtils.SanitizeString(NameProject)}";
+        public async Task OpenProjectForMonitory(string NameProject){
+            var _config = ConfigHelper.Instance.GetConfig();
+            string ProjectPath = $"{_config.DefaultPathForProjects}/{StringUtils.SanitizeString(NameProject)}";
 
             var projectData = await GetProject(NameProject);
             string IdFolderProject = projectData.FolderId;
@@ -71,15 +71,17 @@ namespace WindowsApp.Managers{
             CentralCache.Instance.AddToCache("FolderId", IdFolderProject);
             
             InitProjectFolderMonitory(ProjectPath);
+
+            SyncProcessor.StartSync(ProjectPath, IdFolderProject, _config.SyncInterval);
+            //  _ = Task.Run(() => SyncProcessor.StartSync(ProjectPath, IdFolderProject, _config.SyncInterval));
         }
 
-        public void InitProjectFolderMonitory(string Path){
+        public static void InitProjectFolderMonitory(string Path){
             // Inicialize os componentes
             var queueManager = new QueueManager();
             var syncManager = new SyncManager(queueManager);
             var fileWatcher = new FileWatcher(Path, queueManager, syncManager);
         
-            // Inicie o monitoramento
             fileWatcher.StartWatching();
         }
     }

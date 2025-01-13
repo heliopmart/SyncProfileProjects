@@ -1,5 +1,6 @@
 using WindowsApp.Managers;
 using WindowsApp.Models;
+using WindowsApp.Utils;
 
 namespace WindowsApp.Helpers.Watchers{
     public class FileWatcher{
@@ -36,7 +37,7 @@ namespace WindowsApp.Helpers.Watchers{
             Console.WriteLine("FileWatcher started...");
         }
 
-        private void OnCreated(object sender, FileSystemEventArgs e){
+        private void OnCreated(object sender, FileSystemEventArgs e){        
             lock (PendingCreations)
             {
                 // Adicione o arquivo/pasta ao cache de criações pendentes
@@ -165,7 +166,6 @@ namespace WindowsApp.Helpers.Watchers{
 
         private void AddEventToQueue(string changeType, string path, string? oldPath = null)
         {
-
             var fileChange = new FileChange
             {
                 ChangeType = changeType,

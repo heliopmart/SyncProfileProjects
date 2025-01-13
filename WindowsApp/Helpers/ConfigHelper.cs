@@ -1,9 +1,7 @@
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Helpers
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
 {
     public sealed class ConfigHelper
     {
