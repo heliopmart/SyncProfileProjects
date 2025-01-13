@@ -4,7 +4,9 @@ using WindowsApp.Models; // temp
 using WindowsApp.Models.Class;
 using WindowsAppSync.Services.API;
 
+#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp{
+#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
     class Program
     {
         public static async Task Main(string[] args)

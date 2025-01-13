@@ -7,11 +7,10 @@ using WindowsApp.Utils;
 using WindowsApp.Helpers.Watchers;
 using WindowsApp.Managers;
 
+#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Managers{
+#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
     public class ProjectManager{
-        private List<Project> Projects { get; set; } = new List<Project>();
-
-        // Gerenciamento e criaçao de projetos Pastas e MetaData
 
         public async Task<bool> AddProject(string NameProject){ // Adiciona um novo projeto - Variavel Local
             

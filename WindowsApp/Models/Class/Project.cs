@@ -1,4 +1,6 @@
+#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Models.Class
+#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
 {
     public class Project
     {

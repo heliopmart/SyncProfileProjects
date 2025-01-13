@@ -6,7 +6,9 @@ using WindowsApp.Helpers;
 using WindowsApp.Models.Class;
 
 
+#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Models
+#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
 {
     public class GenerateLog
     {

@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using WindowsApp.Models;
 
+#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Managers
+#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
 {   
     public class QueueManager
     {

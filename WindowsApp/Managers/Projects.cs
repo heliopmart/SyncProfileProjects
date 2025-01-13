@@ -9,7 +9,9 @@ using WindowsApp.Models.Class; // Importa FileModel e Project
 using WindowsApp.Utils;
 using WindowsApp.Managers.Uploaders;
 
+#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Managers{
+#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
     public class ManagerProject{
         
         private static readonly APPConfig _config = ConfigHelper.Instance.GetConfig();
@@ -165,7 +167,8 @@ namespace WindowsApp.Managers{
             }
 
             async Task<bool> CloudProjectSync_Sync(Project DataProject, string DefaultPathForProjects){
-                return await new BoxUploader().UploadManager(DefaultPathForProjects,"mainFolder", DataProject.Name);
+                CentralCache.Instance.AddToCache("NameProject", DataProject.Name); // adiciona dados importante em cache
+                return await new BoxUploader().UploadManager(DefaultPathForProjects,"mainFolder", null);
             }
         }
 

@@ -17,6 +17,20 @@ LocalProjects:
     Name: Teste 1
     DateTime: 2025-01-09T19:26:33.3831074-03:00
     Device: DESKTOP-7P120MF
-    AsyncTime: 2025-01-09T19:26:34.6900301-03:00
+    AsyncTime: 2025-01-10T20:01:44.3189369-03:00
     FolderId: 302035218842
-    Status: 0
+    Status: 1
+  cadeiracontencaomini:
+    Name: cadeiracontencaomini
+    DateTime: 2025-01-10T20:24:42.3868816-03:00
+    Device: DESKTOP-7P120MF
+    AsyncTime: 2025-01-10T20:26:07.2225899-03:00
+    FolderId: 302247554397
+    Status: 1
+  "Teste_Integra\0\0o":
+    Name: "Teste_Integra\0\0o"
+    DateTime: 2025-01-13T11:55:26.5810605-03:00
+    Device: DESKTOP-7P120MF
+    AsyncTime: 2025-01-13T14:36:45.6830564-03:00
+    FolderId: 302508459980
+    Status: 1
