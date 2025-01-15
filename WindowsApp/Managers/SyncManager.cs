@@ -1,10 +1,11 @@
+using Box.Sdk.Gen;
 using WindowsApp.Models;
 using WindowsApp.Managers.Uploaders;
 
 namespace WindowsApp.Managers
 {
     
-    public class SyncManager(QueueManager queueManager)
+    public class SyncManager(BoxClient auth, QueueManager queueManager)
     {
         private readonly QueueManager _queueManager = queueManager;
 
@@ -16,7 +17,7 @@ namespace WindowsApp.Managers
                 {
                     try
                     {
-                        await ProcessFileChangeAsync(fileChange);
+                        await ProcessFileChangeAsync(auth, fileChange);
                     }
                     catch (Exception ex)
                     {
@@ -25,14 +26,14 @@ namespace WindowsApp.Managers
                 }
             }
         }
-        private static async Task ProcessFileChangeAsync(FileChange fileChange){
+        private static async Task ProcessFileChangeAsync(BoxClient auth, FileChange fileChange){
             Console.WriteLine("Uploading...");
             if(fileChange.ChangeType == "FolderRenamed" || fileChange.ChangeType == "FileRenamed"){
-                if(!await new BoxUploader().UploadManager(fileChange.FilePath, fileChange.ChangeType, fileChange.OldFilePath)){
+                if(!await new BoxUploader().UploadManager(auth, fileChange.FilePath, fileChange.ChangeType, fileChange.OldFilePath)){
                     throw new InvalidOperationException($"SyncManager : ProcessFileChangeAsync() => UploadManager(), Erro: Upload Rename não concluido!");
                 }
             }else{
-                if(!await new BoxUploader().UploadManager(fileChange.FilePath, fileChange.ChangeType, null)){
+                if(!await new BoxUploader().UploadManager(auth, fileChange.FilePath, fileChange.ChangeType, null)){
                     throw new InvalidOperationException($"SyncManager : ProcessFileChangeAsync() => UploadManager(), Erro: Upload não concluido!");
                 }
             }

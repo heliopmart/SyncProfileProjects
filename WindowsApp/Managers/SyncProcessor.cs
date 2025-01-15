@@ -1,10 +1,10 @@
 using Box.Sdk.Gen;
 using WindowsApp.Models;
 using WindowsApp.Managers.Cloud;
-using WindowsAppSync.Services.API;
 using WindowsApp.Helpers.Watchers;
 using WindowsApp.Managers.Uploaders;
 using WindowsApp.Managers.Downloaders;
+using System.Text.Json;
 
 namespace WindowsApp.Managers
 {
@@ -13,9 +13,8 @@ namespace WindowsApp.Managers
         private static Timer? _syncTimer;
         private static bool _isRunning = false;
 
-        public static void StartSync(string localRootPath, string cloudRootFolderId, int intervalInSeconds = 300)
+        public static void StartSync(BoxClient client, string localRootPath, string cloudRootFolderId, int intervalInSeconds = 300)
         {
-            BoxClient client = Authenticator.Auth();
             // Configure o Timer para sincronização periódica
             _syncTimer = new Timer(async _ =>
             {
@@ -28,7 +27,7 @@ namespace WindowsApp.Managers
             }, null, TimeSpan.Zero, TimeSpan.FromSeconds(intervalInSeconds));
         }
 
-        public static async Task<bool> Sync(BoxClient client, string localRootPath, string cloudRootFolderId)
+        public static async Task Sync(BoxClient client, string localRootPath, string cloudRootFolderId)
         {
             try
             {
@@ -38,12 +37,11 @@ namespace WindowsApp.Managers
                 var localFiles = LocalFileMapper.MapLocalFiles(localRootPath);
 
                 // Mapear arquivos na cloud
-                var cloudFiles = await CloudFileMapper.MapCloudFilesAsync(cloudRootFolderId);
+                var cloudFiles = await CloudFileMapper.MapCloudFilesAsync(client, cloudRootFolderId);
 
                 // Comparar arquivos locais e cloud
                 await CompareAndSync(client, localFiles, cloudFiles, localRootPath);
 
-                return true;
             }
             catch (Exception ex)
             {
@@ -51,6 +49,7 @@ namespace WindowsApp.Managers
             }
         }
 
+        // TODO Client here
         private static async Task CompareAndSync(BoxClient client, List<FileItem> localFiles, List<CloudFileItem> cloudFiles, string localRootPath)
         {
             // Sincronizar arquivos locais que não existem na cloud
@@ -64,12 +63,12 @@ namespace WindowsApp.Managers
                     if (localFile.IsFolder)
                     {
                         Console.WriteLine($"Criando pasta na cloud: {localFile.Path}");
-                        await new BoxUploader().UploadManager(localFile.FullPath, "FolderCreated", null);
+                        await new BoxUploader().UploadManager(client, localFile.FullPath, "FolderCreated", null);
                     }
                     else
                     {
                         Console.WriteLine($"Fazendo upload do arquivo: {localFile.Path}");
-                        await new BoxUploader().UploadManager(localFile.FullPath, "FileCreated", null);
+                        await new BoxUploader().UploadManager(client, localFile.FullPath, "FileCreated", null);
                     }
                 }
                 else if (localFile.LastModified > correspondingCloudFile.LastModified)
@@ -77,7 +76,7 @@ namespace WindowsApp.Managers
                     // Atualizar arquivos modificados
                     Console.WriteLine($"Atualizando arquivo na cloud: {localFile.Path}");
                     // TODO => Fazer ainda 
-                    await new BoxUploader().UploadManager(localFile.FullPath, "FileOffChange", null);
+                    await new BoxUploader().UploadManager(client, localFile.FullPath, "FileOffChange", null);
                 }
             }
 
@@ -92,7 +91,7 @@ namespace WindowsApp.Managers
                     if(cloudFile.IsFolder){
                         BoxDownloader.DownloadFolderAsync(cloudFile.Path);
                     }else{
-                        await BoxDownloader.DownloadFileAsync(cloudFile.Id, cloudFile.Path);
+                        await BoxDownloader.DownloadFileAsync(client, cloudFile.Id, cloudFile.Path);
                     }
 
                     Console.WriteLine($"Arquivo/pasta na cloud baixado localmente: {cloudFile.Path}");

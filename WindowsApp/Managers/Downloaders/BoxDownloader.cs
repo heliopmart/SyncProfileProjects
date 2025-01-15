@@ -7,10 +7,8 @@ namespace WindowsApp.Managers.Downloaders
     public static class BoxDownloader
     {
 
-        public static async Task DownloadFileAsync(string fileId, string? filePath)
+        public static async Task DownloadFileAsync(BoxClient client, string fileId, string? filePath)
         {
-            BoxClient client = Authenticator.Auth();
-
             if(filePath == null){
                 throw new Exception("BoxDownloader : DownloadFileAsync(), Error: filePath directory is null");
             }

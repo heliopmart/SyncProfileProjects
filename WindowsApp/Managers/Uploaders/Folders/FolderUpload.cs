@@ -7,10 +7,8 @@ namespace WindowsAppSync.Managers.Uploaders{
     {
         private static readonly Dictionary<string, string> FolderMapping = new Dictionary<string, string>(); // Simula um banco de dados
 
-        public static async Task<string> SyncFolderToCloud(string localFolderPath, string parentFolderId)
+        public static async Task<string> SyncFolderToCloud(BoxClient client, string localFolderPath, string parentFolderId)
         {
-            BoxClient client = Authenticator.Auth();
-
             // Verifique se a pasta já foi sincronizada
             if (FolderMapping.TryGetValue(localFolderPath, out var cloudFolderId))
             {

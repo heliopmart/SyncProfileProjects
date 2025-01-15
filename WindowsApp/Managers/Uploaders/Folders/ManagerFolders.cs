@@ -2,17 +2,13 @@ using Box.Sdk.Gen;
 using Box.Sdk.Gen.Managers;
 using Box.Sdk.Gen.Schemas;
 using System.Text.Json;
-using WindowsAppSync.Services.API;
 using WindowsAppSync.Managers.Uploaders;
 using WindowsApp.Managers.Uploaders.Files;
 
 namespace WindowsApp.Managers.Uploaders.Folders{
     public class ManagerFolders{
-        private static readonly Authenticator authenticator = new Authenticator();
-        public static async Task<bool> DeleteFolderRecursivelyAsync(string folderId){
+        public static async Task<bool> DeleteFolderRecursivelyAsync(BoxClient client, string folderId){
             try{
-                // Obtenha o cliente autenticado
-                BoxClient client = Authenticator.Auth();
                 // Obtenha os itens da pasta
                 var folderItems = await client.Folders.GetFolderItemsAsync(folderId);
                 if (folderItems?.Entries != null)
@@ -27,28 +23,27 @@ namespace WindowsApp.Managers.Uploaders.Folders{
                         if (root.TryGetProperty("type", out var typeProperty) && typeProperty.GetString() == "file")
                         {
                             var id = root.GetProperty("id").GetString();
-                            await ManagerFiles.DeleteFiles(null, id);
+                            await ManagerFiles.DeleteFiles(client, null, id);
                         }
                         // Verifique se o tipo do item é "folder"
                         else if (root.TryGetProperty("type", out typeProperty) && typeProperty.GetString() == "folder")
                         {
                             var id = root.GetProperty("id").GetString();
                             var name = root.GetProperty("name").GetString();
-                            await DeleteFolderRecursivelyAsync(id); // Chamada recursiva para subpastas
+                            await DeleteFolderRecursivelyAsync(client, id); // Chamada recursiva para subpastas
                         }
                     }
                 }
-                await Delete(folderId);
+                await Delete(client, folderId);
                 return true;
             }
             catch (Exception ex){
                 Console.WriteLine($"Error deleting folder with ID {folderId}: {ex.Message}");
                 return false;
             }
-            static async Task<bool> Delete(string folderId){
+            static async Task<bool> Delete(BoxClient client, string folderId){
                 try
                 {
-                    BoxClient client = Authenticator.Auth();
                     // Exclua a pasta e todo o seu conteúdo
                     await client.Folders.DeleteFolderByIdAsync(folderId);
                     Console.WriteLine("Exclued");
@@ -62,20 +57,18 @@ namespace WindowsApp.Managers.Uploaders.Folders{
             }
         }
     
-        public static async Task<bool> DeleteFolders(string folderPath, string? folderId){
+        public static async Task<bool> DeleteFolders(BoxClient client, string folderPath, string? folderId){
             var parentFolderIdObject = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
             string? parentFolderId = parentFolderIdObject.ToString();
 
             if(folderId == null){
-                folderId = await GetOrCreateFolderByPathAsync(folderPath, parentFolderId);
+                folderId = await GetOrCreateFolderByPathAsync(client, folderPath, parentFolderId);
             }
 
-            return await DeleteFolderRecursivelyAsync(folderId);
+            return await DeleteFolderRecursivelyAsync(client, folderId);
         }
 
-        public static async Task<string?> GetOrCreateFolderByPathAsync(string folderPath, string parentFolderId){
-            BoxClient client = Authenticator.Auth();
-
+        public static async Task<string?> GetOrCreateFolderByPathAsync(BoxClient client, string folderPath, string parentFolderId){
             string relativePath = BoxUploader.GetRelativePathFromRoot(folderPath);
 
             if(relativePath == null || relativePath == ""){
@@ -135,9 +128,7 @@ namespace WindowsApp.Managers.Uploaders.Folders{
             return parentFolderId;
         }
     
-        public static async Task<string?> GetFolderIdForSubPasta(string folderPath, string parentFolderId){
-            BoxClient client = Authenticator.Auth();
-            
+        public static async Task<string?> GetFolderIdForSubPasta(BoxClient client, string folderPath, string parentFolderId){            
             if(parentFolderId == "0"){
                 return "0";
             }
@@ -192,7 +183,7 @@ namespace WindowsApp.Managers.Uploaders.Folders{
             return subFolderId;
         }
 
-        public static async Task<string> UploadFolder(string folderPath, string? parentFolderId){
+        public static async Task<string> UploadFolder(BoxClient auth, string folderPath, string? parentFolderId){
             if(parentFolderId == null){
                 var folderIdObj = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
                 parentFolderId = folderIdObj.ToString();
@@ -200,26 +191,25 @@ namespace WindowsApp.Managers.Uploaders.Folders{
                 parentFolderId = "0"; // para criar um novo projeto
             }
 
-            string? FolderId = await GetFolderIdForSubPasta(folderPath, parentFolderId);
+            string? FolderId = await GetFolderIdForSubPasta(auth, folderPath, parentFolderId);
 
             if(FolderId == null){
                 return "false";
             }
 
             await BoxUploader.UpdateMetaDataProject();
-            return await FolderSync.SyncFolderToCloud(folderPath, FolderId ?? throw new ArgumentNullException(nameof(parentFolderId)));
+            return await FolderSync.SyncFolderToCloud(auth, folderPath, FolderId ?? throw new ArgumentNullException(nameof(parentFolderId)));
         }
 
-        public static async Task<bool> RenameFolder(string filePath, string oldFilePath){
+        public static async Task<bool> RenameFolder(BoxClient client, string filePath, string oldFilePath){
             if(oldFilePath == null){
                 throw new InvalidOperationException($"ManagerFiles : RenameFile(), Erro: OldFilePath is null");
             }
 
-            BoxClient client = Authenticator.Auth();
             var folderIdObj = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
             string parentFolderId = folderIdObj?.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
 
-            string FolderId = await GetOrCreateFolderByPathAsync(oldFilePath, parentFolderId) ?? throw new InvalidOperationException("FileiD is null");
+            string FolderId = await GetOrCreateFolderByPathAsync(client, oldFilePath, parentFolderId) ?? throw new InvalidOperationException("FileiD is null");
 
             try{
                  // Obter o novo nome do arquivo

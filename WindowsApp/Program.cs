@@ -2,15 +2,16 @@
 using WindowsApp.Models; // temp
 using WindowsApp.Models.Class;
 using WindowsAppSync.Services.API;
-
 namespace WindowsApp{
     class Program
     {
         public static async Task Main(string[] args)
         {
             // Instancia o ProjectManager
-            var projectManager = new ProjectManager();
-    
+            var auth = await Authenticator.Auth();
+            var projectManager = new ProjectManager(auth);
+
+
             while (true)
             {
                 // Exibe um menu simples
@@ -22,7 +23,7 @@ namespace WindowsApp{
                 Console.WriteLine("5. Atualizar Status do projeto");
                 Console.WriteLine("6. Abrir Projeto");
                 Console.WriteLine("7. Fechar Projeto");
-                Console.WriteLine("8. Sincronização programada");
+                Console.WriteLine("8. Authenticação");
                 Console.WriteLine("S. Sair");
                 Console.Write("Opção: ");
                 
@@ -36,7 +37,7 @@ namespace WindowsApp{
                         string? NameProject = Console.ReadLine();
 
                         if(NameProject != null){
-                            var addingProject = await projectManager.AddProject(NameProject);
+                            var addingProject = await projectManager.AddProject(auth, NameProject);
                             if(addingProject){
                                 Console.WriteLine("Projeto Adicionado com sucesso!");
                             }else{
@@ -46,7 +47,7 @@ namespace WindowsApp{
                         break;
 
                     case "2": 
-                        await new ProjectManager().ListProjects();
+                        await projectManager.ListProjects(auth);
                         break;
                     case "3": 
                         // remover projeto
@@ -78,7 +79,7 @@ namespace WindowsApp{
                         NameProject = Console.ReadLine();
 
                         if(NameProject != null){
-                            if(await projectManager.ChangeProjectData(NameProject, "Status", "0")){
+                            if(await projectManager.ChangeProjectData(auth, NameProject, "Status", "0")){
                                 Console.WriteLine("Projeto Alterado com sucesso!");
                             }else{
                                 Console.WriteLine("Algum erro deve ter acontecido!");
@@ -92,7 +93,7 @@ namespace WindowsApp{
                         NameProject = Console.ReadLine();
 
                         if(NameProject != null){
-                            projectManager.OpenProjectForMonitory(NameProject);
+                            await projectManager.OpenProjectForMonitory(auth, NameProject);
                         }
                         break;
 
@@ -102,8 +103,11 @@ namespace WindowsApp{
                         NameProject = Console.ReadLine();
 
                         if(NameProject != null){
-                            projectManager.OpenProjectForMonitory(NameProject);
+                            await projectManager.OpenProjectForMonitory(auth, NameProject);
                         }
+                        break;
+                    case "8": 
+
                         break;
                     case "S":
                         // Sair do programa
@@ -114,6 +118,7 @@ namespace WindowsApp{
                         break;
                 }
             }
+
         }
     }
 

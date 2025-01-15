@@ -1,3 +1,4 @@
+using Box.Sdk.Gen;
 using System.Reflection;
 using WindowsApp.Models; // Importa FileModel e Project
 using WindowsApp.Helpers;
@@ -7,6 +8,11 @@ using WindowsApp.Managers.Uploaders;
 
 namespace WindowsApp.Managers{
     public class ManagerProject{
+
+        private readonly BoxClient _auth;
+        public ManagerProject(BoxClient auth){
+            _auth = auth;
+        }
         
         private static readonly APPConfig _config = ConfigHelper.Instance.GetConfig();
         
@@ -82,14 +88,14 @@ namespace WindowsApp.Managers{
             }
         }
 
-        public async Task<bool> CreateProject(Project DataProject){
+        public async Task<bool> CreateProject(BoxClient auth, Project DataProject){
             var DefaultPathForProjects = _config.DefaultPathForProjects;
             string folderPath = $"{DefaultPathForProjects}/{StringUtils.SanitizeString(DataProject.Name)}";
 
 
             if(CreateFolderProject_Local(folderPath)){
                 if(await CreateMetaDataProject_Local(DataProject)){
-                    return await CloudProjectSync_Sync(DataProject, folderPath);
+                    return await CloudProjectSync_Sync(auth, DataProject, folderPath);
                 }
             }
 
@@ -160,9 +166,9 @@ namespace WindowsApp.Managers{
                 }
             }
 
-            async Task<bool> CloudProjectSync_Sync(Project DataProject, string DefaultPathForProjects){
+            async Task<bool> CloudProjectSync_Sync(BoxClient auth, Project DataProject, string DefaultPathForProjects){
                 CentralCache.Instance.AddToCache("NameProject", DataProject.Name); // adiciona dados importante em cache
-                return await new BoxUploader().UploadManager(DefaultPathForProjects,"mainFolder", null);
+                return await new BoxUploader().UploadManager(auth, DefaultPathForProjects,"mainFolder", null);
             }
         }
 

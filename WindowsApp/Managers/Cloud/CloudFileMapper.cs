@@ -7,12 +7,11 @@ using WindowsAppSync.Services.API;
 namespace WindowsApp.Managers.Cloud{
     public static class CloudFileMapper
     {
-        public static async Task<List<CloudFileItem>> MapCloudFilesAsync(string rootFolderId = "0")
+        public static async Task<List<CloudFileItem>> MapCloudFilesAsync(BoxClient client, string rootFolderId = "0")
         {
             var fileList = new List<CloudFileItem>();
 
             async Task TraverseFolderAsync(string folderId, string parentPath){
-                BoxClient client = Authenticator.Auth();
                 var items = (await client.Folders.GetFolderItemsAsync(folderId)).Entries;
 
                 if(items != null){

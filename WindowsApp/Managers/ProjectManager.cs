@@ -1,3 +1,4 @@
+using Box.Sdk.Gen;
 using WindowsApp.Models.Class; // Importa FileModel e Project
 using WindowsApp.Helpers;
 using WindowsApp.Utils;
@@ -5,8 +6,15 @@ using WindowsApp.Helpers.Watchers;
 
 namespace WindowsApp.Managers{
     public class ProjectManager{
+        
+        private readonly BoxClient _auth;
+        private readonly ManagerProject managerProject;
+        public ProjectManager(BoxClient auth){
+            _auth = auth;
+            managerProject = new ManagerProject(_auth);
+        }
 
-        public async Task<bool> AddProject(string NameProject){ // Adiciona um novo projeto - Variavel Local
+        public async Task<bool> AddProject(BoxClient auth, string NameProject){ // Adiciona um novo projeto - Variavel Local
             
             var DataProject = new Project {
                 Id = Guid.NewGuid().ToString(),
@@ -16,7 +24,7 @@ namespace WindowsApp.Managers{
                 Status = 0
             };
             
-            if(await new ManagerProject().CreateProject(DataProject)){
+            if(await managerProject.CreateProject(auth, DataProject)){
                 return true;
             }else{
                 return false;
@@ -24,14 +32,14 @@ namespace WindowsApp.Managers{
         }
 
         public async Task<bool> DeleteProject(string NameProject){
-            if(await new ManagerProject().DeleteProject(NameProject)){
+            if(await managerProject.DeleteProject(NameProject)){
                 return true;
             }else{
                 return false;
             }
         }
 
-        public async Task<bool> ChangeProjectData(string NameProject, string KeyForChange, string ValueForChange){
+        public async Task<bool> ChangeProjectData(BoxClient auth, string NameProject, string KeyForChange, string ValueForChange){
             if(await ManagerProject.ChangeProjectData(NameProject, KeyForChange, ValueForChange)){
                 return true;
             }else{
@@ -39,7 +47,7 @@ namespace WindowsApp.Managers{
             }
         }
 
-        public async Task<bool> ListProjects(){ // Lista todos os projetos - Variavel Local
+        public async Task<bool> ListProjects(BoxClient auth){ // Lista todos os projetos - Variavel Local
            if(await ManagerProject.ListProjects()){
                 return true;
            }else{
@@ -47,8 +55,8 @@ namespace WindowsApp.Managers{
            }
         }
 
-        public static async Task<ProjectData> GetProject(string NameProject){ // Pega um projeto especifico - Variavel Local
-            var project = await new ManagerProject().GetProject(NameProject);
+        public async Task<ProjectData> GetProject(string NameProject){ // Pega um projeto especifico - Variavel Local
+            var project = await managerProject.GetProject(NameProject);
             if (project == null)
             {
                 throw new Exception("Project not found");
@@ -59,7 +67,7 @@ namespace WindowsApp.Managers{
 
         // Verificação de mudanças de arquivo em determinado projeto
 
-        public async Task OpenProjectForMonitory(string NameProject){
+        public async Task OpenProjectForMonitory(BoxClient auth, string NameProject){
             var _config = ConfigHelper.Instance.GetConfig();
             string ProjectPath = $"{_config.DefaultPathForProjects}/{StringUtils.SanitizeString(NameProject)}";
 
@@ -70,16 +78,14 @@ namespace WindowsApp.Managers{
             CentralCache.Instance.AddToCache("ProjectPath", ProjectPath);
             CentralCache.Instance.AddToCache("FolderId", IdFolderProject);
             
-            InitProjectFolderMonitory(ProjectPath);
-
-            SyncProcessor.StartSync(ProjectPath, IdFolderProject, _config.SyncInterval);
-            //  _ = Task.Run(() => SyncProcessor.StartSync(ProjectPath, IdFolderProject, _config.SyncInterval));
+            SyncProcessor.StartSync(auth, ProjectPath, IdFolderProject, _config.SyncInterval);
+            InitProjectFolderMonitory(auth, ProjectPath);
         }
 
-        public static void InitProjectFolderMonitory(string Path){
+        public static void InitProjectFolderMonitory(BoxClient auth, string Path){
             // Inicialize os componentes
             var queueManager = new QueueManager();
-            var syncManager = new SyncManager(queueManager);
+            var syncManager = new SyncManager(auth, queueManager);
             var fileWatcher = new FileWatcher(Path, queueManager, syncManager);
         
             fileWatcher.StartWatching();
