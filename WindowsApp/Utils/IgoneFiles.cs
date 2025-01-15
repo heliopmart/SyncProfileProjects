@@ -11,9 +11,9 @@ namespace WindowsApp.Utils
             switch (type)
             {
                 case "get":
-                    return IsPathIgnored(path);
+                    return IsPathIgnored(NormalizePath(path));
                 case "add":
-                    return IgnorePath(path);
+                    return IgnorePath(NormalizePath(path));
                 default:
                     return false;
             }
@@ -21,13 +21,13 @@ namespace WindowsApp.Utils
 
         private static bool IgnorePath(string path)
         {
-            var expirationTime = DateTime.Now;
+            var expirationTime = DateTime.Now.AddSeconds(6);;
             IgnoredPaths[path] = expirationTime;
 
-            // Iniciar uma tarefa para remover o caminho após 2 segundos
+            // Iniciar uma tarefa para remover o caminho após 5 segundos
             _ = Task.Run(() =>
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(6000);
                 RemoveIgnoredPath(path);
             });
 
@@ -36,6 +36,7 @@ namespace WindowsApp.Utils
 
         private static void RemoveIgnoredPath(string path)
         {
+            Console.WriteLine("Token removido ou espirado");
             IgnoredPaths.TryRemove(path, out _);
         }
 
@@ -52,6 +53,13 @@ namespace WindowsApp.Utils
                 return true;
             }
             return false;
+        }
+
+        private static string NormalizePath(string path)
+        {
+            return Path.GetFullPath(path)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                .ToLowerInvariant(); // Converte para letras minúsculas
         }
     }
 }

@@ -21,6 +21,7 @@ namespace WindowsApp.Models // Namespace reflete a estrutura da pasta
     {
         public required string Path { get; set; }
         public required string FullPath { get; set; }
+        public string? Sha1 { get; set; }
         public DateTime LastModified { get; set; }
         public bool IsFolder { get; set; }
     }
@@ -29,6 +30,7 @@ namespace WindowsApp.Models // Namespace reflete a estrutura da pasta
     {
         public required string Id { get; set; }
         public required string Path { get; set; }
+        public string? Sha1 { get; set; }
         public DateTime? LastModified { get; set; }
         public bool IsFolder { get; set; }
     }

@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Box.Sdk.Gen" Version="1.5.0" />
+    <PackageReference Include="FileWatcherEx" Version="2.6.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />

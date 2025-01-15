@@ -1,6 +1,9 @@
+using FileWatcherEx;
 using WindowsApp.Managers;
 using WindowsApp.Models;
 using WindowsApp.Utils;
+using WindowsApp.Services;
+using System.Threading.Tasks;
 
 namespace WindowsApp.Helpers.Watchers{
     public class FileWatcher{
@@ -21,23 +24,19 @@ namespace WindowsApp.Helpers.Watchers{
 
         public void StartWatching()
         {
-            var watcher = new FileSystemWatcher(_pathToWatch)
-            {
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite,
-                IncludeSubdirectories = true
-            };
+            var _fw = new FileSystemWatcherEx(_pathToWatch);
 
-            watcher.Created += OnCreated;
-            watcher.Changed += OnChanged;
-            watcher.Deleted += OnDeleted;
-            watcher.Renamed += OnRenamed;
+            _fw.OnRenamed += OnRenamed;
+            _fw.OnCreated += OnCreated;
+            _fw.OnDeleted += OnDeleted;
+            _fw.OnChanged += OnChanged;
 
-            watcher.EnableRaisingEvents = true;
+            _fw.Start();
 
             Console.WriteLine("FileWatcher started...");
         }
 
-        private void OnCreated(object sender, FileSystemEventArgs e){        
+        private void OnCreated(object? sender, FileChangedEvent e){        
             lock (PendingCreations)
             {
                 // Adicione o arquivo/pasta ao cache de criações pendentes
@@ -52,13 +51,13 @@ namespace WindowsApp.Helpers.Watchers{
                         if (PendingCreations.ContainsKey(e.FullPath))
                         {
                             PendingCreations.Remove(e.FullPath);
-                            CallCreatedHandle(e);
+                            _ = CallCreatedHandle(e);
                         }
                     }
                 });
             }
         }
-        private void OnChanged(object sender, FileSystemEventArgs e){
+        private void OnChanged(object? sender, FileChangedEvent  e){
             lock (CreatedFilesCache)
             {
                 if (CreatedFilesCache.ContainsKey(e.FullPath) &&
@@ -71,49 +70,58 @@ namespace WindowsApp.Helpers.Watchers{
 
             if (Directory.Exists(e.FullPath))
             {
-                Console.WriteLine($"Folder changed: {e.FullPath}");
-                // HandleFolder(e.FullPath, "FolderChanged");
+                // HandleFolder(e.FullPath, "FolderChanged"); --------> Talvez não precise.
             }
-            else if (File.Exists(e.FullPath))
+            if (File.Exists(e.FullPath))
             {
                 Console.WriteLine($"File changed: {e.FullPath}");
-                HandleFile(e.FullPath, "FileChanged");
+                _ = HandleFile(e.FullPath, "FileChanged");
             }
             else
             {
                 Console.WriteLine($"Unknown item changed: {e.FullPath}");
             }
         }
-        private void OnDeleted(object sender, FileSystemEventArgs e)
+        private void OnDeleted(object? sender, FileChangedEvent  e)
         {
             if (!Path.HasExtension(e.FullPath))
             {
                 Console.WriteLine($"Folder deleted: {e.FullPath}");
-                HandleFolder(e.FullPath, "FolderDeleted");
+                _ = HandleFolder(e.FullPath, "FolderDeleted");
             }
             else
             {
                 Console.WriteLine($"File deleted: {e.FullPath}");
-                HandleFile(e.FullPath, "FileDeleted");
+                _ = HandleFile(e.FullPath, "FileDeleted");
             }
         }
-        private void OnRenamed(object sender, RenamedEventArgs e)
+
+        private static bool IsTemporaryFile(string path)
+        {
+            string fileName = Path.GetFileName(path);
+
+            // Arquivos temporários ou de sistema a serem ignorados
+            if (fileName.StartsWith("~$") || fileName.EndsWith(".tmp") || fileName.EndsWith(".lock"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void OnRenamed(object? sender, FileChangedEvent  e)
         {
             lock (PendingCreations)
             {
-                // Verifique se o item renomeado estava pendente de criação
                 if (PendingCreations.ContainsKey(e.OldFullPath))
                 {
                     if(!PendingCreations.Remove(e.OldFullPath)){
                         throw new InvalidOperationException("FileWatcher : OnRenamed(), Error: OldFullPath didn't delete in PendingCreations.");
                     }
 
-                    // Atualize o evento de criação para o novo nome
                     // TODO: Removido -> PendingCreations[e.FullPath] = DateTime.Now;        
-
-                    Console.WriteLine($"Folder renamed during creation: {e.OldFullPath} -> {e.FullPath}");
-                    CallCreatedHandle(e); // Chama a função que cria o argumento
-                    return; // Não processe como um renome normal
+                    _ = CallCreatedHandle(e);
+                    return;
                 }
             }       
 
@@ -121,12 +129,12 @@ namespace WindowsApp.Helpers.Watchers{
             if (Directory.Exists(e.FullPath))
             {
                 Console.WriteLine($"Folder renamed from {e.OldFullPath} to {e.FullPath}");
-                HandleFolderRenamed(e.OldFullPath, e.FullPath);
+                _ = HandleFolderRenamed(e.OldFullPath, e.FullPath);
             }
             else if (File.Exists(e.FullPath))
             {
                 Console.WriteLine($"File renamed from {e.OldFullPath} to {e.FullPath}");
-                HandleFileRenamed(e.OldFullPath, e.FullPath);
+                _ = HandleFileRenamed(e.OldFullPath, e.FullPath);
             }
             else
             {
@@ -134,38 +142,49 @@ namespace WindowsApp.Helpers.Watchers{
             }
         }
        
-        private void HandleFolder(string folderPath, string type){
-            AddEventToQueue(type, folderPath);
+        private async Task HandleFolder(string folderPath, string type){
+            await AddEventToQueue(type, folderPath);
         }
 
-        private void HandleFile(string filePath, string type){
-            AddEventToQueue(type, filePath);
+        private async Task HandleFile(string filePath, string type){
+            await AddEventToQueue(type, filePath);
         }
 
-        private void HandleFolderRenamed(string oldFolderPath, string newFolderPath){
-            AddEventToQueue("FolderRenamed", newFolderPath, oldFolderPath);
+        private async Task HandleFolderRenamed(string oldFolderPath, string newFolderPath){
+            await AddEventToQueue("FolderRenamed", newFolderPath, oldFolderPath);
         }
 
-        private void HandleFileRenamed(string oldFilePath, string newFilePath){
-            AddEventToQueue("FileRenamed", newFilePath, oldFilePath);
+        private async Task HandleFileRenamed(string oldFilePath, string newFilePath){
+            await AddEventToQueue("FileRenamed", newFilePath, oldFilePath);
         }       
 
-        private void CallCreatedHandle(FileSystemEventArgs e){
+        private async Task CallCreatedHandle(FileChangedEvent  e){
             if (Directory.Exists(e.FullPath)){
                 Console.WriteLine($"Folder created by Call: {e.FullPath}");
-                HandleFolder(e.FullPath, "FolderCreated");
+                await HandleFolder(e.FullPath, "FolderCreated");
             }
             else if (File.Exists(e.FullPath)){
                 Console.WriteLine($"File created by Call: {e.FullPath}");
-                HandleFile(e.FullPath, "FileCreated");
+                await HandleFile(e.FullPath, "FileCreated");
             }
             else{
                 Console.WriteLine($"Unknown item Created by Call: {e.FullPath}");
             }
         }
 
-        private void AddEventToQueue(string changeType, string path, string? oldPath = null)
+        private async Task AddEventToQueue(string changeType, string path, string? oldPath = null)
         {
+
+            if(IgnoreFiles.HandlePath(path, "get")){
+                Console.WriteLine("Mudança controlada por aplicação detectada \n");
+                return; 
+            }
+
+            if(IsTemporaryFile(path)){
+                Console.WriteLine("Arquivo Temporário Identificado");
+                return;
+            }
+
             var fileChange = new FileChange
             {
                 ChangeType = changeType,
@@ -174,9 +193,14 @@ namespace WindowsApp.Helpers.Watchers{
                 ChangeTime = DateTime.Now
             };
 
-            _queueManager.Enqueue(fileChange);
-            // Processa a fila automaticamente
-            _syncManager.ProcessQueueAsync().Wait();
+            if(await ConnectionChecker.CheckConnectionAsync()){
+                _queueManager.Enqueue(fileChange);
+                _ = _syncManager.ProcessQueueAsync();
+            }else{
+
+                // A ideia é armazenar as alterações e consumir depois.
+            }
+
         }
     }
 }

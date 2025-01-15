@@ -1,6 +1,5 @@
 using Box.Sdk.Gen;
 using Box.Sdk.Gen.Managers;
-using WindowsAppSync.Services.API;
 
 namespace WindowsAppSync.Managers.Uploaders{
     public class FolderSync

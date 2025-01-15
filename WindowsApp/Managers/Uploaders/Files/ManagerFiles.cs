@@ -135,7 +135,6 @@ namespace WindowsApp.Managers.Uploaders.Files{
             var parentFolderIdObject = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
             string parentFolderId = parentFolderIdObject.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
 
-            // Verifique o caminho da subpasta e crie, se necessário
             string? folderId = await ManagerFolders.GetOrCreateFolderByPathAsync(client, filePath, parentFolderId);
 
             if (folderId == null){
@@ -145,23 +144,39 @@ namespace WindowsApp.Managers.Uploaders.Files{
             using (var fileStream = new FileStream(filePath, FileMode.Open)){
                var fileName = Path.GetFileName(filePath);
 
-               // Construa os atributos do arquivo para o upload
                var attributes = new UploadFileRequestBodyAttributesField(
-                   name: fileName, // Nome do arquivo
-                   parent: new UploadFileRequestBodyAttributesParentField(id: folderId) // ID da pasta
+                   name: fileName, 
+                   parent: new UploadFileRequestBodyAttributesParentField(id: folderId) 
                );
 
-               // Construa o corpo da requisição para o upload
                var requestBody = new UploadFileRequestBody(
-                   attributes: attributes, // Atributos do arquivo
-                   file: fileStream         // Arquivo em forma de Stream
+                   attributes: attributes,
+                   file: fileStream 
                );
 
                 try{
                     Box.Sdk.Gen.Schemas.Files file = await client.Uploads.UploadFileAsync(requestBody);
                     return await BoxUploader.UpdateMetaDataProject();
-                }catch{
-                    return false;
+                }catch(Exception ex){
+                    var errorDetails = JsonSerializer.Deserialize<JsonElement>(ex.Message);
+                    if (errorDetails.TryGetProperty("code", out var codeProperty)){
+                        string errorCode = codeProperty.GetString() ?? string.Empty;
+                        if (errorCode == "item_name_in_use"){
+                            /*
+                                TEMPORÁRIO
+
+                                Alguns arquivos não modificam o arquivo atual, mas sim cria um por cima, 
+                                o que acaba chamando o evento de criar e não o de modificar.
+
+                                Uma alternativa é manter os arquivos e pastas dentro de .yaml.
+                            */
+                            return await ChangeCallByCreate(client, fileStream, filePath, parentFolderId);
+                        }else{
+                            throw new Exception($"ManagerFiles : UploadFileAsync(), Erro: Upload not compleate ({ex})");
+                        }
+                    }else{
+                        throw new Exception($"ManagerFiles : UploadFileAsync(), Erro: Upload not compleate ({ex})");
+                    }
                 }
             }
         }
@@ -178,17 +193,18 @@ namespace WindowsApp.Managers.Uploaders.Files{
                     await client.Uploads.UploadFileVersionAsync(
                         fileId: fileId,
                         requestBody: new UploadFileVersionRequestBody(
-                            attributes: new UploadFileVersionRequestBodyAttributesField(name: Path.GetFileName(filePath)),
+                            attributes: new UploadFileVersionRequestBodyAttributesField(
+                                name: Path.GetFileName(filePath)
+                            ),
                             file: fileStream
                         )
                     );
                 }
 
                 return true;
-            }catch{
-                throw new InvalidOperationException("ManagerFiles: ChangeFileAsync(), Error: Upload file new version");
+            }catch(Exception ex){
+                throw new InvalidOperationException($"ManagerFiles: ChangeFileAsync(), Error: Upload file new version ({ex})");
             }
-
         }
     
         public static async Task<bool> RenameFile(BoxClient client, string filePath, string oldFilePath){
@@ -202,10 +218,8 @@ namespace WindowsApp.Managers.Uploaders.Files{
             string fileId = await GetOrCreateFileByPathAsync(client, oldFilePath, parentFolderId) ?? throw new InvalidOperationException("FileiD is null");
 
             try{
-                 // Obter o novo nome do arquivo
                 string newFileName = Path.GetFileName(filePath);
 
-                // Atualizar o nome do arquivo na nuvem
                 var updateRequest = new UpdateFileByIdRequestBody
                 {
                     Name = newFileName
@@ -214,8 +228,28 @@ namespace WindowsApp.Managers.Uploaders.Files{
                 await client.Files.UpdateFileByIdAsync(fileId, updateRequest);
                 return true;
             }
-            catch (System.Exception Err){
-                throw new InvalidOperationException($"ManagerFiles : RenameFile(), Erro: {Err}");
+            catch (Exception ex){
+                throw new InvalidOperationException($"ManagerFiles : RenameFile(), Erro: {ex}");
+            }
+        }
+
+        // TEMPORÁRIO => Chamado pelo Exception dentro de UploadFileAsync()
+        private static async Task<bool> ChangeCallByCreate(BoxClient client, FileStream fileStream, string filePath, string parentFolderId){
+            string fileId = await GetOrCreateFileByPathAsync(client, filePath, parentFolderId) ?? throw new InvalidOperationException("FileiD is null");
+            try{
+                await client.Uploads.UploadFileVersionAsync(
+                fileId: fileId,
+                requestBody: new UploadFileVersionRequestBody(
+                    attributes: new UploadFileVersionRequestBodyAttributesField(
+                        name: Path.GetFileName(filePath)
+                    ),
+                    file: fileStream
+                )
+                );
+
+                return true;
+            }catch(Exception ex){
+                throw new Exception($"ManagerFiles : ChangeCallByCreate(), error: {ex}");
             }
         }
     

@@ -1,5 +1,4 @@
 using Box.Sdk.Gen;
-using WindowsAppSync.Services.API;
 using WindowsApp.Utils;
 
 namespace WindowsApp.Managers.Downloaders
@@ -27,8 +26,6 @@ namespace WindowsApp.Managers.Downloaders
                     // Garantir que o diretório de destino existe
                     string directory = Path.GetDirectoryName(destinationPath) ?? throw new Exception("BoxDownloader : DownloadFileAsync(), Error: destinationPath directory is null");
                     
-                    Console.WriteLine($"LOG : BoxDownloader : DownloadFileAsync(), Directory => {directory}");
-
                     if (!Directory.Exists(directory))
                     {
                         Directory.CreateDirectory(directory);

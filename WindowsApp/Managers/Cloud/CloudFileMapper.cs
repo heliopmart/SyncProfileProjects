@@ -1,8 +1,7 @@
-
 using Box.Sdk.Gen;
+using Box.Sdk.Gen.Managers;
 using WindowsApp.Models;
 using System.Text.Json;
-using WindowsAppSync.Services.API;
 
 namespace WindowsApp.Managers.Cloud{
     public static class CloudFileMapper
@@ -12,7 +11,9 @@ namespace WindowsApp.Managers.Cloud{
             var fileList = new List<CloudFileItem>();
 
             async Task TraverseFolderAsync(string folderId, string parentPath){
-                var items = (await client.Folders.GetFolderItemsAsync(folderId)).Entries;
+                var items = (await client.Folders.GetFolderItemsAsync(folderId, new GetFolderItemsQueryParams{
+                    Fields = ["id", "name", "type", "modified_at", "sha1"]
+                })).Entries;
 
                 if(items != null){
                     foreach (var item in items)
@@ -37,6 +38,7 @@ namespace WindowsApp.Managers.Cloud{
                                         Id = id,
                                         Path = Path.Combine(parentPath, name),
                                         LastModified = null,
+                                        Sha1 = null,
                                         IsFolder = true
                                     });
 
@@ -48,10 +50,11 @@ namespace WindowsApp.Managers.Cloud{
 
                             }
                             else if (typeProperty.GetString() == "file")
-                            {
+                            {  
                                 var id = root.GetProperty("id").GetString();
                                 var name = root.GetProperty("name").GetString();
-
+                                var sha1 = root.GetProperty("sha1").GetString();
+                               
                                 if(id != null && parentPath != null){
                                     DateTime? lastModified = root.TryGetProperty("modified_at", out var modifiedAtProperty) &&
                                                              modifiedAtProperty.ValueKind != JsonValueKind.Null
@@ -64,6 +67,7 @@ namespace WindowsApp.Managers.Cloud{
                                         Id = id,
                                         Path = Path.Combine(parentPath, name),
                                         LastModified = lastModified,
+                                        Sha1 = sha1 ?? null,
                                         IsFolder = false
                                     });
                                 }else{

@@ -65,7 +65,11 @@ namespace WindowsApp{
                     
                     case "4": 
                         // Listar projeto por nome
-                        var ProjectData = await GetLogs.GetProjectsByName("Teste");
+                        Console.WriteLine("\nAdicione o Nome do projeto: ");
+                        NameProject = Console.ReadLine();
+
+                        var ProjectData = await GetLogs.GetProjectsByName(NameProject);
+                        
                         if(ProjectData != null){
                             Console.WriteLine($"Nome: {ProjectData.Name}, Data: {ProjectData.DateTime}, Dispositivo: {ProjectData.Device}, Status: {ProjectData.Status}");
                         }else{

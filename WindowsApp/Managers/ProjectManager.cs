@@ -9,6 +9,7 @@ namespace WindowsApp.Managers{
         
         private readonly BoxClient _auth;
         private readonly ManagerProject managerProject;
+
         public ProjectManager(BoxClient auth){
             _auth = auth;
             managerProject = new ManagerProject(_auth);
@@ -78,16 +79,18 @@ namespace WindowsApp.Managers{
             CentralCache.Instance.AddToCache("ProjectPath", ProjectPath);
             CentralCache.Instance.AddToCache("FolderId", IdFolderProject);
             
-            SyncProcessor.StartSync(auth, ProjectPath, IdFolderProject, _config.SyncInterval);
+            // Inicia monitoração
             InitProjectFolderMonitory(auth, ProjectPath);
+
+            // Inicie o SyncProcessor
+            await Task.Run(() => SyncProcessor.StartSync(auth, ProjectPath, IdFolderProject, _config.SyncInterval));
         }
 
         public static void InitProjectFolderMonitory(BoxClient auth, string Path){
-            // Inicialize os componentes
             var queueManager = new QueueManager();
             var syncManager = new SyncManager(auth, queueManager);
+
             var fileWatcher = new FileWatcher(Path, queueManager, syncManager);
-        
             fileWatcher.StartWatching();
         }
     }

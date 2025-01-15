@@ -4,7 +4,7 @@ using WindowsApp.Managers.Cloud;
 using WindowsApp.Helpers.Watchers;
 using WindowsApp.Managers.Uploaders;
 using WindowsApp.Managers.Downloaders;
-using System.Text.Json;
+using WindowsApp.Services;
 
 namespace WindowsApp.Managers
 {
@@ -12,16 +12,16 @@ namespace WindowsApp.Managers
     {
         private static Timer? _syncTimer;
         private static bool _isRunning = false;
+        private static readonly SemaphoreSlim SyncLock = new(1, 1);
 
         public static void StartSync(BoxClient client, string localRootPath, string cloudRootFolderId, int intervalInSeconds = 300)
         {
-            // Configure o Timer para sincronização periódica
             _syncTimer = new Timer(async _ =>
             {
                 if (!_isRunning)
                 {
                     _isRunning = true;
-                    await Sync(client, localRootPath, cloudRootFolderId);
+                        await Sync(client, localRootPath, cloudRootFolderId);
                     _isRunning = false;
                 }
             }, null, TimeSpan.Zero, TimeSpan.FromSeconds(intervalInSeconds));
@@ -29,6 +29,11 @@ namespace WindowsApp.Managers
 
         public static async Task Sync(BoxClient client, string localRootPath, string cloudRootFolderId)
         {
+            if(!await ConnectionChecker.CheckConnectionAsync()){
+                return;
+            }
+
+            await SyncLock.WaitAsync();
             try
             {
                 Console.WriteLine("Starting sync by time...");
@@ -47,9 +52,11 @@ namespace WindowsApp.Managers
             {
                 throw new Exception($"SyncManager : Sync(), error: {ex.Message}");
             }
+            finally{
+                SyncLock.Release();
+            }
         }
 
-        // TODO Client here
         private static async Task CompareAndSync(BoxClient client, List<FileItem> localFiles, List<CloudFileItem> cloudFiles, string localRootPath)
         {
             // Sincronizar arquivos locais que não existem na cloud
@@ -71,16 +78,16 @@ namespace WindowsApp.Managers
                         await new BoxUploader().UploadManager(client, localFile.FullPath, "FileCreated", null);
                     }
                 }
-                else if (localFile.LastModified > correspondingCloudFile.LastModified)
+                else if (IsLocalFileOutdated(localFile.LastModified, correspondingCloudFile.LastModified, "Upload"))
                 {
                     // Atualizar arquivos modificados
                     Console.WriteLine($"Atualizando arquivo na cloud: {localFile.Path}");
-                    // TODO => Fazer ainda 
-                    await new BoxUploader().UploadManager(client, localFile.FullPath, "FileOffChange", null);
-                }
+
+                    await new BoxUploader().UploadManager(client, localFile.FullPath, "FileChanged", null);
+                }                 
             }
 
-            // Sincronizar arquivos na cloud que não existem localmente (opcional: deletar ou baixar)
+            // Sincronizar arquivos na cloud que não existem localmente (opcional: baixar)
             foreach (var cloudFile in cloudFiles)
             {
                 var correspondingLocalFile = localFiles.FirstOrDefault(l => NormalizePath(l.FullPath, localRootPath) == NormalizePath(cloudFile.Path, localRootPath));
@@ -96,16 +103,22 @@ namespace WindowsApp.Managers
 
                     Console.WriteLine($"Arquivo/pasta na cloud baixado localmente: {cloudFile.Path}");
                     
+                }else if(IsLocalFileOutdated(correspondingLocalFile.LastModified, cloudFile.LastModified, "Download")){
+                    if(!cloudFile.IsFolder && correspondingLocalFile.Sha1 != cloudFile.Sha1){
+                        Console.WriteLine($"Atualizando Arquivo/pasta localmente: {cloudFile.Path}");
+                        await BoxDownloader.DownloadFileAsync(client, cloudFile.Id, cloudFile.Path);
+                    }else if(cloudFile.IsFolder){
+                        Console.WriteLine("LOG: Pasta Modificada"); // TODO: Talvez renomeada.
+                    }
                     /*
                         TODO: 
-
                         Download de arquivos e diretório: OK
-                        Delete files local: --------------------------------------- Deve ser feito?
-                        Update files local and cloud: ----------------------------- Deve ser feito
+                        Update files local and cloud: ----------------------------- OK
                         Rename files local and cloud: ----------------------------- Deve ser feito
 
                         preciso de uma função que guarde as modificações locais, e que quando feito o upload 
                         ela use esses dados em vez dados dinâmicos. 
+
                     */
                 }
             }
@@ -119,11 +132,32 @@ namespace WindowsApp.Managers
 
         private static string NormalizePath(string path, string localRootPath)
         {
-            // Substitui todos os separadores por '/' para garantir consistência
             string normalizedPath = path.Replace(localRootPath, "").TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Replace(Path.DirectorySeparatorChar, '/').Replace(Path.AltDirectorySeparatorChar, '/');
-
-            // Remove separadores extras no início ou fim do caminho
             return normalizedPath.Trim('/');
+        }
+
+        private static bool IsLocalFileOutdated(DateTime? localLastModified, DateTime? cloudLastModified, string Type)
+        {
+            if (localLastModified == null || cloudLastModified == null)
+            {
+                return false;
+            }
+
+            // Remove segundos e milissegundos para a comparação
+            var localTimeTruncated = localLastModified.Value
+                .AddSeconds(-localLastModified.Value.Second)
+                .AddMilliseconds(-localLastModified.Value.Millisecond);
+
+            var cloudTimeTruncated = cloudLastModified.Value.ToUniversalTime()
+                .AddSeconds(-cloudLastModified.Value.ToUniversalTime().Second)
+                .AddMilliseconds(-cloudLastModified.Value.ToUniversalTime().Millisecond);
+
+            return Type switch
+            {
+                "Download" => localTimeTruncated < cloudTimeTruncated,
+                "Upload" => localTimeTruncated > cloudTimeTruncated,
+                _ => false,
+            };
         }
     }
 }
