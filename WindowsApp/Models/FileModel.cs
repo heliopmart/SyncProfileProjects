@@ -1,6 +1,4 @@
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Models // Namespace reflete a estrutura da pasta
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
 {
     public class FileModel
     {
@@ -18,4 +16,24 @@ namespace WindowsApp.Models // Namespace reflete a estrutura da pasta
         public string? OldFilePath { get; set; } // Caminho antigo, se houver
         public DateTime ChangeTime { get; set; }
     }
+
+    public class FileItem
+    {
+        public required string Path { get; set; }
+        public required string FullPath { get; set; }
+        public string? Sha1 { get; set; }
+        public DateTime LastModified { get; set; }
+        public bool IsFolder { get; set; }
+    }
+
+    public class CloudFileItem
+    {
+        public required string Id { get; set; }
+        public required string Path { get; set; }
+        public string? Sha1 { get; set; }
+        public DateTime? LastModified { get; set; }
+        public bool IsFolder { get; set; }
+    }
+
 }
+

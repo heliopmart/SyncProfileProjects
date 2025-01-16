@@ -1,9 +1,7 @@
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-#pragma warning disable IDE0130 // O namespace não corresponde à estrutura da pasta
 namespace WindowsApp.Helpers
-#pragma warning restore IDE0130 // O namespace não corresponde à estrutura da pasta
 {
     public sealed class ConfigHelper
     {
@@ -32,18 +30,22 @@ namespace WindowsApp.Helpers
     {
         public required string DefaultPathForProjects { get; set; }
         public required string MetaDataPath { get; set; }
+        public required bool Development { get; set; }
         public int SyncInterval { get; set; }
         public required APIConfigs APIConfigs { get; set; }
     }
     
     public class APIConfigs
     {
+        public required string Token {get; set;}
         public required string ClientId {get; set;}
         public required string ClientSecret {get; set;}
         public required string EnterpriseId {get; set;}
         public required string JwtPrivateKey { get; set; }
         public required string JwtPrivateKeyPassword {get; set;}
         public required string JwtPublicKeyId {get; set;}
+        public required string UserID {get; set;}
+
 
     }
 }

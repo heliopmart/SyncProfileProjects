@@ -2,27 +2,18 @@ using Box.Sdk.Gen;
 using Box.Sdk.Gen.Managers;
 using Box.Sdk.Gen.Schemas;
 using System.Text.Json;
-using WindowsAppSync.Services.API;
 using WindowsApp.Managers.Uploaders.Folders;
 using Microsoft.IdentityModel.Tokens;
 
 namespace WindowsApp.Managers.Uploaders.Files{
 
     class ManagerFiles{
-        private static readonly Authenticator authenticator = new Authenticator();
-
-        public static async Task<bool> DeleteFiles(string? folderPath, string? fileId){
-            var parentFolderIdObject = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
-            string? parentFolderId = parentFolderIdObject.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
-            
-            fileId ??= await GetOrCreateFileByPathAsync(folderPath, parentFolderId);
+        public static async Task<bool> DeleteFiles(BoxClient client, string? folderPath, string? fileId, string parentFolderId){
+            fileId ??= await GetOrCreateFileByPathAsync(client, folderPath, parentFolderId);
             
             if(!fileId.IsNullOrEmpty()){
                 try
                 {
-                    BoxClient client = Authenticator.Auth();
-
-
                     // Exclua a pasta e todo o seu conteúdo
                     await client.Files.DeleteFileByIdAsync(fileId);
                     return true;
@@ -37,10 +28,8 @@ namespace WindowsApp.Managers.Uploaders.Files{
             }
         }
 
-        public static async Task<string?> GetOrCreateFileByPathAsync(string filePath, string parentFolderId)
+        public static async Task<string?> GetOrCreateFileByPathAsync(BoxClient client, string filePath, string parentFolderId)
         {
-            BoxClient client = Authenticator.Auth();
-
             // Obtenha o caminho relativo do arquivo
             string relativePath = BoxUploader.GetRelativePathFromRoot(filePath);
             // Divida o caminho em segmentos
@@ -139,15 +128,8 @@ namespace WindowsApp.Managers.Uploaders.Files{
             
         }
 
-        public static async Task<bool> UploadFileAsync(string filePath, string parentFolderPath = "/"){
-            var parentFolderIdObject = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
-            string parentFolderId = parentFolderIdObject.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
-
-            // Obtenha o cliente autenticado
-            BoxClient client = Authenticator.Auth();
-
-            // Verifique o caminho da subpasta e crie, se necessário
-            string? folderId = await ManagerFolders.GetOrCreateFolderByPathAsync(filePath, parentFolderId);
+        public static async Task<bool> UploadFileAsync(BoxClient client, string filePath, string parentFolderId, string parentFolderPath = "/"){
+            string? folderId = await ManagerFolders.GetOrCreateFolderByPathAsync(client, filePath, parentFolderId);
 
             if (folderId == null){
                 throw new InvalidOperationException($"Folder path '{parentFolderPath}' could not be located or created.");
@@ -156,33 +138,46 @@ namespace WindowsApp.Managers.Uploaders.Files{
             using (var fileStream = new FileStream(filePath, FileMode.Open)){
                var fileName = Path.GetFileName(filePath);
 
-               // Construa os atributos do arquivo para o upload
                var attributes = new UploadFileRequestBodyAttributesField(
-                   name: fileName, // Nome do arquivo
-                   parent: new UploadFileRequestBodyAttributesParentField(id: folderId) // ID da pasta
+                   name: fileName, 
+                   parent: new UploadFileRequestBodyAttributesParentField(id: folderId) 
                );
 
-               // Construa o corpo da requisição para o upload
                var requestBody = new UploadFileRequestBody(
-                   attributes: attributes, // Atributos do arquivo
-                   file: fileStream         // Arquivo em forma de Stream
+                   attributes: attributes,
+                   file: fileStream 
                );
 
                 try{
                     Box.Sdk.Gen.Schemas.Files file = await client.Uploads.UploadFileAsync(requestBody);
                     return await BoxUploader.UpdateMetaDataProject();
-                }catch{
-                    return false;
+                }catch(Exception ex){
+                    var errorDetails = JsonSerializer.Deserialize<JsonElement>(ex.Message);
+                    if (errorDetails.TryGetProperty("code", out var codeProperty)){
+                        string errorCode = codeProperty.GetString() ?? string.Empty;
+                        if (errorCode == "item_name_in_use"){
+                            /*
+                                TEMPORÁRIO
+
+                                Alguns arquivos não modificam o arquivo atual, mas sim cria um por cima, 
+                                o que acaba chamando o evento de criar e não o de modificar.
+
+                                Uma alternativa é manter os arquivos e pastas dentro de .yaml.
+                            */
+                            await ChangeCallByCreate(client, fileStream, filePath, parentFolderId);
+                            return await BoxUploader.UpdateMetaDataProject();
+                        }else{
+                            throw new Exception($"ManagerFiles : UploadFileAsync(), Erro: Upload not compleate ({ex})");
+                        }
+                    }else{
+                        throw new Exception($"ManagerFiles : UploadFileAsync(), Erro: Upload not compleate ({ex})");
+                    }
                 }
             }
         }
 
-        public static async Task<bool> ChangeFileAsync(string filePath){
-            BoxClient client = Authenticator.Auth();
-            var folderIdObj = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
-            string parentFolderId = folderIdObj?.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
-
-            string fileId = await GetOrCreateFileByPathAsync(filePath, parentFolderId) ?? throw new InvalidOperationException("FileiD is null");
+        public static async Task<bool> ChangeFileAsync(BoxClient client, string filePath, string parentFolderId){
+            string fileId = await GetOrCreateFileByPathAsync(client, filePath, parentFolderId) ?? throw new InvalidOperationException("FileiD is null");
             try{
                 using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
@@ -190,45 +185,60 @@ namespace WindowsApp.Managers.Uploaders.Files{
                     await client.Uploads.UploadFileVersionAsync(
                         fileId: fileId,
                         requestBody: new UploadFileVersionRequestBody(
-                            attributes: new UploadFileVersionRequestBodyAttributesField(name: Path.GetFileName(filePath)),
+                            attributes: new UploadFileVersionRequestBodyAttributesField(
+                                name: Path.GetFileName(filePath)
+                            ),
                             file: fileStream
                         )
                     );
                 }
 
-                return true;
-            }catch{
-                throw new InvalidOperationException("ManagerFiles: ChangeFileAsync(), Error: Upload file new version");
+                return await BoxUploader.UpdateMetaDataProject();
+            }catch(Exception ex){
+                throw new InvalidOperationException($"ManagerFiles: ChangeFileAsync(), Error: Upload file new version ({ex})");
             }
-
         }
     
-        public static async Task<bool> RenameFile(string filePath, string oldFilePath){
+        public static async Task<bool> RenameFile(BoxClient client, string filePath, string oldFilePath, string parentFolderId){
             if(oldFilePath == null){
                 throw new InvalidOperationException($"ManagerFiles : RenameFile(), Erro: OldFilePath is null");
             }
 
-            BoxClient client = Authenticator.Auth();
-            var folderIdObj = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
-            string parentFolderId = folderIdObj?.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
-
-            string fileId = await GetOrCreateFileByPathAsync(oldFilePath, parentFolderId) ?? throw new InvalidOperationException("FileiD is null");
+            string fileId = await GetOrCreateFileByPathAsync(client, oldFilePath, parentFolderId) ?? throw new InvalidOperationException("FileiD is null");
 
             try{
-                 // Obter o novo nome do arquivo
                 string newFileName = Path.GetFileName(filePath);
 
-                // Atualizar o nome do arquivo na nuvem
                 var updateRequest = new UpdateFileByIdRequestBody
                 {
                     Name = newFileName
                 };
 
                 await client.Files.UpdateFileByIdAsync(fileId, updateRequest);
-                return true;
+                return await BoxUploader.UpdateMetaDataProject();
             }
-            catch (System.Exception Err){
-                throw new InvalidOperationException($"ManagerFiles : RenameFile(), Erro: {Err}");
+            catch (Exception ex){
+                throw new InvalidOperationException($"ManagerFiles : RenameFile(), Erro: {ex}");
+            }
+        }
+
+        // TEMPORÁRIO => Chamado pelo Exception dentro de UploadFileAsync()
+        private static async Task<bool> ChangeCallByCreate(BoxClient client, FileStream fileStream, string filePath, string parentFolderId){
+            string fileId = await GetOrCreateFileByPathAsync(client, filePath, parentFolderId) ?? throw new InvalidOperationException("FileiD is null");
+            try{
+                await client.Uploads.UploadFileVersionAsync(
+                fileId: fileId,
+                requestBody: new UploadFileVersionRequestBody(
+                    attributes: new UploadFileVersionRequestBodyAttributesField(
+                        name: Path.GetFileName(filePath)
+                    ),
+                    file: fileStream
+                )
+                );
+
+                return true;
+            }catch(Exception ex){
+                throw new Exception($"ManagerFiles : ChangeCallByCreate(), error: {ex}");
             }
         }
     
