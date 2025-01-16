@@ -47,7 +47,6 @@ namespace WindowsApp{
                         break;
 
                     case "2": 
-                        await projectManager.ListProjects(auth);
                         break;
                     case "3": 
                         // remover projeto

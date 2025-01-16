@@ -1,23 +1,9 @@
 LocalProjects:
-  NomeProjeto1:
-    Name: Nome Teste 1
-    DateTime: 2010-10-10T20:00:00.0000000
-    Device: DeviceName
-    AsyncTime: 0001-01-01T00:00:00.0000000
-    FolderId: 
-    Status: 0
-  NomeProjeto2:
-    Name: Nome Teste 2
-    DateTime: 2012-10-10T20:00:00.0000000
-    Device: DeviceNames
-    AsyncTime: 0001-01-01T00:00:00.0000000
-    FolderId: 
-    Status: 1
   Teste 1:
     Name: Teste 1
     DateTime: 2025-01-09T19:26:33.3831074-03:00
     Device: DESKTOP-7P120MF
-    AsyncTime: 2025-01-15T20:37:29.7203671-03:00
+    AsyncTime: 2025-01-15T21:25:09.5238518-03:00
     FolderId: 302035218842
     Status: 1
   cadeiracontencaomini:
@@ -31,7 +17,7 @@ LocalProjects:
     Name: "Teste_Integra\0\0o"
     DateTime: 2025-01-13T11:55:26.5810605-03:00
     Device: DESKTOP-7P120MF
-    AsyncTime: 2025-01-13T14:36:45.6830564-03:00
+    AsyncTime: 2025-01-16T11:30:39.1712364-03:00
     FolderId: 302508459980
     Status: 1
   modify_test:

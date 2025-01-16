@@ -6,14 +6,12 @@ namespace WindowsApp.Managers.Downloaders
     public static class BoxDownloader
     {
 
-        public static async Task DownloadFileAsync(BoxClient client, string fileId, string? filePath)
+        public static async Task DownloadFileAsync(BoxClient client, string fileId, string? filePath, string projectPath)
         {
             if(filePath == null){
                 throw new Exception("BoxDownloader : DownloadFileAsync(), Error: filePath directory is null");
             }
-            
-            var nameProjectObj = CentralCache.Instance.GetFromCache("ProjectPath");
-            string projectPath = nameProjectObj?.ToString() ?? string.Empty;
+
 
             string destinationPath = $"{projectPath}/{filePath}";
             IgnoreFiles.HandlePath(destinationPath, "add");
@@ -53,14 +51,11 @@ namespace WindowsApp.Managers.Downloaders
             }
         }
 
-        public static void DownloadFolderAsync(string filePath)
+        public static void DownloadFolderAsync(string filePath, string projectPath)
         {
             if(filePath == null){
                 throw new Exception("BoxDownloader : DownloadFileAsync(), Error: filePath directory is null");
             }
-            
-            var nameProjectObj = CentralCache.Instance.GetFromCache("ProjectPath");
-            string projectPath = nameProjectObj?.ToString() ?? string.Empty;
 
             string destinationPath = $"{projectPath}/{filePath}";
             IgnoreFiles.HandlePath(destinationPath, "add");

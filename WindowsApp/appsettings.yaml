@@ -3,7 +3,7 @@ MetaDataPath: config/
 SyncInterval: 300
 Development: true
 APIConfigs:
-  Token: "tI6SE9fujW62OrpQkQ3viCnf7yuviRN9"
+  Token: "jg1DNmRLbFHidi5wfBvbkMAfePvM2GGy"
   ClientId: "wahr9e37bv03y6b95vgpyl9msrzqptmb"
   ClientSecret: "9Nsz74IkbPBNQZLSq6kHfY72axLjL5nJ"
   EnterpriseId: "0"

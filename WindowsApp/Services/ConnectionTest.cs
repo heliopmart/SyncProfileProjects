@@ -22,6 +22,7 @@ namespace WindowsApp.Services
             if (DateTime.Now - LastCheckTime < CheckInterval)
             {
                 Console.WriteLine("Usando resultados de verificação anteriores.");
+
                 return LastInternetCheck.GetValueOrDefault(false) && LastBoxApiCheck.GetValueOrDefault(false);
             }
 

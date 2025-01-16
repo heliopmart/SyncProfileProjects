@@ -213,18 +213,13 @@ namespace WindowsApp.Managers{
             
         }
 
-        public static async Task<bool> ListProjects(){
+        public static async Task<Metadata?> ListProjects(){
             var dataProjects = await GetLogs.GetProjectsLogFile();
 
             if(dataProjects != null && dataProjects.LocalProjects != null){
-                foreach (var project in dataProjects.LocalProjects)
-                {
-                    Console.WriteLine($"Nome: {project.Value.Name}, Data: {project.Value.DateTime}, Dispositivo: {project.Value.Device}, Status: {project.Value.Status}");
-                }
-                return true;
+                return dataProjects;
             }else{
-                Console.WriteLine("Nenhum projeto encontrado.");
-                return false;
+                return null;
             }
 
         }

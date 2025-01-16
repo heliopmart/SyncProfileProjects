@@ -8,10 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace WindowsApp.Managers.Uploaders.Files{
 
     class ManagerFiles{
-        public static async Task<bool> DeleteFiles(BoxClient client, string? folderPath, string? fileId){
-            var parentFolderIdObject = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
-            string? parentFolderId = parentFolderIdObject.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
-            
+        public static async Task<bool> DeleteFiles(BoxClient client, string? folderPath, string? fileId, string parentFolderId){
             fileId ??= await GetOrCreateFileByPathAsync(client, folderPath, parentFolderId);
             
             if(!fileId.IsNullOrEmpty()){
@@ -131,10 +128,7 @@ namespace WindowsApp.Managers.Uploaders.Files{
             
         }
 
-        public static async Task<bool> UploadFileAsync(BoxClient client, string filePath, string parentFolderPath = "/"){
-            var parentFolderIdObject = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
-            string parentFolderId = parentFolderIdObject.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
-
+        public static async Task<bool> UploadFileAsync(BoxClient client, string filePath, string parentFolderId, string parentFolderPath = "/"){
             string? folderId = await ManagerFolders.GetOrCreateFolderByPathAsync(client, filePath, parentFolderId);
 
             if (folderId == null){
@@ -170,7 +164,8 @@ namespace WindowsApp.Managers.Uploaders.Files{
 
                                 Uma alternativa é manter os arquivos e pastas dentro de .yaml.
                             */
-                            return await ChangeCallByCreate(client, fileStream, filePath, parentFolderId);
+                            await ChangeCallByCreate(client, fileStream, filePath, parentFolderId);
+                            return await BoxUploader.UpdateMetaDataProject();
                         }else{
                             throw new Exception($"ManagerFiles : UploadFileAsync(), Erro: Upload not compleate ({ex})");
                         }
@@ -181,10 +176,7 @@ namespace WindowsApp.Managers.Uploaders.Files{
             }
         }
 
-        public static async Task<bool> ChangeFileAsync(BoxClient client, string filePath){
-            var folderIdObj = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
-            string parentFolderId = folderIdObj?.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
-
+        public static async Task<bool> ChangeFileAsync(BoxClient client, string filePath, string parentFolderId){
             string fileId = await GetOrCreateFileByPathAsync(client, filePath, parentFolderId) ?? throw new InvalidOperationException("FileiD is null");
             try{
                 using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -201,19 +193,16 @@ namespace WindowsApp.Managers.Uploaders.Files{
                     );
                 }
 
-                return true;
+                return await BoxUploader.UpdateMetaDataProject();
             }catch(Exception ex){
                 throw new InvalidOperationException($"ManagerFiles: ChangeFileAsync(), Error: Upload file new version ({ex})");
             }
         }
     
-        public static async Task<bool> RenameFile(BoxClient client, string filePath, string oldFilePath){
+        public static async Task<bool> RenameFile(BoxClient client, string filePath, string oldFilePath, string parentFolderId){
             if(oldFilePath == null){
                 throw new InvalidOperationException($"ManagerFiles : RenameFile(), Erro: OldFilePath is null");
             }
-
-            var folderIdObj = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
-            string parentFolderId = folderIdObj?.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
 
             string fileId = await GetOrCreateFileByPathAsync(client, oldFilePath, parentFolderId) ?? throw new InvalidOperationException("FileiD is null");
 
@@ -226,7 +215,7 @@ namespace WindowsApp.Managers.Uploaders.Files{
                 };
 
                 await client.Files.UpdateFileByIdAsync(fileId, updateRequest);
-                return true;
+                return await BoxUploader.UpdateMetaDataProject();
             }
             catch (Exception ex){
                 throw new InvalidOperationException($"ManagerFiles : RenameFile(), Erro: {ex}");

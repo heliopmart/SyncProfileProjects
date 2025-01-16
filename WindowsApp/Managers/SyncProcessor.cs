@@ -45,7 +45,7 @@ namespace WindowsApp.Managers
                 var cloudFiles = await CloudFileMapper.MapCloudFilesAsync(client, cloudRootFolderId);
 
                 // Comparar arquivos locais e cloud
-                await CompareAndSync(client, localFiles, cloudFiles, localRootPath);
+                await CompareAndSync(client, localFiles, cloudFiles, localRootPath, cloudRootFolderId);
 
             }
             catch (Exception ex)
@@ -57,7 +57,7 @@ namespace WindowsApp.Managers
             }
         }
 
-        private static async Task CompareAndSync(BoxClient client, List<FileItem> localFiles, List<CloudFileItem> cloudFiles, string localRootPath)
+        private static async Task CompareAndSync(BoxClient client, List<FileItem> localFiles, List<CloudFileItem> cloudFiles, string localRootPath, string? FolderId = null)
         {
             // Sincronizar arquivos locais que não existem na cloud
             foreach (var localFile in localFiles)
@@ -70,12 +70,12 @@ namespace WindowsApp.Managers
                     if (localFile.IsFolder)
                     {
                         Console.WriteLine($"Criando pasta na cloud: {localFile.Path}");
-                        await new BoxUploader().UploadManager(client, localFile.FullPath, "FolderCreated", null);
+                        await new BoxUploader().UploadManager(client, localFile.FullPath, "FolderCreated", null, FolderId ?? null); // ---------------------
                     }
                     else
                     {
                         Console.WriteLine($"Fazendo upload do arquivo: {localFile.Path}");
-                        await new BoxUploader().UploadManager(client, localFile.FullPath, "FileCreated", null);
+                        await new BoxUploader().UploadManager(client, localFile.FullPath, "FileCreated", null, FolderId ?? null); // ----------------------
                     }
                 }
                 else if (IsLocalFileOutdated(localFile.LastModified, correspondingCloudFile.LastModified, "Upload"))
@@ -83,7 +83,7 @@ namespace WindowsApp.Managers
                     // Atualizar arquivos modificados
                     Console.WriteLine($"Atualizando arquivo na cloud: {localFile.Path}");
 
-                    await new BoxUploader().UploadManager(client, localFile.FullPath, "FileChanged", null);
+                    await new BoxUploader().UploadManager(client, localFile.FullPath, "FileChanged", null, FolderId ?? null); // ------------------------
                 }                 
             }
 
@@ -94,11 +94,11 @@ namespace WindowsApp.Managers
 
                 if (correspondingLocalFile == null)
                 {
-
+                    // TODO: Talvez precise informar o FolderId por parametro
                     if(cloudFile.IsFolder){
-                        BoxDownloader.DownloadFolderAsync(cloudFile.Path);
+                        BoxDownloader.DownloadFolderAsync(cloudFile.Path, localRootPath);
                     }else{
-                        await BoxDownloader.DownloadFileAsync(client, cloudFile.Id, cloudFile.Path);
+                        await BoxDownloader.DownloadFileAsync(client, cloudFile.Id, cloudFile.Path, localRootPath);
                     }
 
                     Console.WriteLine($"Arquivo/pasta na cloud baixado localmente: {cloudFile.Path}");
@@ -106,7 +106,7 @@ namespace WindowsApp.Managers
                 }else if(IsLocalFileOutdated(correspondingLocalFile.LastModified, cloudFile.LastModified, "Download")){
                     if(!cloudFile.IsFolder && correspondingLocalFile.Sha1 != cloudFile.Sha1){
                         Console.WriteLine($"Atualizando Arquivo/pasta localmente: {cloudFile.Path}");
-                        await BoxDownloader.DownloadFileAsync(client, cloudFile.Id, cloudFile.Path);
+                        await BoxDownloader.DownloadFileAsync(client, cloudFile.Id, cloudFile.Path, localRootPath);
                     }else if(cloudFile.IsFolder){
                         Console.WriteLine("LOG: Pasta Modificada"); // TODO: Talvez renomeada.
                     }

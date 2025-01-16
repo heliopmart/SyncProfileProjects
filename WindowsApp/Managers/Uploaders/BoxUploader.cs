@@ -5,7 +5,17 @@ using WindowsApp.Managers.Uploaders.Files;
 namespace WindowsApp.Managers.Uploaders{
     public class BoxUploader
     {
-        public async Task<bool> UploadManager(BoxClient auth, string filePath, string type, string? OldFilePath){
+        private static string? _parentFolderId;
+
+        public async Task<bool> UploadManager(BoxClient auth, string filePath, string type, string? OldFilePath, string? parentFolderId = null){
+            
+            _parentFolderId = parentFolderId;
+
+            if(parentFolderId == null){
+                var parentFolderIdObject = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
+                parentFolderId = parentFolderIdObject.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
+                _parentFolderId = parentFolderId;
+            }
 
             switch(type){
                 case "FileCreated":
@@ -41,7 +51,7 @@ namespace WindowsApp.Managers.Uploaders{
         }
 
         static async Task<bool> UploadFile(BoxClient auth, string filePath){
-            return await ManagerFiles.UploadFileAsync(auth, filePath);
+            return await ManagerFiles.UploadFileAsync(auth, filePath, _parentFolderId);
         }
 
         static async Task<bool> UploadFolder(BoxClient auth, string filePath){
@@ -49,7 +59,7 @@ namespace WindowsApp.Managers.Uploaders{
         }
 
         static async Task<bool> DeleteFiles(BoxClient auth, string filePath){
-            return await ManagerFiles.DeleteFiles(auth, filePath, null);
+            return await ManagerFiles.DeleteFiles(auth, filePath, null, _parentFolderId);
         }
 
         static async Task<bool> DeleteFolders(BoxClient auth, string filePath){
@@ -57,11 +67,11 @@ namespace WindowsApp.Managers.Uploaders{
         }
 
         static async Task<bool> ChangeFiles(BoxClient auth, string filePath){
-            return await ManagerFiles.ChangeFileAsync(auth, filePath);
+            return await ManagerFiles.ChangeFileAsync(auth, filePath, _parentFolderId);
         }
 
         static async Task<bool> RenameFiles(BoxClient auth, string filePath, string? oldFilePath){
-            return await ManagerFiles.RenameFile(auth, filePath, oldFilePath);
+            return await ManagerFiles.RenameFile(auth, filePath, oldFilePath, _parentFolderId);
         }
 
         static async Task<bool> RenameFolders(BoxClient auth, string filePath, string? oldFilePath){
@@ -69,8 +79,12 @@ namespace WindowsApp.Managers.Uploaders{
         }
 
         public static string GetRelativePathFromRoot(string folderPath){
-            var nameProjectObj = CentralCache.Instance.GetFromCache("NameProject");
-            string rootFolderName = StringUtils.SanitizeString(nameProjectObj != null ? nameProjectObj.ToString() : string.Empty);
+            string? rootFolderName = GetNameProjectByDynamicPath(folderPath);
+
+            if(rootFolderName == null){
+                var nameProjectObj = CentralCache.Instance.GetFromCache("NameProject");
+                rootFolderName = StringUtils.SanitizeString(nameProjectObj != null ? nameProjectObj.ToString() : string.Empty);
+            }
             // Obtenha o caminho relativo completo
             string relativePath = Path.GetRelativePath("BaseFolderPath", folderPath);
             
@@ -98,9 +112,11 @@ namespace WindowsApp.Managers.Uploaders{
             return string.Join(Path.DirectorySeparatorChar.ToString(), pathAfterRoot);
         }
 
-        public static async Task<bool> UpdateMetaDataProject(){
-            var nameProjectObj = CentralCache.Instance.GetFromCache("NameProject");
-            string? NameProject = nameProjectObj != null ? nameProjectObj.ToString() : string.Empty;
+        public static async Task<bool> UpdateMetaDataProject(string? NameProject = null){
+            if(NameProject == null){
+                var nameProjectObj = CentralCache.Instance.GetFromCache("NameProject");
+                NameProject = nameProjectObj != null ? nameProjectObj.ToString() : string.Empty;
+            }
             
             bool ChangeStatus = await ManagerProject.ChangeProjectData(NameProject, "Status", "1");
             bool ChangeAsnyc = await ManagerProject.ChangeProjectData(NameProject, "AsyncTime", DateTime.Now.ToString());
@@ -110,6 +126,23 @@ namespace WindowsApp.Managers.Uploaders{
             }else{
                 return true;
             }
+        }
+
+        private static string? GetNameProjectByDynamicPath(string filePath)
+        {
+            // Obtém os diretórios do caminho
+            var directories = Path.GetDirectoryName(filePath)?.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            // Encontra o índice da pasta "Projects"
+            int projectIndex = Array.IndexOf(directories, "Projects");
+
+            if (projectIndex != -1 && projectIndex + 1 < directories.Length)
+            {
+                // Retorna a pasta seguinte à "Projects"
+                return directories[projectIndex + 1];
+            }
+
+            return null;
         }
     }
 }

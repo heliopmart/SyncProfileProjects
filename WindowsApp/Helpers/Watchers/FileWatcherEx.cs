@@ -3,7 +3,6 @@ using WindowsApp.Managers;
 using WindowsApp.Models;
 using WindowsApp.Utils;
 using WindowsApp.Services;
-using System.Threading.Tasks;
 
 namespace WindowsApp.Helpers.Watchers{
     public class FileWatcher{
@@ -185,6 +184,12 @@ namespace WindowsApp.Helpers.Watchers{
                 return;
             }
 
+            
+            if(FileExpirationManager.CheckFile(path)){
+                Console.WriteLine("Arquivo modificado muito recentemente");
+                return;
+            }
+
             var fileChange = new FileChange
             {
                 ChangeType = changeType,
@@ -197,10 +202,10 @@ namespace WindowsApp.Helpers.Watchers{
                 _queueManager.Enqueue(fileChange);
                 _ = _syncManager.ProcessQueueAsync();
             }else{
-
-                // A ideia é armazenar as alterações e consumir depois.
+                await ProjectManager.SetPeddingSincronization();
             }
 
+            FileExpirationManager.AddFile(path);
         }
     }
 }

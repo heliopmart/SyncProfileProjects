@@ -8,6 +8,9 @@ using WindowsApp.Managers.Uploaders.Files;
 namespace WindowsApp.Managers.Uploaders.Folders{
     public class ManagerFolders{
         public static async Task<bool> DeleteFolderRecursivelyAsync(BoxClient client, string folderId){
+            var parentFolderIdObject = CentralCache.Instance.GetFromCache("FolderId") ?? throw new InvalidOperationException("FolderId not found in cache.");
+            string parentFolderId = parentFolderIdObject.ToString() ?? throw new InvalidOperationException("FolderId not found in cache.");
+
             try{
                 // Obtenha os itens da pasta
                 var folderItems = await client.Folders.GetFolderItemsAsync(folderId);
@@ -23,7 +26,7 @@ namespace WindowsApp.Managers.Uploaders.Folders{
                         if (root.TryGetProperty("type", out var typeProperty) && typeProperty.GetString() == "file")
                         {
                             var id = root.GetProperty("id").GetString();
-                            await ManagerFiles.DeleteFiles(client, null, id);
+                            await ManagerFiles.DeleteFiles(client, null, id, parentFolderId);
                         }
                         // Verifique se o tipo do item é "folder"
                         else if (root.TryGetProperty("type", out typeProperty) && typeProperty.GetString() == "folder")

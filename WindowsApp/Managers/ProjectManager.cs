@@ -48,14 +48,6 @@ namespace WindowsApp.Managers{
             }
         }
 
-        public async Task<bool> ListProjects(BoxClient auth){ // Lista todos os projetos - Variavel Local
-           if(await ManagerProject.ListProjects()){
-                return true;
-           }else{
-            return false;
-           }
-        }
-
         public async Task<ProjectData> GetProject(string NameProject){ // Pega um projeto especifico - Variavel Local
             var project = await managerProject.GetProject(NameProject);
             if (project == null)
@@ -63,6 +55,20 @@ namespace WindowsApp.Managers{
                 throw new Exception("Project not found");
             }
             return project;
+        }
+
+        public static async Task<bool> SetPeddingSincronization(){ // Atribui o status pendente ao projeto - Metadata.yaml
+            var NameProjectObject = CentralCache.Instance.GetFromCache("NameProject") ?? throw new InvalidOperationException("NameProject not found in cache.");
+            string NameProject = NameProjectObject.ToString() ?? throw new InvalidOperationException("NameProject not found in cache.");
+            
+            bool ChangeStatus = await ManagerProject.ChangeProjectData(NameProject, "Status", "2");
+            bool ChangeAsnyc = await ManagerProject.ChangeProjectData(NameProject, "AsyncTime", DateTime.Now.ToString());
+
+            if (!ChangeStatus || !ChangeAsnyc)
+            {
+                throw new Exception("Project not found");
+            }
+            return true;
         }
 
 
@@ -78,6 +84,9 @@ namespace WindowsApp.Managers{
             CentralCache.Instance.AddToCache("NameProject", NameProject); // adiciona dados importante em cache
             CentralCache.Instance.AddToCache("ProjectPath", ProjectPath);
             CentralCache.Instance.AddToCache("FolderId", IdFolderProject);
+            
+            // Verificar as sincronizações pendentes
+            await Task.Run(() => SyncPeddingProjects.Sincronization(auth, _config.DefaultPathForProjects));
             
             // Inicia monitoração
             InitProjectFolderMonitory(auth, ProjectPath);
