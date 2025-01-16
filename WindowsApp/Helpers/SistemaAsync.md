@@ -159,7 +159,7 @@ Garantir sincronização eficiente entre arquivos locais e na nuvem, equilibrand
    - Processa uploads em lote.
    - Gerencia paralelismo e limites.
 
-4. `PeriodicChecker`:
+4. `SyncProcessor`:
    - Realiza sincronizações periódicas.
    - Verifica consistência entre local, Firestore e nuvem.
 
@@ -167,7 +167,7 @@ Garantir sincronização eficiente entre arquivos locais e na nuvem, equilibrand
    - Gerencia metadados no Firestore.
    - Atualiza histórico e status dos arquivos.
 
-6. `BoxApiClient`:
+6. `BoxAuthenticator`:
    - Interface para interagir com a API da Box.com.
 
 ---
