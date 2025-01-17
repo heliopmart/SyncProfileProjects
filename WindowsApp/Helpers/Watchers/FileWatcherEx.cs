@@ -23,7 +23,9 @@ namespace WindowsApp.Helpers.Watchers{
 
         public void StartWatching()
         {
-            var _fw = new FileSystemWatcherEx(_pathToWatch);
+            var _fw = new FileSystemWatcherEx(_pathToWatch){
+                IncludeSubdirectories = true  // Garantir que subpastas sejam monitoradas
+            };
 
             _fw.OnRenamed += OnRenamed;
             _fw.OnCreated += OnCreated;
@@ -33,6 +35,11 @@ namespace WindowsApp.Helpers.Watchers{
             _fw.Start();
 
             Console.WriteLine("FileWatcher started...");
+        }
+
+        public void StopWatching(){
+            var _fw = new FileSystemWatcherEx(_pathToWatch);
+            _fw.Stop();
         }
 
         private void OnCreated(object? sender, FileChangedEvent e){        

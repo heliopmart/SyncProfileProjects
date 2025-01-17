@@ -5,18 +5,19 @@ using WindowsApp.Helpers.Watchers;
 using WindowsApp.Managers.Uploaders;
 using WindowsApp.Managers.Downloaders;
 using WindowsApp.Services;
+using ThreadingTimer = System.Threading.Timer;
 
 namespace WindowsApp.Managers
 {
     public static class SyncProcessor
     {
-        private static Timer? _syncTimer;
+        private static ThreadingTimer? _syncTimer;
         private static bool _isRunning = false;
         private static readonly SemaphoreSlim SyncLock = new(1, 1);
 
         public static void StartSync(BoxClient client, string localRootPath, string cloudRootFolderId, int intervalInSeconds = 300)
         {
-            _syncTimer = new Timer(async _ =>
+            _syncTimer = new ThreadingTimer(async _ =>
             {
                 if (!_isRunning)
                 {

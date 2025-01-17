@@ -1,13 +1,70 @@
-DefaultPathForProjects: D:/SyncProfileProjects/Projects
+DefaultPathForProjects: D:\SyncProfileProjects\Projects
 MetaDataPath: config/
-SyncInterval: 300
 Development: true
+SyncInterval: 300
 APIConfigs:
-  Token: "jg1DNmRLbFHidi5wfBvbkMAfePvM2GGy"
-  ClientId: "wahr9e37bv03y6b95vgpyl9msrzqptmb"
-  ClientSecret: "9Nsz74IkbPBNQZLSq6kHfY72axLjL5nJ"
-  EnterpriseId: "0"
-  JwtPrivateKey: "-----BEGIN ENCRYPTED PRIVATE KEY-----\nMIIFHDBOBgkqhkiG9w0BBQ0wQTApBgkqhkiG9w0BBQwwHAQIBneBfpVasYkCAggA\nMAwGCCqGSIb3DQIJBQAwFAYIKoZIhvcNAwcECNPiitHXVu66BIIEyJhi3vRGai1+\ncJzfzo1ww2TeZXUGeMs9ZNco6K4ikucvvBtbZ9XD5Idy3waCzxkYIQG/R32DIdLK\nL+tqrKanKZKjbR0hbF1xU229bJ9FIpv029bXJZ/q3uwFBd4mOdIlludYxCG7/qIw\nsHuBC2tpLYkjunoh+h2r/ypSHPJXEGflQVdpllqGHXkr6Eg+q1jy5ST33pE9sn/e\ngYjxvzyaLw/pcXP+2YhxH2XZidWq6PRLcvlMFVyn6PbG03Hs+Vrjvam9QLW+W4/8\nAt8/3RfJG2hqGbQKyJm43sgfvXj3wYO5rifVmc6lk0ss+cSd2pJJ64IEZlCzXe7+\n24iH3J8ZUiQKCXZTIrdhmTbm5yAh5zIq5GXbdzlcyEUcSD008QUvVhHZMdNRKLty\nUvrrG+JbK7Pk755FJ7S069kkBfvnjvrj31Qf8w6gHYuNYTsPYTH13stMqVbrhBfk\n9VyEbo4CvTLkqeAjBqBaxUXoy7hISs1HlrGznmpyI5Lq5WD5BB+RvmO0XPAY7P8+\n4eTmwuk+R0qQVRgeEJzyOmGJUvGW8GEI7XR85dAWYFShmLF+K/LkYpsQa9g2CtKC\njE9EB7BsnHQUF2c2ke3+UtbPD/HqxG4IK2OTmKtOJMpa5rniPOIo0iYxpc8vctLt\njm38nJdYbf7JCQ6WMA/KiYbEbpLzdGCJVdTY4bvvn+QZNOij3VNxAgVKUFPSZ+RA\nuIE3PWYPwPkSIuSdI9s8QCKzOzk2gFLHzzr8rKwH5LOh1P1NsWEQkLeGSlH4jOir\n4AI7jLFwIf1KpUamGhZyjHAswP5U3bAbmCP6CyfO0aMyOCwvJTM7kErR92Xx1fhO\noP88F5gZsqPk/ScrhxtbSyyiOK6g6FwHdRxbtxkqb1oTEWMrofKbpk6U3MkiC66z\numKF0fG6w85jvbPpmpiTNgrQSwgsxDkRrBR+nyGqvAHFBj+O8CdTnkY2OyrQnZeQ\nBhlEH3OZjWApI5rZkOL6SrezQJChWkzCBM3uKW8wr0ayiaUAuRdSLHssT90a0WcM\nJoJ7gS1O4uMXfa4TVsIwhgJ4xlC5WhED5q3t6rpfgpIBeHsrN8dGhrervCZ73ZBv\n6Ciy95MvisMaedqkPKo1OnfZ47OQxc3BD9mE7glnKcskF2zoO1lGf5LGfnx4bEd7\nOdRArFvQbUWgV3AQkIT3KVS9sj3iP46oXes2LSkpSkjtGQc/5UydGT0BKjXQZ4B5\nszyibtqt+6XoeFQxWpYYCBUCvxyN/22pQf3ED3hVXoTyItFvr2SM7XRj7J7CQO2I\nSiFHG5ISztmHvwca60GCPSZ2Zq4GdYx3tMt7JVgMXADmJtnNBHmkrc+aXreHyoB0\n86wsW3uUZ0Xi7UiFU9vEyTVv7Y8e+5SppKNHR45OrzlXT+YUsLjyzFnEFhYJY0jX\nVZkyWx/QCcLhSdlYcMOkl0u3gQggmCNcFEKqJzBNtgg5sFJ39NBTw0I7OY7gV/7y\nzdl/hKUgSMERP83mBF+OPO42wqcrNt7HZP9naIcFjTSeOQZLANxixhirhTvHK2kL\nbvM9Hh6XZ0g88w21NIj8iFh0a7cYGB9128NaWYmwti1ixcAB/r0NQ7OVm/EBwBYD\nfpW6Pl463C2UsL9TaMHHzQ==\n-----END ENCRYPTED PRIVATE KEY-----\n"
-  JwtPrivateKeyPassword: "c8660d81c54ca840edbf73a4fd11d326"
-  JwtPublicKeyId: "njfbj0ak"
-  UserID: "39190607560"
+  Token: ZB3hrk3KZTWNfh1LBwadDNPzMevvll84
+  ClientId: wahr9e37bv03y6b95vgpyl9msrzqptmb
+  ClientSecret: 9Nsz74IkbPBNQZLSq6kHfY72axLjL5nJ
+  EnterpriseId: 0
+  JwtPrivateKey: >
+    -----BEGIN ENCRYPTED PRIVATE KEY-----
+
+    MIIFHDBOBgkqhkiG9w0BBQ0wQTApBgkqhkiG9w0BBQwwHAQIBneBfpVasYkCAggAMAwGCCqGSIb3DQIJBQAwFAYIKoZIhvcNAwcECNPiitHXVu66BIIEyJhi3vRGai1+
+
+    cJzfzo1ww2TeZXUGeMs9ZNco6K4ikucvvBtbZ9XD5Idy3waCzxkYIQG/R32DIdLK
+
+    L+tqrKanKZKjbR0hbF1xU229bJ9FIpv029bXJZ/q3uwFBd4mOdIlludYxCG7/qIw
+
+    sHuBC2tpLYkjunoh+h2r/ypSHPJXEGflQVdpllqGHXkr6Eg+q1jy5ST33pE9sn/e
+
+    gYjxvzyaLw/pcXP+2YhxH2XZidWq6PRLcvlMFVyn6PbG03Hs+Vrjvam9QLW+W4/8
+
+    At8/3RfJG2hqGbQKyJm43sgfvXj3wYO5rifVmc6lk0ss+cSd2pJJ64IEZlCzXe7+
+
+    24iH3J8ZUiQKCXZTIrdhmTbm5yAh5zIq5GXbdzlcyEUcSD008QUvVhHZMdNRKLty
+
+    UvrrG+JbK7Pk755FJ7S069kkBfvnjvrj31Qf8w6gHYuNYTsPYTH13stMqVbrhBfk
+
+    9VyEbo4CvTLkqeAjBqBaxUXoy7hISs1HlrGznmpyI5Lq5WD5BB+RvmO0XPAY7P8+
+
+    4eTmwuk+R0qQVRgeEJzyOmGJUvGW8GEI7XR85dAWYFShmLF+K/LkYpsQa9g2CtKC
+
+    jE9EB7BsnHQUF2c2ke3+UtbPD/HqxG4IK2OTmKtOJMpa5rniPOIo0iYxpc8vctLt
+
+    jm38nJdYbf7JCQ6WMA/KiYbEbpLzdGCJVdTY4bvvn+QZNOij3VNxAgVKUFPSZ+RA
+
+    uIE3PWYPwPkSIuSdI9s8QCKzOzk2gFLHzzr8rKwH5LOh1P1NsWEQkLeGSlH4jOir
+
+    4AI7jLFwIf1KpUamGhZyjHAswP5U3bAbmCP6CyfO0aMyOCwvJTM7kErR92Xx1fhO
+
+    oP88F5gZsqPk/ScrhxtbSyyiOK6g6FwHdRxbtxkqb1oTEWMrofKbpk6U3MkiC66z
+
+    umKF0fG6w85jvbPpmpiTNgrQSwgsxDkRrBR+nyGqvAHFBj+O8CdTnkY2OyrQnZeQ
+
+    BhlEH3OZjWApI5rZkOL6SrezQJChWkzCBM3uKW8wr0ayiaUAuRdSLHssT90a0WcM
+
+    JoJ7gS1O4uMXfa4TVsIwhgJ4xlC5WhED5q3t6rpfgpIBeHsrN8dGhrervCZ73ZBv
+
+    6Ciy95MvisMaedqkPKo1OnfZ47OQxc3BD9mE7glnKcskF2zoO1lGf5LGfnx4bEd7
+
+    OdRArFvQbUWgV3AQkIT3KVS9sj3iP46oXes2LSkpSkjtGQc/5UydGT0BKjXQZ4B5
+
+    szyibtqt+6XoeFQxWpYYCBUCvxyN/22pQf3ED3hVXoTyItFvr2SM7XRj7J7CQO2I
+
+    SiFHG5ISztmHvwca60GCPSZ2Zq4GdYx3tMt7JVgMXADmJtnNBHmkrc+aXreHyoB0
+
+    86wsW3uUZ0Xi7UiFU9vEyTVv7Y8e+5SppKNHR45OrzlXT+YUsLjyzFnEFhYJY0jX
+
+    VZkyWx/QCcLhSdlYcMOkl0u3gQggmCNcFEKqJzBNtgg5sFJ39NBTw0I7OY7gV/7y
+
+    zdl/hKUgSMERP83mBF+OPO42wqcrNt7HZP9naIcFjTSeOQZLANxixhirhTvHK2kL
+
+    bvM9Hh6XZ0g88w21NIj8iFh0a7cYGB9128NaWYmwti1ixcAB/r0NQ7OVm/EBwBYD
+
+    fpW6Pl463C2UsL9TaMHHzQ==
+
+    -----END ENCRYPTED PRIVATE KEY-----
+  JwtPrivateKeyPassword: c8660d81c54ca840edbf73a4fd11d326
+  JwtPublicKeyId: njfbj0ak
+  UserID: 39190607560
