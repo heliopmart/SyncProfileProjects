@@ -1,8 +1,7 @@
-using WindowsApp.Views;
 using WindowsApp.Managers;
+using WindowsApp.Utils;
 using WindowsAppSync.Services.API;
 using Box.Sdk.Gen;
-
 
 namespace WindowsApp.Views
 {
@@ -10,6 +9,7 @@ namespace WindowsApp.Views
     {
         private Button btnConfig = new Button();
         private Button btnProjects = new Button();
+        private Button btnLogs = new Button();
         private Button btnStartSync = new Button();
         private Button btnStopSync = new Button();
 
@@ -22,147 +22,165 @@ namespace WindowsApp.Views
 
         public SetApp()
         {
-            _ = InitializeComponent();
+            _ = InitializeComponentsAsync();
         }
 
-        private async Task InitializeComponent()
+        private async Task InitializeComponentsAsync()
         {
             _auth = await Authenticator.Auth();
             _projectManager = new ProjectManager(_auth);
             _projectsForm = new ProjectsApp(_auth, _projectManager);
 
-            // Definir propriedades do formul�rio
+            SetFormProperties();
+            SetUpControls();
+        }
+
+        private void SetFormProperties()
+        {
             this.Text = "Windows App Sync";
             this.Width = 500;
-            this.Height = 400;
+            this.Height = 500;
             this.StartPosition = FormStartPosition.CenterScreen;
+        }
 
-            // Painel principal para centralizar os controles
-            var mainPanel = new FlowLayoutPanel()
+        private void SetUpControls()
+        {
+            var mainPanel = CreateMainPanel();
+            this.Controls.Add(mainPanel);
+
+            lblTitle = CreateLabel("Bem-vindo ao Windows App Sync", new Font("Arial", 14, FontStyle.Bold));
+            mainPanel.Controls.Add(lblTitle);
+
+            lblDescription = CreateLabel("Escolha uma das opções abaixo:", new Font("Arial", 10, FontStyle.Regular));
+            lblDescription.Margin = new Padding(0, 10, 0, 10);
+            mainPanel.Controls.Add(lblDescription);
+
+            btnConfig = CreateButton("Abrir Configurações", BtnConfig_Click);
+            mainPanel.Controls.Add(btnConfig);
+
+            btnProjects = CreateButton("Abrir Projetos", BtnProjects_Click);
+            mainPanel.Controls.Add(btnProjects);
+
+            btnLogs = CreateButton("Abrir Logs", BtnProjects_Click);
+            mainPanel.Controls.Add(btnLogs);
+
+            btnStartSync = CreateButton("Iniciar Sincronização", BtnStartSync_Click);
+            mainPanel.Controls.Add(btnStartSync);
+
+            btnStopSync = CreateButton("Parar Sincronização", BtnStopSync_Click);
+            mainPanel.Controls.Add(btnStopSync);
+
+            lblSyncStatus = new Label
+            {
+                Text = "Status da Sincronização: Parada",
+                AutoSize = true,
+                ForeColor = Color.Red
+            };
+            mainPanel.Controls.Add(lblSyncStatus);
+        }
+
+        private FlowLayoutPanel CreateMainPanel()
+        {
+            return new FlowLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 FlowDirection = FlowDirection.TopDown,
                 Padding = new Padding(20),
                 AutoScroll = true
             };
-            this.Controls.Add(mainPanel);
+        }
 
-            // T�tulo da janela
-            lblTitle = new Label()
+        private Label CreateLabel(string text, Font font)
+        {
+            return new Label
             {
-                Text = "Bem-vindo ao Windows App Sync",
-                Font = new System.Drawing.Font("Arial", 14, System.Drawing.FontStyle.Bold),
+                Text = text,
+                Font = font,
                 AutoSize = true
             };
-            mainPanel.Controls.Add(lblTitle);
-
-            // Descri��o
-            lblDescription = new Label()
-            {
-                Text = "Escolha uma das op��es abaixo:",
-                AutoSize = true,
-                Margin = new Padding(0, 10, 0, 10)
-            };
-            mainPanel.Controls.Add(lblDescription);
-
-            // Bot�o para abrir o formul�rio de configura��es
-            btnConfig = new Button()
-            {
-                Text = "Abrir Configurações",
-                Width = 200,
-                Height = 40
-            };
-            btnConfig.Click += BtnConfig_Click;
-            mainPanel.Controls.Add(btnConfig);
-
-            // Bot�o para abrir o formul�rio de projetos
-            btnProjects = new Button()
-            {
-                Text = "Abrir Projetos",
-                Width = 200,
-                Height = 40
-            };
-            btnProjects.Click += BtnProjects_Click;
-            mainPanel.Controls.Add(btnProjects);
-
-            // Bot�o para iniciar a sincroniza��o
-            btnStartSync = new Button()
-            {
-                Text = "Iniciar Sincronização",
-                Width = 200,
-                Height = 40
-            };
-            btnStartSync.Click += BtnStartSync_Click;
-            mainPanel.Controls.Add(btnStartSync);
-
-            // Bot�o para parar a sincroniza��o
-            btnStopSync = new Button()
-            {
-                Text = "Parar Sincroniza��o",
-                Width = 200,
-                Height = 40
-            };
-            btnStopSync.Click += BtnStopSync_Click;
-            mainPanel.Controls.Add(btnStopSync);
-
-            // Label de status de sincroniza��o
-            lblSyncStatus = new Label()
-            {
-                Text = "Status da Sincroniza��o: Parada",
-                AutoSize = true,
-                ForeColor = System.Drawing.Color.Red
-            };
-            mainPanel.Controls.Add(lblSyncStatus);
         }
 
-        // Eventos dos bot�es
-        private void BtnConfig_Click(object sender, EventArgs e)
+        private Button CreateButton(string text, EventHandler clickEventHandler)
+        {
+            var button = new Button
+            {
+                Text = text,
+                Width = 200,
+                Height = 40
+            };
+            button.Click += clickEventHandler;
+            return button;
+        }
+
+        // Evento de Configuração
+        private void BtnConfig_Click(object? sender, EventArgs e)
         {
             var configForm = new ConfigApp();
-            configForm.ShowDialog();  // Exibe o formul�rio de configura��es
+            configForm.ShowDialog();
         }
 
-        private void BtnProjects_Click(object sender, EventArgs e)
+        // Evento de Projetos
+        private void BtnProjects_Click(object? sender, EventArgs e)
         {
-            
-            _projectsForm.ShowDialog();  // Exibe o formul�rio de projetos
+            _projectsForm?.ShowDialog();
         }
 
-        private void BtnStartSync_Click(object sender, EventArgs e)
+        // Evento de Abrir Logs
+        private void BtnLogs_Click(object? sender, EventArgs e)
+        {
+            MainForm logForm = new MainForm();
+            logForm.Show();
+        }
+
+        // Evento para Iniciar a Sincronização
+        private void BtnStartSync_Click(object? sender, EventArgs e)
+        {
+            HandleSyncAction(true);
+        }
+
+        // Evento para Parar a Sincronização
+        private void BtnStopSync_Click(object? sender, EventArgs e)
+        {
+            HandleSyncAction(false);
+        }
+
+        private void HandleSyncAction(bool isStart)
         {
             var projectSelect = _projectsForm?.GetSelectedProject();
-            if(projectSelect != null){
-                
-                _ = OpenProject(_auth, _projectManager, projectSelect);
-
-                lblSyncStatus.Text = $"Status da Sincronização: Sincronizando com {projectSelect}";
-                lblSyncStatus.ForeColor = System.Drawing.Color.Green;
-            }else{
-                MessageBox.Show("Você não selecionou um projeto");
+            if (projectSelect != null)
+            {
+                if (isStart)
+                {
+                    _ = OpenProject(_auth, _projectManager, projectSelect);
+                    lblSyncStatus.Text = $"Status da Sincronização: Sincronizando com {projectSelect}";
+                    lblSyncStatus.ForeColor = Color.Green;
+                }
+                else
+                {
+                    _ = CloseProject(_auth, _projectManager, projectSelect);
+                    lblSyncStatus.Text = "Status da Sincronização: Parada";
+                    lblSyncStatus.ForeColor = Color.Red;
+                }
+            }
+            else
+            {
+                MessageBox.Show(isStart ? "Você não selecionou um projeto" : "Erro, Não foi possível encontrar o projeto");
             }
         }
 
-        private void BtnStopSync_Click(object sender, EventArgs e)
+        private static async Task OpenProject(BoxClient auth, ProjectManager projectManager, string nameProject)
         {
-            var projectSelect = _projectsForm?.GetSelectedProject();
-            if(projectSelect != null){
-                _ = CloseProject(_auth, _projectManager, projectSelect);
-                lblSyncStatus.Text = "Status da Sincronização: Parada";
-                lblSyncStatus.ForeColor = System.Drawing.Color.Red;
-            }else{
-                MessageBox.Show("Erro, Não foi possivel encontrar o projeto");
+            if (!string.IsNullOrEmpty(nameProject))
+            {
+                await projectManager.OpenProjectForMonitory(auth, nameProject);
             }
         }
 
-        private static async Task OpenProject(BoxClient auth, ProjectManager projectManager, string NameProject){
-            if(NameProject != null){
-                await projectManager.OpenProjectForMonitory(auth, NameProject);
-            }
-        }
-
-        private static async Task CloseProject(BoxClient auth, ProjectManager projectManager, string NameProject){
-            if(NameProject != null){
-                await projectManager.CloseProjectMonitory(auth, NameProject);
+        private static async Task CloseProject(BoxClient auth, ProjectManager projectManager, string nameProject)
+        {
+            if (!string.IsNullOrEmpty(nameProject))
+            {
+                await projectManager.CloseProjectMonitory(auth, nameProject);
             }
         }
     }

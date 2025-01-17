@@ -4,7 +4,7 @@
     <TargetFramework>net9.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>  <!-- Habilita o Windows Forms -->
+  <UseWindowsForms>true</UseWindowsForms>   <!--  Habilita o Windows Forms -->
     <ApplicationIcon>./Resources/icone.ico</ApplicationIcon>  <!-- Adiciona o ícone ao aplicativo -->
   </PropertyGroup>
 

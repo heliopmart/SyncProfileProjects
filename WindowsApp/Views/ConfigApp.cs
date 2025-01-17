@@ -7,31 +7,36 @@ namespace WindowsApp.Views
 {
     public class ConfigApp : Form
     {
-        private CheckBox cbDev;
-        private TextBox txtDevToken;
-        private TextBox txtDefaultPath;
-        private NumericUpDown numSyncTime;
-        private Button btnSave;
-        private APPConfig _config;
+        // Torne os campos não anuláveis ou inicialize-os diretamente no construtor
+        private CheckBox cbDev = new CheckBox();
+        private TextBox txtDevToken = new TextBox();
+        private TextBox txtDefaultPath = new TextBox();
+        private NumericUpDown numSyncTime = new NumericUpDown();
+        private Button btnSave = new Button();
+        private APPConfig? _config;
 
         public ConfigApp()
         {
             _config = GetDataConfig();
-            if(_config != null){
+            if (_config != null)
+            {
                 InitializeComponent();
-            }else{
-                MessageBox.Show($"Config is null");
+            }
+            else
+            {
+                MessageBox.Show("Config is null");
             }
         }
 
-        private APPConfig GetDataConfig(){
+        private APPConfig GetDataConfig()
+        {
             return ConfigHelper.Instance.GetConfig();
         }
 
         private void InitializeComponent()
         {
-            // Definir propriedades do formul�rio
-            this.Text = "Configura��es do App";
+            // Definir propriedades do formulário
+            this.Text = "Configurações do App";
             this.Width = 400;
             this.Height = 300;
             this.StartPosition = FormStartPosition.CenterScreen; // Centraliza a janela na tela
@@ -42,7 +47,7 @@ namespace WindowsApp.Views
                 Dock = DockStyle.Fill,
                 FlowDirection = FlowDirection.TopDown,
                 Padding = new Padding(20),
-                AutoScroll = true // Permite rolar se necess�rio
+                AutoScroll = true // Permite rolar se necessário
             };
             this.Controls.Add(mainPanel);
 
@@ -55,7 +60,7 @@ namespace WindowsApp.Views
             cbDev = new CheckBox()
             {
                 Text = "Ativar Modo Dev",
-                Checked = _config.Development,
+                Checked = _config != null && _config.Development,
                 AutoSize = true
             };
             mainPanel.Controls.Add(labelDevMode);
@@ -70,7 +75,7 @@ namespace WindowsApp.Views
             txtDevToken = new TextBox()
             {
                 PlaceholderText = "Informe o DevToken",
-                Text = _config.APIConfigs.Token,
+                Text = _config?.APIConfigs.Token ?? string.Empty,
                 Width = 250
             };
             mainPanel.Controls.Add(labelDevToken);
@@ -79,51 +84,48 @@ namespace WindowsApp.Views
             // Label e Campo de texto para DefaultPath
             var labelDefaultPath = new Label()
             {
-                Text = "Caminho Padr�o:",
+                Text = "Caminho Padrão:",
                 AutoSize = true
             };
             txtDefaultPath = new TextBox()
             {
-                PlaceholderText = "Informe o caminho padr�o",
-                Text = _config.DefaultPathForProjects ?? null,
+                PlaceholderText = "Informe o caminho padrão",
+                Text = _config?.DefaultPathForProjects ?? string.Empty,
                 Width = 250
             };
             mainPanel.Controls.Add(labelDefaultPath);
             mainPanel.Controls.Add(txtDefaultPath);
 
-            // Label e Campo num�rico para Tempo de Sincroniza��o
+            // Label e Campo numérico para Tempo de Sincronização
             var labelSyncTime = new Label()
             {
-                Text = "Tempo de Sincroniza��o (minutos):",
+                Text = "Tempo de Sincronização (minutos):",
                 AutoSize = true
             };
             numSyncTime = new NumericUpDown()
             {
                 Minimum = 1,
                 Maximum = 3600,
-                Value = _config.SyncInterval,
+                Value = _config?.SyncInterval ?? 5,
                 Width = 250
             };
             mainPanel.Controls.Add(labelSyncTime);
             mainPanel.Controls.Add(numSyncTime);
 
-            // Bot�o para salvar as configura��es
+            // Botão para salvar as configurações
             btnSave = new Button()
             {
-                Text = "Salvar Configura��es",
+                Text = "Salvar Configurações",
                 AutoSize = true
             };
             btnSave.Click += BtnSave_Click;
             mainPanel.Controls.Add(btnSave);
         }
 
-        // ... c�digo existente ...
-
-        private async void BtnSave_Click(object sender, EventArgs e) // Adicione 'async' aqui
+        private async void BtnSave_Click(object? sender, EventArgs e)
         {
             if (sender is Button button)
             {
-                // Aqui voc� pode salvar ou aplicar as configura��es
                 bool devMode = cbDev.Checked;
                 string devToken = txtDevToken.Text;
                 string defaultPath = txtDefaultPath.Text;
@@ -137,16 +139,16 @@ namespace WindowsApp.Views
                     Token = devToken
                 };
 
-                if (await ModifyAppSetting.ChangeAppSettings(settings)) // Corrigido para 'settings'
+                if (await ModifyAppSetting.ChangeAppSettings(settings))
                 {
-                    MessageBox.Show($"appsettings atualizado com sucesso!");
+                    MessageBox.Show("appsettings atualizado com sucesso!");
                 }
                 else
                 {
-                    MessageBox.Show($"Erro na atualiza��o do appsettings.");
+                    MessageBox.Show("Erro na atualização do appsettings.");
                 }
 
-                this.Close();  // Fecha o formul�rio de configura��es
+                this.Close();  // Fecha o formulário de configurações
             }
         }
     }

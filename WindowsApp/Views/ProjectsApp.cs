@@ -9,34 +9,41 @@ namespace WindowsApp.Views
 {
     public partial class ProjectsApp : Form
     {
-        private ListBox lstProjects;
-        private Button btnAddProject;
-        private Label lblSelectedProject;
-        private string selectedProject; // Vari�vel para armazenar o projeto selecionado
+        // Inicialização dos campos obrigatórios no momento da declaração
+        private ListBox lstProjects = new ListBox(); // Inicializado diretamente
+        private Button btnAddProject = new Button(); // Inicializado diretamente
+        private Label lblSelectedProject = new Label(); // Inicializado diretamente
+        private string? selectedProject; // Variável para armazenar o projeto selecionado
 
         private BoxClient? _auth;
         private ProjectManager? _projectManager;
 
-        private List<string> projects;
+        private List<string> projects = new List<string>(); // Inicializa a lista como uma nova lista
 
         public ProjectsApp(BoxClient client, ProjectManager projectManager)
         {
             _auth = client;
             _projectManager = projectManager;
-            _ = ListProjects();
             InitializeComponent();
+            _ = ListProjects(); // A chamada é assíncrona e segura
         }
-        private async Task ListProjects(){
-            var ProjectsData = await GetLogs.GetProjectsLogFile();
-            if (ProjectsData?.LocalProjects != null){
-                projects = ProjectsData.LocalProjects.Values
-                .Select(p => p.Name)  // Extrai os nomes dos projetos
-                .ToList();            // Converte para uma lista de strings
-            }else{  
-                throw new Exception($"MAIN : ListProjects(), error: Metadata or Project Name not invalid.");
-            } 
 
-            lstProjects.DataSource = projects;
+        private async Task ListProjects()
+        {
+            var ProjectsData = await GetLogs.GetProjectsLogFile();
+            if (ProjectsData?.LocalProjects != null)
+            {
+                projects = ProjectsData.LocalProjects.Values
+                    .Select(p => p.Name)  // Extrai os nomes dos projetos
+                    .ToList();            // Converte para uma lista de strings
+            }
+            else
+            {
+                throw new Exception("MAIN : ListProjects(), error: Metadata or Project Name not invalid.");
+            }
+
+            // Verificação adicional de nulidade antes de atribuir
+            lstProjects.DataSource = projects ?? new List<string>();
         }
 
         private void InitializeComponent()
@@ -52,12 +59,11 @@ namespace WindowsApp.Views
                 Height = 150,
                 Location = new Point(20, 20)
             };
-            lstProjects.SelectedIndexChanged += LstProjects_SelectedIndexChanged; // Evento de sele��o
+            lstProjects.SelectedIndexChanged += LstProjects_SelectedIndexChanged; // Evento de seleção
             this.Controls.Add(lstProjects);
-            
-            if(projects != null){
-                lstProjects.DataSource = projects;
-            }
+
+            // Garantindo que o DataSource seja atribuído de forma segura
+            lstProjects.DataSource = projects ?? new List<string>();
 
             lblSelectedProject = new Label()
             {
@@ -65,9 +71,9 @@ namespace WindowsApp.Views
                 Location = new Point(20, 180),
                 AutoSize = true
             };
-            this.Controls.Add(lblSelectedProject);  // Adiciona o label ao formul�rio
+            this.Controls.Add(lblSelectedProject);  // Adiciona o label ao formulário
 
-            // Bot�o para adicionar um projeto
+            // Botão para adicionar um projeto
             btnAddProject = new Button()
             {
                 Text = "Adicionar Projeto",
@@ -79,27 +85,27 @@ namespace WindowsApp.Views
             this.Controls.Add(btnAddProject);
         }
 
-        // Evento de clique do bot�o "Adicionar Projeto"
-        private void BtnAddProject_Click(object sender, EventArgs e)
+        // Evento de clique do botão "Adicionar Projeto"
+        private void BtnAddProject_Click(object? sender, EventArgs e)
         {
-            // Solicitar ao usu�rio o nome do novo projeto
+            // Solicitar ao usuário o nome do novo projeto
             string NameProject = Microsoft.VisualBasic.Interaction.InputBox("Digite o nome do novo projeto", "Adicionar Projeto", "");
             if (!string.IsNullOrEmpty(NameProject))
             {
                 _ = AddProject(NameProject);
-                projects.Add(NameProject);  // Adiciona o novo projeto � lista
+                projects.Add(NameProject);  // Adiciona o novo projeto à lista
                 lstProjects.DataSource = null; // Redefine o DataSource
                 lstProjects.DataSource = projects; // Atualiza a lista
             }
         }
 
-        // Evento de sele��o de um item na lista
-        private void LstProjects_SelectedIndexChanged(object sender, EventArgs e)
+        // Evento de seleção de um item na lista
+        private void LstProjects_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            // Verifique se algum item foi selecionado (caso contr�rio, seleciona um item vazio)
+            // Verifique se algum item foi selecionado (caso contrário, seleciona um item vazio)
             if (lstProjects.SelectedItem != null)
             {
-                // Atualiza a vari�vel 'selectedProject' com o projeto selecionado
+                // Atualiza a variável 'selectedProject' com o projeto selecionado
                 selectedProject = lstProjects.SelectedItem.ToString();
 
                 // Exibe o projeto selecionado no label
@@ -107,22 +113,28 @@ namespace WindowsApp.Views
             }
         }
 
-        // Fun��o para acessar o projeto selecionado em outra parte do aplicativo
+        // Função para acessar o projeto selecionado em outra parte do aplicativo
         public string GetSelectedProject()
         {
-            return selectedProject;
+            return selectedProject ?? string.Empty; // Retorna uma string vazia caso seja nulo
         }
 
-        private async Task AddProject(string NameProject){
-            if(_projectManager != null){
-                if(NameProject != null){
-                    try{
+        private async Task AddProject(string NameProject)
+        {
+            if (_projectManager != null)
+            {
+                if (!string.IsNullOrEmpty(NameProject))
+                {
+                    try
+                    {
                         await _projectManager.AddProject(_auth, NameProject);
-                    }catch(Exception ex){
+                    }
+                    catch (Exception ex)
+                    {
                         MessageBox.Show($"ProjectsApp : AddProject(), Erro: {ex}");
                     }
                 }
             }
-        } 
+        }
     }
 }

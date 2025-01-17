@@ -77,7 +77,6 @@ namespace WindowsApp.Managers{
         public async Task OpenProjectForMonitory(BoxClient auth, string NameProject){
             var _config = ConfigHelper.Instance.GetConfig();
             string ProjectPath = $"{_config.DefaultPathForProjects}/{StringUtils.SanitizeString(NameProject)}";
-
             var projectData = await GetProject(NameProject);
             string IdFolderProject = projectData.FolderId;
 

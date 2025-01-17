@@ -1,13 +1,12 @@
-﻿using Box.Sdk.Gen;
+using Box.Sdk.Gen;
 using WindowsApp.Managers;
 using WindowsApp.Models; // temp
 using WindowsAppSync.Services.API;
 using WindowsApp.Models.Class;
 
-namespace WindowsApp{
-    class Program
-    {
-        public static async Task Main(string[] args)
+namespace WindowsApp.Test{
+    class TestApp{
+        public static async Task DevMode()
         {
             var auth = await Authenticator.Auth();
             var projectManager = new ProjectManager(auth);
@@ -115,7 +114,5 @@ namespace WindowsApp{
                 await projectManager.OpenProjectForMonitory(auth, NameProject);
             }
         }
-
     }
-
 }
