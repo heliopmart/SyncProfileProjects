@@ -168,7 +168,7 @@ namespace WindowsApp.Managers{
 
             async Task<bool> CloudProjectSync_Sync(BoxClient auth, Project DataProject, string DefaultPathForProjects){
                 CentralCache.Instance.AddToCache("NameProject", DataProject.Name); // adiciona dados importante em cache
-                return await new BoxUploader().UploadManager(auth, DefaultPathForProjects,"mainFolder", null);
+                return await new BoxUploader().UploadManager(auth, DefaultPathForProjects,"mainFolder", null, "mainFolder");
             }
         }
 

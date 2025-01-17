@@ -4,7 +4,7 @@ using System.Net;
 
 namespace WindowsAppSync.Services.API
 {
-    public class Authenticator
+    public class Authenticator : Form
     {
         public static async Task<BoxClient> Auth()
         {
@@ -24,10 +24,11 @@ namespace WindowsAppSync.Services.API
             // Gera a URL de autorização
             string RedirectUri = "http://localhost:5000/callback";
             var authorizeUrl = $"https://account.box.com/api/oauth2/authorize?client_id={_config.APIConfigs.ClientId}&redirect_uri={RedirectUri}&response_type=code";
-            Console.WriteLine($"Acesse esta URL para autorizar: {authorizeUrl}");
+            
+            OpenAuthorizationLinkInBrowser(authorizeUrl);
 
             // Inicia o servidor HTTP para capturar o código de autorização
-            string code = await StartHttpListenerAsync();
+            string code = await Task.Run(() => StartHttpListenerAsync());
 
             // Troca o código pelo token de acesso
             var token = await auth.GetTokensAuthorizationCodeGrantAsync(code);
@@ -74,6 +75,24 @@ namespace WindowsAppSync.Services.API
 
             listener.Stop();
             return code;
+        }
+
+        // Função para abrir o navegador com o link de autorização
+        private static void OpenAuthorizationLinkInBrowser(string authorizeUrl)
+        {
+            try
+            {
+                // Abre a URL no navegador padrão do sistema
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = authorizeUrl,
+                    UseShellExecute = true // Garante que o navegador seja aberto
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao abrir o navegador: {ex.Message}");
+            }
         }
     }
 }

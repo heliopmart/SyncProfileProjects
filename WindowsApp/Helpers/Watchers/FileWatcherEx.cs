@@ -35,6 +35,11 @@ namespace WindowsApp.Helpers.Watchers{
             Console.WriteLine("FileWatcher started...");
         }
 
+        public void StopWatching(){
+            var _fw = new FileSystemWatcherEx(_pathToWatch);
+            _fw.Stop();
+        }
+
         private void OnCreated(object? sender, FileChangedEvent e){        
             lock (PendingCreations)
             {

@@ -102,5 +102,23 @@ namespace WindowsApp.Managers{
             var fileWatcher = new FileWatcher(Path, queueManager, syncManager);
             fileWatcher.StartWatching();
         }
+
+        public static void CloseProjectFolderMonitory(BoxClient auth, string Path){
+            var queueManager = new QueueManager();
+            var syncManager = new SyncManager(auth, queueManager);
+
+            var fileWatcher = new FileWatcher(Path, queueManager, syncManager);
+            fileWatcher.StopWatching();
+        }
+
+        public async Task CloseProjectMonitory(BoxClient auth, string NameProject){
+            var _config = ConfigHelper.Instance.GetConfig();
+            string ProjectPath = $"{_config.DefaultPathForProjects}/{StringUtils.SanitizeString(NameProject)}";
+           
+            CloseProjectFolderMonitory(auth, ProjectPath);
+
+            // Inicie o SyncProcessor
+            await Task.Run(() => SyncProcessor.StopSync());
+        }
     }
 }
