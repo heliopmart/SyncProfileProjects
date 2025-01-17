@@ -3,6 +3,7 @@ using WindowsApp.Utils;
 using WindowsAppSync.Services.API;
 using Box.Sdk.Gen;
 
+
 namespace WindowsApp.Views
 {
     public class SetApp : Form
@@ -20,9 +21,15 @@ namespace WindowsApp.Views
         private ProjectManager? _projectManager;
         private ProjectsApp? _projectsForm;
 
+        // Notificação na bandeja do sistema
+        private NotifyIcon trayIcon = new NotifyIcon();
+         private ContextMenuStrip trayMenu = new ContextMenuStrip();
+
         public SetApp()
         {
             _ = InitializeComponentsAsync();
+            SetTrayIcon(); // Função para configurar o ícone da bandeja
+            MinimizeToTray(); // Função para minimizar para a bandeja
         }
 
         private async Task InitializeComponentsAsync()
@@ -168,6 +175,8 @@ namespace WindowsApp.Views
             }
         }
 
+
+        // Funcções de comunicação externa
         private static async Task OpenProject(BoxClient auth, ProjectManager projectManager, string nameProject)
         {
             if (!string.IsNullOrEmpty(nameProject))
@@ -181,6 +190,56 @@ namespace WindowsApp.Views
             if (!string.IsNullOrEmpty(nameProject))
             {
                 await projectManager.CloseProjectMonitory(auth, nameProject);
+            }
+        }
+
+        // Função para configurar o ícone na bandeja
+        private void SetTrayIcon()
+        {
+            trayMenu = new ContextMenuStrip(); // Usando ContextMenuStrip ao invés de ContextMenu
+            trayMenu.Items.Add("Abrir", null, TrayOpen_Click);
+            trayMenu.Items.Add("Sair", null, TrayExit_Click);
+
+            trayIcon = new NotifyIcon
+            {
+                Icon = new Icon("./Resources/icone.ico"), // Ícone da bandeja
+                ContextMenuStrip = trayMenu,
+                Visible = true
+            };
+        }
+
+        // Função para minimizar o app para a bandeja
+        private void MinimizeToTray()
+        {
+            this.WindowState = FormWindowState.Minimized;
+            this.ShowInTaskbar = false;
+            trayIcon.ShowBalloonTip(3000, "Aplicativo Minimizando", "Aplicativo funcionando em segundo plano", ToolTipIcon.Info);
+        }
+
+        // Evento de clique no ícone da bandeja para abrir o app
+        private void TrayOpen_Click(object? sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Normal;
+            this.ShowInTaskbar = true;
+            trayIcon.Visible = false;
+        }
+
+        // Evento de clique no ícone da bandeja para sair
+        private void TrayExit_Click(object? sender, EventArgs e)
+        {
+            trayIcon.Visible = false;
+            Application.Exit();
+        }
+
+        // Substitua o método `OnFormClosing` para garantir que o app minimize ao invés de fechar
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                MinimizeToTray();
+                SetTrayIcon();
             }
         }
     }

@@ -4,8 +4,8 @@
     <TargetFramework>net9.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-  <UseWindowsForms>true</UseWindowsForms>   <!--  Habilita o Windows Forms -->
-    <ApplicationIcon>./Resources/icone.ico</ApplicationIcon>  <!-- Adiciona o ícone ao aplicativo -->
+    <UseWindowsForms>true</UseWindowsForms>   <!--  Habilita o Windows Forms -->
+    <ApplicationIcon>Resources/icone.ico</ApplicationIcon>  <!-- Adiciona o ícone ao aplicativo -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +17,12 @@
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
     <None Update="appsettings.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\icone.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="config\metadata.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 </Project>
