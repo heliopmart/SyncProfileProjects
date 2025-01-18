@@ -119,5 +119,14 @@ namespace WindowsApp.Managers{
             // Inicie o SyncProcessor
             await Task.Run(() => SyncProcessor.StopSync());
         }
+
+        // change metadata.yaml
+        public static void SyncMetaData(){
+            _ = SyncronizationMetaData.SyncMetaData();
+            // if(AuthFirebase != null){
+            // }else{
+            //     Console.WriteLine("Nuuu");
+            // }
+        }
     }
 }

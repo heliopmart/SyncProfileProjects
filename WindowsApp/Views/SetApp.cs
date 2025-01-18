@@ -1,8 +1,6 @@
 using WindowsApp.Managers;
-using WindowsApp.Utils;
 using WindowsAppSync.Services.API;
 using Box.Sdk.Gen;
-
 
 namespace WindowsApp.Views
 {
@@ -23,13 +21,13 @@ namespace WindowsApp.Views
 
         // Notificação na bandeja do sistema
         private NotifyIcon trayIcon = new NotifyIcon();
-         private ContextMenuStrip trayMenu = new ContextMenuStrip();
+        private ContextMenuStrip trayMenu = new ContextMenuStrip();
 
         public SetApp()
         {
             _ = InitializeComponentsAsync();
-            SetTrayIcon(); // Função para configurar o ícone da bandeja
-            MinimizeToTray(); // Função para minimizar para a bandeja
+           // SetTrayIcon(); // Função para configurar o ícone da bandeja
+           // MinimizeToTray(); // Função para minimizar para a bandeja
         }
 
         private async Task InitializeComponentsAsync()
@@ -37,6 +35,7 @@ namespace WindowsApp.Views
             _auth = await Authenticator.Auth();
             _projectManager = new ProjectManager(_auth);
             _projectsForm = new ProjectsApp(_auth, _projectManager);
+            FirebaseAuthenticator.AuthenticateWithOAuthAsync();
 
             SetFormProperties();
             SetUpControls();
@@ -68,7 +67,7 @@ namespace WindowsApp.Views
             btnProjects = CreateButton("Abrir Projetos", BtnProjects_Click);
             mainPanel.Controls.Add(btnProjects);
 
-            btnLogs = CreateButton("Abrir Logs", BtnProjects_Click);
+            btnLogs = CreateButton("Abrir Logs", BtnLogs_Click);
             mainPanel.Controls.Add(btnLogs);
 
             btnStartSync = CreateButton("Iniciar Sincronização", BtnStartSync_Click);
@@ -137,6 +136,7 @@ namespace WindowsApp.Views
         {
             MainForm logForm = new MainForm();
             logForm.Show();
+            SyncMetaDataProject();
         }
 
         // Evento para Iniciar a Sincronização
@@ -193,6 +193,11 @@ namespace WindowsApp.Views
             }
         }
 
+            // Sincronização do metadata.yaml
+        private static void SyncMetaDataProject(){
+            ProjectManager.SyncMetaData();
+        }
+
         // Função para configurar o ícone na bandeja
         private void SetTrayIcon()
         {
@@ -234,13 +239,13 @@ namespace WindowsApp.Views
         // Substitua o método `OnFormClosing` para garantir que o app minimize ao invés de fechar
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            base.OnFormClosing(e);
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                e.Cancel = true;
-                MinimizeToTray();
-                SetTrayIcon();
-            }
+            // base.OnFormClosing(e);
+            // if (e.CloseReason == CloseReason.UserClosing)
+            // {
+            //     e.Cancel = true;
+            //     MinimizeToTray();
+            //     SetTrayIcon();
+            // }
         }
     }
 }

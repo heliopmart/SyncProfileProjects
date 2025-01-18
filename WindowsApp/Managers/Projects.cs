@@ -1,6 +1,5 @@
 using Box.Sdk.Gen;
 using System.Reflection;
-using WindowsApp.Models; // Importa FileModel e Project
 using WindowsApp.Helpers;
 using WindowsApp.Models.Class; // Importa FileModel e Project
 using WindowsApp.Utils;

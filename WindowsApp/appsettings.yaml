@@ -1,5 +1,6 @@
 DefaultPathForProjects: D:\SyncProfileProjects\Projects
 MetaDataPath: config/
+FirebaseAppID: heliopmart
 Development: true
 SyncInterval: 300
 APIConfigs:

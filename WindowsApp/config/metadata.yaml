@@ -1,36 +1,36 @@
 LocalProjects:
   Teste 1:
     Name: Teste 1
-    DateTime: 2025-01-09T19:26:33.3831074-03:00
+    DateTime: 2025-01-09T19:26:33.0000000
     Device: DESKTOP-7P120MF
-    AsyncTime: 2025-01-17T13:44:47.8515721-03:00
+    AsyncTime: 2025-01-18T11:08:35.5348136-03:00
     FolderId: 302035218842
-    Status: 1
+    Status: 2
   cadeiracontencaomini:
     Name: cadeiracontencaomini
     DateTime: 2025-01-10T20:24:42.3868816-03:00
     Device: DESKTOP-7P120MF
-    AsyncTime: 2025-01-13T20:32:29.6780686-03:00
+    AsyncTime: 2025-01-18T11:08:35.6312097-03:00
     FolderId: 302247554397
     Status: 1
-  "Teste_Integra\0\0o":
-    Name: "Teste_Integra\0\0o"
-    DateTime: 2025-01-13T11:55:26.5810605-03:00
+  Teste_Integrao:
+    Name: Teste_Integrao
+    DateTime: 2025-01-13T11:55:26.0000000
     Device: DESKTOP-7P120MF
-    AsyncTime: 2025-01-16T11:30:39.1712364-03:00
+    AsyncTime: 2025-01-18T11:08:35.5956856-03:00
     FolderId: 302508459980
-    Status: 1
+    Status: 2
   modify_test:
     Name: modify_test
-    DateTime: 2025-01-13T15:43:26.7605639-03:00
+    DateTime: 2025-01-13T15:43:26.0000000
     Device: DESKTOP-7P120MF
-    AsyncTime: 2025-01-13T16:27:00.3884081-03:00
+    AsyncTime: 2025-01-18T11:08:35.6452947-03:00
     FolderId: 302531975001
-    Status: 1
+    Status: 2
   Cad:
     Name: Cad
-    DateTime: 2025-01-16T20:50:25.5236927-03:00
+    DateTime: 2025-01-16T20:50:25.0000000
     Device: DESKTOP-7P120MF
-    AsyncTime: 2025-01-16T20:50:26.7377119-03:00
+    AsyncTime: 2025-01-18T11:08:35.6093266-03:00
     FolderId: 303123159994
-    Status: 1
+    Status: 2
