@@ -1,6 +1,5 @@
 using Box.Sdk.Gen;
 using System.Reflection;
-using WindowsApp.Models; // Importa FileModel e Project
 using WindowsApp.Helpers;
 using WindowsApp.Models.Class; // Importa FileModel e Project
 using WindowsApp.Utils;
@@ -108,7 +107,8 @@ namespace WindowsApp.Managers{
                     DateTime = DataProject.DateTime,
                     Device = DataProject.Device,
                     Status = DataProject.Status,
-                    FolderId = ""
+                    FolderId = "",
+                    Id = DataProject.Id ?? null
                 };
                 var MetaData = await UpdateMetaData.UpdateMetaDataLog(DataProjectForLog.Name, DataProjectForLog);
                 if(MetaData){

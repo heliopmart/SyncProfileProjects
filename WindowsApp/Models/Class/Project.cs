@@ -20,13 +20,6 @@ namespace WindowsApp.Models.Class
             Files = [];
         }
 
-        // public Project(string name, string directoryPath)
-        // {
-        //     Id = Guid.NewGuid().ToString();
-        //     Name = name;
-        //     Files = new List<FileModel>();
-        // }
-
         public Project(string name, string directoryPath)
         {
             Id = Guid.NewGuid().ToString();

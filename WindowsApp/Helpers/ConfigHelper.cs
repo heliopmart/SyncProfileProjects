@@ -74,6 +74,7 @@ namespace WindowsApp.Helpers
         public required bool Development { get; set; }
         public int SyncInterval { get; set; }
         public required APIConfigs APIConfigs { get; set; }
+        public required string FirebaseAppID {get; set;}
     }
     
     public class APIConfigs
