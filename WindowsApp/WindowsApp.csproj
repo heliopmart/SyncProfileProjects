@@ -25,6 +25,9 @@
     <None Include="Resources\icone.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\ResponsePageBoxAuth.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="config\metadata.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

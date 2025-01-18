@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Threading.Tasks;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
@@ -42,10 +40,32 @@ namespace WindowsAppSync.Services.API{
             var _config = ConfigHelper.Instance.GetConfig();
             if (_firebaseApp == null)
             {
-                // AuthenticateWithOAuthAsync();
+                throw new Exception("Erro: FirebaseAuth not defined");
             }
             // Retorna a instância do FirestoreDb associada à aplicação
             return FirestoreDb.Create(_config.FirebaseAppID);
+        }
+
+        public static void SourceFirebaseKeys(){
+             // Obter o diretório atual da aplicação (onde o executável está localizado)
+            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Construir o caminho dinâmico para o arquivo de credenciais
+            string credentialsPath = System.IO.Path.Combine(appDirectory, "Keys", "serviceAccountKey.json");
+
+            // Verificar se o arquivo existe antes de definir a variável de ambiente
+            if (File.Exists(credentialsPath))
+            {
+                // Definir a variável de ambiente com o caminho absoluto do arquivo de credenciais
+                Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialsPath);
+
+                // Aqui você pode continuar o fluxo de autenticação do Firebase
+                Console.WriteLine("Variável de ambiente GOOGLE_APPLICATION_CREDENTIALS definida com sucesso.");
+            }
+            else
+            {
+                Console.WriteLine("Arquivo de credenciais não encontrado.");
+            }
         }
     }
 

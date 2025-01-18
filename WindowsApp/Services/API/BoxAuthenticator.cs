@@ -28,7 +28,7 @@ namespace WindowsAppSync.Services.API
             OpenAuthorizationLinkInBrowser(authorizeUrl);
 
             // Inicia o servidor HTTP para capturar o código de autorização
-            string code = await Task.Run(() => StartHttpListenerAsync());
+            string? code = await Task.Run(() => WaitForCodeWithTimeout());
 
             // Troca o código pelo token de acesso
             var token = await auth.GetTokensAuthorizationCodeGrantAsync(code);
@@ -68,7 +68,17 @@ namespace WindowsAppSync.Services.API
 
             // Retorna uma resposta ao navegador
             using var response = context.Response;
-            string responseString = "<html><body>Autorização concluída. Você pode fechar esta janela.</body></html>";
+
+            // Lê o conteúdo do arquivo HTML
+            string responseString;
+            try
+            {
+                responseString = File.ReadAllText("./Resources/ResponsePageBoxAuth.html");
+            }
+            catch
+            {
+                responseString = "<html><body><h1>Erro ao carregar a página de resposta.</h1></body></html>";
+            }
             var buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
             response.ContentLength64 = buffer.Length;
             await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
@@ -77,16 +87,41 @@ namespace WindowsAppSync.Services.API
             return code;
         }
 
+        private static async Task<string?> WaitForCodeWithTimeout()
+        {
+            var timeout = TimeSpan.FromMinutes(2); // 2 minutos de timeout
+            var cts = new CancellationTokenSource(timeout); // Define o tempo limite
+            var token = cts.Token;
+
+            // Tarefa que espera o código de autorização
+            var waitForCodeTask = Task.Run(() => StartHttpListenerAsync(), token);
+
+            // Espera até que a tarefa seja concluída ou o tempo acabe
+            var completedTask = await Task.WhenAny(waitForCodeTask, Task.Delay(timeout, token));
+
+            if (completedTask == waitForCodeTask)
+            {
+                // Código recebido dentro do tempo limite
+                return await waitForCodeTask;
+            }
+            else
+            {
+                // Tempo limite alcançado, reinicia o processo de autenticação
+                Console.WriteLine("Tempo limite atingido. Tentando autenticação novamente...");
+                await Auth(); // Chama a função novamente para reiniciar o processo
+                return null;
+            }
+        }
+
         // Função para abrir o navegador com o link de autorização
         private static void OpenAuthorizationLinkInBrowser(string authorizeUrl)
         {
             try
             {
-                // Abre a URL no navegador padrão do sistema
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = authorizeUrl,
-                    UseShellExecute = true // Garante que o navegador seja aberto
+                    UseShellExecute = true
                 });
             }
             catch (Exception ex)

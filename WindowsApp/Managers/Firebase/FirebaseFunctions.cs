@@ -1,7 +1,6 @@
 using Google.Cloud.Firestore;
 using WindowsAppSync.Services.API;
-using System.Text.Json.Serialization;
-using System.Text.Json;
+using WindowsApp.Models.Class;
 
 namespace WindowsApp.Managers.Firebase
 {
@@ -44,6 +43,10 @@ namespace WindowsApp.Managers.Firebase
         private static async Task<bool> CreateDocumentInternal(string collection, object data)
         {
             try{
+                if (firestoreDb == null)
+                {
+                    throw new Exception("DB Auth is Null");
+                }
                 var documentReference = await firestoreDb.Collection(collection).AddAsync(data);
                 return true;
             }catch(Exception ex){
@@ -91,35 +94,19 @@ namespace WindowsApp.Managers.Firebase
         private static async Task<bool> UpdateDocumentInternal(string collection, string documentId, object data)
         {
             try{
+                if (firestoreDb == null)
+                {
+                    throw new Exception("DB Auth is Null");
+                }
                 var documentReference = firestoreDb.Collection(collection).Document(documentId);
                 await documentReference.SetAsync(data, SetOptions.MergeAll);  // Atualiza o documento
                 return true;
             }catch(Exception ex){
                 Console.WriteLine(ex);
-                throw new Exception($"FirebaseManager : CreateDocumentInternal(), error: {ex}");
+                throw new Exception($"FirebaseManager : UpdateDocumentInternal(), error: {ex}");
             }
         }
 
         #endregion
-    }
-
-    // Modelo de documento do Firestore
-    [FirestoreData] 
-    public class FirestoreDocument
-    {
-        [FirestoreProperty]
-        public required string Name { get; set; }
-        [FirestoreProperty]
-        public required string DateTime { get; set; }
-        [FirestoreProperty]
-        public required string Device { get; set; }
-        [FirestoreProperty]
-        public required string AsyncTime { get; set; }
-        [FirestoreProperty]
-        public required string FolderId {get; set;}
-        [FirestoreProperty]
-        public int Status { get; set; }
-        [FirestoreProperty]
-        public string? Id { get; set; }
     }
 }

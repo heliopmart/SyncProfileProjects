@@ -107,7 +107,8 @@ namespace WindowsApp.Managers{
                     DateTime = DataProject.DateTime,
                     Device = DataProject.Device,
                     Status = DataProject.Status,
-                    FolderId = ""
+                    FolderId = "",
+                    Id = DataProject.Id ?? null
                 };
                 var MetaData = await UpdateMetaData.UpdateMetaDataLog(DataProjectForLog.Name, DataProjectForLog);
                 if(MetaData){

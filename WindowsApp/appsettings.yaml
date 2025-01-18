@@ -1,7 +1,6 @@
 DefaultPathForProjects: D:\SyncProfileProjects\Projects
 MetaDataPath: config/
-FirebaseAppID: heliopmart
-Development: true
+Development: false
 SyncInterval: 300
 APIConfigs:
   Token: ZB3hrk3KZTWNfh1LBwadDNPzMevvll84
@@ -69,3 +68,4 @@ APIConfigs:
   JwtPrivateKeyPassword: c8660d81c54ca840edbf73a4fd11d326
   JwtPublicKeyId: njfbj0ak
   UserID: 39190607560
+FirebaseAppID: heliopmart

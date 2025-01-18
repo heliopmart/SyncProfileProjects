@@ -52,10 +52,18 @@ namespace WindowsApp.Helpers
                     Device = DataProject.Device,
                     Status = DataProject.Status,
                     AsyncTime = DateTime.Now,
-                    FolderId = DataProject.FolderId
+                    FolderId = DataProject.FolderId,
+                    Id = DataProject.Id ?? null
                 };
 
-                return await ChangeMetaData(metaDataProject);
+                if(await ChangeMetaData(metaDataProject)){
+                    if(metaDataProject.LocalProjects[ProjectName].Id != null){
+                        return await SyncronizationMetaData.UpdateCloudMetaData(ProjectDataConverter.ConvertToFirestoreDocument(metaDataProject.LocalProjects[ProjectName]));
+                    }else{
+                        return await SyncronizationMetaData.CreateCloudMetaData(ProjectDataConverter.ConvertToFirestoreDocument(metaDataProject.LocalProjects[ProjectName]));
+                    }
+                }
+                return false;
             }
             else
             {
@@ -168,9 +176,6 @@ namespace WindowsApp.Helpers
             Metadata _localMetadaData = await GetLogs.GetProjectsLogFile();
             try{
                 List<FirestoreDocument> _Divergents = CompareLocalWithFirestore(_localMetadaData.LocalProjects, _firebaseMetaData);
-                /*
-                    TODO: Fazer o download dos dados da nuvem para local. Verificando atravez do syncTime
-                */
                 if(await CreateOrUpdateMetaDataBD(_Divergents, _firebaseMetaData)){
                     return true;
                 }
@@ -183,6 +188,12 @@ namespace WindowsApp.Helpers
             
         }
 
+        public static async Task<bool> CreateCloudMetaData(FirestoreDocument DocMetaData){
+            return await FirebaseManager.CreateDocumentAsync("metadata", DocMetaData);
+        }
+        public static async Task<bool> UpdateCloudMetaData(FirestoreDocument DocMetaData){
+            return await FirebaseManager.UpdateDocumentAsync("metadata", DocMetaData.Id ,DocMetaData);
+        }
         private static List<FirestoreDocument> CompareLocalWithFirestore(
             Dictionary<string, ProjectData> localProjects,
             List<FirestoreDocument> firestoreDocuments)
@@ -259,8 +270,8 @@ namespace WindowsApp.Helpers
                 }
 
                 foreach (var metadataCloud in _firebaseMetaData){
-                    var existingDoc = _Divergents.FirstOrDefault(doc => doc.Name == metadataCloud.Name);
-                    if(existingDoc != null){
+                    var Doc = _Divergents.FirstOrDefault(doc => doc.Name == metadataCloud.Name);
+                    if(Doc != null){
                         await UpdateLocalMetaData(metadataCloud.Name, metadataCloud);
                     }else{
                         await CreateLocalMetaData(metadataCloud.Name, metadataCloud);
@@ -275,27 +286,13 @@ namespace WindowsApp.Helpers
             }
         }
 
-
         private static async Task<bool> UpdateLocalMetaData(string NameProject, FirestoreDocument DataProject){
-            var data = new ProjectData{
-                Name = DataProject.Name,
-                DateTime = DateTime.Parse(DataProject.DateTime),
-                Device = DataProject.Device,
-                Status = 2,
-                AsyncTime = DateTime.Parse(DataProject.AsyncTime),
-                FolderId = DataProject.FolderId
-            };
+            DataProject.Status = 2;
+            var data = ProjectDataConverter.ConvertToProjectData(DataProject);
             return await UpdateMetaData.UpdateMetaDataLog(NameProject, data);
         }
         private static async Task<bool> CreateLocalMetaData(string NameProject, FirestoreDocument DataProject){
-            var data = new ProjectData{
-                Name = DataProject.Name,
-                DateTime = DateTime.Parse(DataProject.DateTime),
-                Device = DataProject.Device,
-                Status = DataProject.Status,
-                AsyncTime = DateTime.Parse(DataProject.AsyncTime),
-                FolderId = DataProject.FolderId
-            };
+            var data = ProjectDataConverter.ConvertToProjectData(DataProject);
             if(await UpdateMetaData.UpdateMetaDataLog(NameProject, data)){
                 var _config = ConfigHelper.Instance.GetConfig();
                 var DefaultPathForProjects = _config.DefaultPathForProjects;

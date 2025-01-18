@@ -123,10 +123,6 @@ namespace WindowsApp.Managers{
         // change metadata.yaml
         public static void SyncMetaData(){
             _ = SyncronizationMetaData.SyncMetaData();
-            // if(AuthFirebase != null){
-            // }else{
-            //     Console.WriteLine("Nuuu");
-            // }
         }
     }
 }

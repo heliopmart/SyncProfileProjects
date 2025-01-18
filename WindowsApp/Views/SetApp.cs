@@ -26,17 +26,23 @@ namespace WindowsApp.Views
         public SetApp()
         {
             _ = InitializeComponentsAsync();
-           // SetTrayIcon(); // Função para configurar o ícone da bandeja
-           // MinimizeToTray(); // Função para minimizar para a bandeja
+           SetTrayIcon(); // Função para configurar o ícone da bandeja
+           MinimizeToTray(); // Função para minimizar para a bandeja
         }
 
         private async Task InitializeComponentsAsync()
         {
+
+            var authenticationCompletionSource = new TaskCompletionSource();
             _auth = await Authenticator.Auth();
+            authenticationCompletionSource.SetResult();
+            await authenticationCompletionSource.Task;
+
             _projectManager = new ProjectManager(_auth);
             _projectsForm = new ProjectsApp(_auth, _projectManager);
             FirebaseAuthenticator.AuthenticateWithOAuthAsync();
 
+            SyncMetaDataProject();
             SetFormProperties();
             SetUpControls();
         }
@@ -136,7 +142,6 @@ namespace WindowsApp.Views
         {
             MainForm logForm = new MainForm();
             logForm.Show();
-            SyncMetaDataProject();
         }
 
         // Evento para Iniciar a Sincronização
@@ -239,13 +244,13 @@ namespace WindowsApp.Views
         // Substitua o método `OnFormClosing` para garantir que o app minimize ao invés de fechar
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            // base.OnFormClosing(e);
-            // if (e.CloseReason == CloseReason.UserClosing)
-            // {
-            //     e.Cancel = true;
-            //     MinimizeToTray();
-            //     SetTrayIcon();
-            // }
+            base.OnFormClosing(e);
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                MinimizeToTray();
+                SetTrayIcon();
+            }
         }
     }
 }
