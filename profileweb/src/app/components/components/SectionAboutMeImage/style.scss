@@ -1,0 +1,104 @@
+@mixin Flex( $direction, $wrap, $align, $content) {
+    display: flex;
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    align-items: $align;
+    justify-content: $content;
+}
+
+.aboutMe_images{
+    width: 90%;
+    height: auto;
+    @include Flex(row, nowrap, center, space-between);
+    gap: 10%;
+    padding: 10px 5% 10px 5%;
+    box-sizing: border-box;
+    position: relative;
+    margin: 0px auto;
+    top: -10px;
+
+    .content_gear{
+        width: 60%;
+        height: auto;
+        @include Flex(row, nowrap, center, start);
+        
+        img{
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: relative;
+            animation-timing-function: linear; 
+            animation-iteration-count: infinite;
+        }
+
+        #gear_1{
+           top: 30px;
+           filter: invert(76%) sepia(22%) saturate(1418%) hue-rotate(211deg) brightness(87%) contrast(95%);
+        }
+        #gear_2{
+            top: 19px;
+            right: 21px;
+            filter: invert(69%) sepia(91%) saturate(352%) hue-rotate(159deg) brightness(95%) contrast(107%);
+        }
+        #gear_3{
+            top: 58px;
+            right: 50px;
+            filter: invert(28%) sepia(11%) saturate(2895%) hue-rotate(195deg) brightness(96%) contrast(90%);
+        }
+        #gear_4{
+            top: -17px;
+            right: 101px;    
+            filter: invert(91%) sepia(10%) saturate(5465%) hue-rotate(312deg) brightness(106%) contrast(95%); 
+        }
+        #gear_5{
+            top: 16px;
+            right: 134px;
+            filter: invert(54%) sepia(53%) saturate(1226%) hue-rotate(199deg) brightness(103%) contrast(98%);
+        }
+        #gear_6{
+            top: 18px;
+            right: 194px;
+            filter: invert(6%) sepia(43%) saturate(2349%) hue-rotate(203deg) brightness(88%) contrast(93%);
+        }
+        #gear_7{
+            top: -33px;
+            right: 293px;
+            filter: invert(66%) sepia(12%) saturate(568%) hue-rotate(61deg) brightness(95%) contrast(91%);
+        }   
+    }
+
+    #male_certificate{
+        width: 100%;
+        height: 100%;
+        max-width: 280px;
+        max-height: 350px;
+        min-width: 80px;
+        min-height: 120px;
+        
+        object-fit: contain;
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 1470px) {
+
+    .aboutMe_images{
+        justify-content: center;
+
+        #male_certificate {
+          display: none;
+        }
+    
+        .content_gear{
+            width: 100%;
+        }
+    }
+}

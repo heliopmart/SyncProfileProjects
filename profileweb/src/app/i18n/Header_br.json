@@ -1,0 +1,57 @@
+{
+    "header": {
+        "head": {
+        "name": "Hélio Peres Martins Neto",
+        "selectTittle": "Selecionar Linguagem"
+        },
+        "wellcome":{
+            "titleFirstAcess": [
+                "Bem Vindo!",
+                "Seja muito bem vindo!",
+                "Oiii! Bem vindo!",
+                "Eai? Bem vindo!"
+            ],
+            "title": [
+                "Oi de novo, Bem vindo!",
+                "Voltou!!! Bem vindo",
+                "Bem vindo de volta!",
+                "Opa! Bem vindo de volta."
+            ],
+            "subtitle": "Escolha alguma opção abaixo e tenha uma <i>experiência única</i> no meu <b>portfólio</b>."
+        },
+        "buttons": {
+            "story": "Conte sua história",
+            "recruiter": "Recrutadores",
+            "just": "equilibrado"
+        },
+        "curiosity": {
+            "story": [
+                "Apertando aí o site se ajusta para te mostrar mais detalhes da minha história!",
+                "Deixa eu te contar minha história, clique ai!",
+                "Quer saber da minha história em detalhes? clique aí!",
+                "Vamos trasformar sua experiência. Clique!"
+            ],
+            "recruiter": [
+                "Como vai RH? Apertando aí o site se ajusta para uma experiência objetiva, expecialmente para você!",
+                "HR é você? Aperte para ter uma máxima experiência!",
+                "Se você for um recrutador, aperte aí",
+                "Um recrutador! faz tempo que não vejo um."
+            ],
+            "just": [
+                "Quer ter uma experiência equilibrada no meu portifólio, clique aí!",
+                "O equilibrio é muito bom.",
+                "Aperte para mesclar suas experiências!"
+            ],
+            "imageWellcome": [
+                "Admito! parecia faltar alguma coisa aí, então adicionei essa imagem",
+                "Eu ia trocar essa imagem, mas achei que combinou"
+            ],
+            "div-name":[
+                "Esse daí é meu nome, igual o primeiro elemento do grupo 18 da tabela periódica.",
+                "Sim! esse aí sou eu.",
+                "Esse é meu nome, gostou?",
+                "[...] você achou meu nome."
+            ]
+        }
+    }
+}

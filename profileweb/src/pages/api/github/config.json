@@ -1,0 +1,5 @@
+{
+    "user": "heliopmart",
+    "defaultUrl": "https://api.github.com/users",
+    "request": "repos" 
+}

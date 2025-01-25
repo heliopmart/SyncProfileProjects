@@ -1,0 +1,267 @@
+@mixin Flex( $direction, $wrap, $align, $content) {
+    display: flex;
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    align-items: $align;
+    justify-content: $content;
+}
+
+header{
+    width: 100%;
+    height: 100vh;
+    @include Flex(column, wrap, center, none);
+    gap: 100px;
+    padding: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: linear-gradient(71deg, #0F172A, #334155);
+
+    animation: backgrundMoviment 5s ease infinite;
+    background-size: 200% 200%;
+
+    .sectionHead{
+        width: 100%;
+        min-height: 70px;
+        height: auto;
+        padding: 5px;
+        box-sizing: border-box;
+        @include Flex(row, wrap, center, space-between);
+        gap: 10;
+
+        #div-name{
+            width: auto;
+            min-width: 100px;
+            height: auto;
+            padding: 10px;
+            text-align: left;
+
+            .name{
+                font-size: 29px;
+                font-weight: bold;
+                color: #fff;
+            }
+        }
+
+        #div-language{
+            width: auto;
+            height: auto;
+            @include Flex(row, nowrap, center, left);
+            gap: 15px;
+
+            #iconFlag{
+                width: 86px;
+                height: 45px;
+                border-radius: 10px;
+                background-position: center;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-color: #b6b6b6;
+            }
+
+            .flag-br{
+                background-image: url(/images/flag/flag_br.png);
+            }
+
+            .flag-us{
+                background-image: url(/images/flag/flag_us.png);
+            }
+
+            .optionlanguage{
+                font-weight: bold;
+                text-transform: uppercase;
+                background: transparent;
+                border: 0px;
+                color: #fff;
+                font-size: 22px;
+                border-radius: 5px;
+                
+                option{
+                    color: #1a1a1a;
+                    font-size: 15px;
+                }
+            }
+        }
+    }
+
+    .sectionWellcome{
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding-left: 40px;
+        box-sizing: border-box;
+        @include Flex(row, wrap, center, space-between);
+
+        .div-left{
+            width: auto;
+            height: 300px;
+            min-height: 100px;
+            position: relative;
+            padding: 0px 0px 0px 60px;
+            @include Flex(column, nowrap, baseline, center);
+            gap: 40px;
+            max-width: 50%;
+            min-width: 400px;
+
+            &::before{
+                content: "";
+                width: 18px;
+                height: calc(100% + 50px);
+                background-color: #5AAFFF;
+                border-radius: 2px;
+    
+                position: absolute;
+                top: 0px;
+                left: 0px;
+            }
+
+            .div-titileWellcome{
+                .titleWellcome{
+                    font-size: 122px;
+                    color: #f1f1f1;
+                    font-weight: 900;
+                    text-shadow: 0px 0px 10px #fff;
+                    text-align: left;
+                }
+            }
+        
+            .div-subtextWellcome{
+                .pWellcome{
+                    font-size: 40px;
+                    font-weight: lighter;
+                    color: #fff;
+
+                    i{
+                        font-weight: 500;
+                        text-decoration: underline !important;
+                    }
+
+                    b{
+                        color: #8D89FF;
+                    }
+                }
+            }
+        }
+
+        .div-right{
+            width: 100%;
+            height: 100%;
+            max-width: 400px;
+            max-height: 400px;
+            min-width: 150px;
+            min-height: 150px;
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            margin: auto;
+            right: -15px;
+
+            .imageWellcome{
+                width: 100%;
+                height: 100%;
+                background-position: right;
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-image: url('../../../resources/images/image_enginner.png');
+            }
+        }
+    }
+
+    .sectionButtons{
+        width: 100%;
+        height: auto;
+        @include Flex(row, nowrap, center, center);
+        gap: 5%;
+        margin-top: 80px;
+
+        .btnOptions{
+            max-width: 440px;
+            max-height: 137px;
+            width: 100%;
+            height: 100%;
+            min-height: 137px;
+            min-width: 220px;
+            border-radius: 15px;
+            border: 0px;
+
+            font-size: 35px;
+            color: #fff;
+            text-transform: uppercase;
+            position: relative;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+            cursor: pointer;
+
+            animation: fadeInUpBig;
+            animation-duration: 1.5s;
+
+            &:active{
+                animation: fadeOutDown;
+                animation-duration: 1s; /* don't forget to set a duration! */
+            }
+            
+            svg {
+                height: 100%;
+                left: 0;
+                position: absolute;
+                top: 0; 
+                width: 100%; 
+                border-radius: 15px;
+              }
+              
+            rect {
+                fill: none;
+                stroke: transparent;
+                stroke-width: 2;
+                stroke-dasharray: 422, 0;
+                transition: all 0.35s linear;
+            }
+        
+            &:hover{
+                background: transparent;
+                letter-spacing: 1px;
+                
+                rect {
+                    stroke: #fff;
+                    stroke-width: 10;
+                    stroke-dasharray: 15, 310;
+                    stroke-dashoffset: 48;
+                    transition: all 1.35s cubic-bezier(0.19, 1, 0.22, 1);
+                }
+            }    
+        }
+        
+        #story{
+            background-color: #759BFD;
+            box-shadow:0px 0px 5px 5px rgba(116,155,253,0.9);
+        }
+
+        #recruiter{
+            background-color: #A688FF;
+            box-shadow:0px 0px 5px 5px rgba(166,136,255,0.9);
+            position: relative;
+            top: -50px;
+            animation-delay: .1s;
+        }
+
+        #just{
+            background-color: #D7BA85;
+            box-shadow:0px 0px 5px 5px rgba(255,186,133,0.9);
+        }
+
+    }
+}
+
+
+@keyframes backgrundMoviment {
+    0% {
+        background-position: 0% 0%; 
+    }
+    50% {
+        background-position: 100% 100%; 
+    }
+    100% {
+        background-position: 0% 0%; 
+    }
+}

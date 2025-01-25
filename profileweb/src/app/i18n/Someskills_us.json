@@ -1,0 +1,45 @@
+{
+    "title": "Some of my skills",
+    "software": {
+        "title": "Software Engineering",
+        "skills": [
+            "Backend software using <b> PYTHON </b>",
+            "Frontend software using <b> REACT </b>",
+            "Backend software using <b> C# </b>",
+            "Frontend software using <b> NEXT </b>",
+            "Backend software using <b> RUBY </b> (Learning)",
+            "Frontend software using <b> HTML CSS JS </b> native",
+            "Frontend/Backend software using <b> PHP </b> (outdated language)",
+            "APIs using <b> NODE.JS </b>",
+            "Frontend software using <b> EXPRESS.JS </b>",
+            "Mobile software using <b> REACT NATIVE </b>",
+            "Mobile software using <b> Swift </b> (Learning)",
+            "Mobile software using <b> DART/FLUTTER </b> (Learning)",
+            "Relational <b> databases </b> using SQL",
+            "Non-relational database <b> MARIADB </b>",
+            "Amazon <b> AWS </b> (Learning)",
+            "Microsoft <b> Azure </b> (Learning)",
+            "<b> Google Cloud Platform </b> (Learning)",
+            "Google <b> Firebase </b> and related functions",
+            "<b> GIT/GITHUB </b>",
+            "<b> ENGLISH </b> ADVANCED (With certificate)",
+            "<b> SPANISH </b> BASIC (With certificate)",
+            "<b> PORTUGUESE </b> (Native Language)"
+        ],
+        "navSkills": {
+            "nextButtonText": "Next",
+            "backButtonText": "Back"
+        }
+    },
+    "enginner": {
+        "title": "Mechanical Engineering",
+        "skills": [
+            "<b> Technical drawing </b> of machines and mechanisms",
+            "<b> PYTHON </b> Advanced",
+            "<b> PHYSICS </b> LEVEL 3",
+            "<b> ADVANCED ENGLISH </b> (With certificate)",
+            "<b> BASIC SPANISH </b> (With certificate)",
+            "<b> PORTUGUESE </b> (Native Language)"
+        ]
+    }
+}

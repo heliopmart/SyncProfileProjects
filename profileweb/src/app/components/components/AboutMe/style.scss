@@ -1,0 +1,104 @@
+@mixin Flex( $direction, $wrap, $align, $content) {
+    display: flex;
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    align-items: $align;
+    justify-content: $content;
+}
+
+#main_AboutMe{
+    width: 100%;
+    height: auto;
+    @include Flex(column, nowrap, center, center);
+    gap: 50px;
+    
+    .div-titleAboutMe{
+        width: 100%;
+        height: auto;
+        padding: 10px 5%;
+        box-sizing: border-box;
+        @include Flex(row, nowrap, center, start);
+        gap: 30px;
+
+        .image_AboutMe{
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .titleAboutMe{
+            font-size: 4em;
+            font-weight: 900;
+            color: #222D41;
+            text-transform: uppercase;
+            text-align: left;
+        }
+    }
+
+    .content_aboutMe{
+        width: 100%;
+        height: auto;
+        min-height: 10vh;
+        background: linear-gradient(50deg, #FFFCF9, #FFEDDE);
+        padding: 5%;
+        box-sizing: border-box;
+        overflow: hidden;
+        @include Flex(row, nowrap, center, start);
+        gap: 30px;
+
+        .content_images_AboutMe{
+            width: 10%;
+            height: 100%;
+            @include Flex(column, nowrap, center, start);
+            gap: 8vw;
+
+            .images_in{
+                display: block;
+                width: 100%;
+                height: 100%;
+                max-width: 90px;
+                max-height: 90px;
+                min-width: 40px;
+                min-height: 40px;
+                object-fit: contain;
+
+
+                .fillChange{
+                    filter: invert(57%) sepia(24%) saturate(4725%) hue-rotate(218deg) brightness(105%) contrast(101%);
+                    fill: #A688FF;
+                }
+            }
+        }
+
+        .paragraphAboutMe{
+            width: 80%;
+            height: 100%;
+            font-weight: normal;
+            font-size: 1.5em;
+            color: #1A1A1A;
+
+            b{
+                font-weight: 900;
+            }
+
+            i{
+                font-weight: 600;
+            }
+
+            story{
+                color: #588ACA;
+                font-weight: bold;
+            }
+
+            recruiter{
+                color: #A688FF;
+                font-weight: bold;
+            }
+
+            just{
+                color: #AB7602;
+                font-weight: bold;
+            }
+        }
+    }
+}

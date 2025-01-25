@@ -1,0 +1,45 @@
+{
+    "title": "Algumas das minhas habilidades",
+    "software": {
+        "title": "Eng. de software",
+        "skills": [
+            "Softwares backend usando <b> PYTHON </b>",
+            "Softwares frontend usando <b> REACT</b>",
+            "Softwares backend usando <b> C#</b>",
+            "Softwares frontend usando <b> NEXT</b>",
+            "Softwares backend usando <b> RUBY</b> (Aprendendo)",
+            "Softwares frontend usando <b> HTML CSS JS</b> nativo",
+            "Softwares usando <b> PHP</b> (linguagem ultrapassada)",
+            "APIs usando <b> NODE.JS</b>",
+            "Softwares frontend usando <b> EXPRESS.JS</b>",
+            "Mobile Softwares usando <b> REACT NATIVE</b>",
+            "Mobile Softwares usando <b> Swift</b> (Aprendendo)",
+            "Mobile Softwares usando <b> DART/FLUTTER</b> (Aprendendo)",
+            "Banco de <b> dados relacional</b> usando SQL",
+            "Banco de dados <b> não relacional</b> MARIADB",
+            "Amazon <b> AWS</b> (Aprendendo)",
+            "Microsoft <b> Azure</b> (Aprendendo)",
+            "<b> Google Cloud plataform</b> (Aprendendo)",
+            "Google <b> Firebase</b> e funções relacionadas",
+            "<b> GIT/GITHUB</b>",
+            "<b> INGLES</b> AVANÇADO (Com certificado)",
+            "<b> ESPANHOL</b> BASICO (Com certificado)",
+            "<b> PORTUGUÊS</b> (Lingua Materna)"
+        ],
+        "navSkills": {
+            "nextButtonText": "Próximo",
+            "backButtonText": "Voltar"
+        }
+    },
+    "enginner": {
+        "title": "Eng. Mecânica",
+        "skills": [
+            "<b> Desenho técnico </b> de maquinas e mecânismos",
+            "<b> PYTHON </b> Avançado",
+            "<b> FÍSICA </b> NIVEL 3",
+            "<b> INGLES AVANÇADO </b> (Com certificado)",
+            "<b> ESPANHOL BASICO </b> (Com certificado)",
+            "<b> PORTUGUÊS </b> (Lingua Materna)"
+        ]
+    }
+}
