@@ -178,6 +178,35 @@ footer{
 
         }
     }
+
+    .content-web-information{
+        width: 100%;
+        height: auto;
+        min-height: 40px;
+        padding: 10px;
+        box-sizing: border-box;
+        @include Flex(row, wrap, center, start);
+        gap: 20px;
+        color: #e0e0e0;
+
+        a{
+            text-decoration: none;
+        }
+
+        .clickAnimate{
+            &:hover{
+                text-decoration: underline;   
+            }
+        }
+
+        .webInformationText{
+            font-size: 1em;
+            color: #fff;
+            font-weight: 400;
+            text-transform: uppercase;        
+            cursor: pointer;    
+        }
+    }
 }
 
 @keyframes backgrundMoviment {

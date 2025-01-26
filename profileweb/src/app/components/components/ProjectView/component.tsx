@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import {SoftwareProjects, EnginnerProjects} from '../../componets'
+import {SoftwareProjects, EnginnerProjects} from '../../components'
 import InterfaceProjectView  from '@/app/i18n/ProjectView'
 import "./style.scss"
 

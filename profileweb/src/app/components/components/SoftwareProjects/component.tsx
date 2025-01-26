@@ -1,5 +1,7 @@
 'use client'
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import Image from 'next/image'
 import Link from 'next/link';
 import "./style.scss"
@@ -18,8 +20,6 @@ interface InformationProject {
 
 export default function SoftwareProjects({ languageSelect }: { languageSelect: string }) {
     const [projects, setProjects] = useState<InformationProject[]>([]);
-    const projectRefs = useRef<(HTMLDivElement | null)[]>([]); 
-
 
     function generateProjectLink(id: string) {
         return `/project/page/${id}`
@@ -27,22 +27,14 @@ export default function SoftwareProjects({ languageSelect }: { languageSelect: s
 
     function openProject(id: string) {
         const link = generateProjectLink(id);
-        console.log(link) //TODO
-        // Abrir projeto
+        console.log(link)
     }
 
     function shareProjetc(id: string) {
         const link = generateProjectLink(id);
         console.log(link)
-        //
     }
 
-    // Função para aplicar a visibilidade
-    const setVisible = (index: number) => {
-        if (projectRefs.current[index]) {
-            projectRefs.current[index]?.classList.add("visible");
-        }
-    };
 
     function FilterInformation(data:Array<InformationProject>|null) {
         if(data == null){
@@ -68,50 +60,33 @@ export default function SoftwareProjects({ languageSelect }: { languageSelect: s
 
     useEffect(() => {
         async function fetchProjects() {
-            // TODO: Habilitar para fazer chamadas para o github
             const res = await fetch("/api/github/getRepos");
             const data = await res.json();
 
-            console.log(data)
-            // const data = {error: true};
             if(data.error){
                 console.error("GitHub Api 100% used")
                 return 
             }
-            FilterInformation(data); // => data
+            FilterInformation(data);
         }
         fetchProjects();
     }, []);
 
     useEffect(() => {
-        setTimeout(() => {
-            const observer = new IntersectionObserver((entries) => {
-                console.log(entries)
-              entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                  setVisible(index);
-                }
-              });
-            }, { threshold: 0.1 , rootMargin: '0px 0px 200px 0px' });
-      
-            projectRefs.current.forEach((project) => {
-              if (project) observer.observe(project);
-            });
-      
-            return () => observer.disconnect();
-        }, 100);
-    }, [projects]);
+        AOS.init();
+    }, []);
+    
 
     return (
         <div className="SoftwareProjects">
             <div className="LineLeft" />
-            <div className="content-projects"  ref={(el) => { projectRefs.current[0] = el }}>
+            <div className="content-projects" >
                 {projects.length > 0 ? (
                     <>
                         {projects.map((key, index) => (
                             <div
                                 key={`project-software-${key.name}-${index}-${languageSelect}`}
-                                className="project">
+                                className="project"  data-aos="fade-up">
                                 <div onClick={() => openProject(key.id)} className="content">
                                     <span className="text titleProject">{key.name}</span>
                                     <p className="text pProject">{key.description}</p>

@@ -1,0 +1,55 @@
+@mixin Flex( $direction, $wrap, $align, $content) {
+    display: flex;
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    align-items: $align;
+    justify-content: $content;
+}
+
+#aboutProject{
+    width: 100%;
+    height: auto;
+    margin-top: -235px;
+
+    .content-title{
+        width: 80%;
+        height: auto;
+        padding: 10px 5% 10px 40px;
+        box-sizing: border-box;
+        @include Flex(row, nowrap, center, start);
+        gap: 30px;
+
+        img{
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .titleAboutProject{
+            font-size: 3.5em    ;
+            font-weight: 900;
+            color: #222D41;
+            text-transform: uppercase;
+            text-align: left;
+        }
+    }
+
+    .section-aboutProject{
+        width: 75%;
+        min-width: 1000px;
+        height: auto;
+        min-height: 20vh;
+        margin: auto;
+        margin-top: 7vh !important;
+        
+        .content_readme{
+            width: 100%;
+            height: auto;
+            min-height: 20vh;
+            padding: 30px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #131D31, #324055);
+        }
+    }
+}

@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 // component
 
-import {HeaderIndex, SectionHeaderImage, AboutMe, SectionAboutMeImage, SomeSkills, ProjectView, SectionProjectViewImage, Footer} from './components/componets';
+import {HeaderIndex, SectionHeaderImage, AboutMe, SectionAboutMeImage, SomeSkills, ProjectView, SectionProjectViewImage, Footer} from './components/components';
 
 // Interfaces
 

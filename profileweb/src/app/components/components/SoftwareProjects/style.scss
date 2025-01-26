@@ -38,6 +38,12 @@
         padding-left: 14%;
         row-gap: 35px;
 
+        .fade-in {
+            opacity: 1; /* Animação de fade-in para a opacidade */
+            transition: opacity 0.5s ease-in-out;
+            background-color: red;
+        }
+
         .project{
             width: 100%;
             height: 100%;
@@ -55,11 +61,7 @@
             box-sizing: border-box;
             cursor: pointer;
             transition: .3s;
-            flex: 1 1 220px; /* Garantir que os itens ocupem o espaço necessário */
-
-            opacity: 0;
-            transform: translateY(30px);  /* Começa com os itens um pouco abaixo */
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            flex: 1 1 220px;
 
             .content{
                 @include Flex(column, nowrap, start, center);
@@ -132,5 +134,17 @@
             flex-direction: column;
             gap: 20px;
         }
+    }
+}
+
+@media (max-width: 1470px) {
+    .SoftwareProjects{
+        .content-projects{
+            flex-direction: column;
+            justify-content: center !important;
+            align-items: center;
+            padding-left: 10% !important;
+        }
+        margin-bottom: 50px;
     }
 }

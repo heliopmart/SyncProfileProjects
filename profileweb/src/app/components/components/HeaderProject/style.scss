@@ -1,0 +1,265 @@
+@mixin Flex( $direction, $wrap, $align, $content) {
+    display: flex;
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    align-items: $align;
+    justify-content: $content;
+}
+
+#headerProject{
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    @include Flex(column, wrap, center, none);
+    gap: 80px;
+    padding: 10px 10px 30px 10px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: linear-gradient(71deg, #0F172A, #334155);
+
+    animation: backgrundMoviment 5s ease infinite;
+    background-size: 200% 200%;
+
+    $s: 19px;
+    $w: 13em;
+    $f: 19/13;
+    $g: 1em;
+    $n: 7;
+    $c: #24354F;  
+    &:before, &:after {
+        --p: 0;
+        --s: calc(1 - 2 * var(--p));
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        mask: var(--m);
+        content: '';
+        background: 
+            linear-gradient(calc(var(--s) * 45deg), 
+                    transparent calc(50% - 1px), $c 0, $c calc(50% + 1px), transparent 0) 
+                0 0/ #{$s #{$s}};
+        --m: linear-gradient(red 50%, transparent 50%) 
+                            0 calc(var(--p) * #{$s})/ 100% #{2 * $s};
+    }
+
+    &:after { --p: 1 }
+
+    .sectionHead{
+        width: 100%;
+        min-height: 70px;
+        height: auto;
+        padding: 5px 2%;
+        box-sizing: border-box;
+        @include Flex(row, wrap, center, space-between);
+        gap: 10;
+        z-index: 1;
+
+        #div-button{
+            width: auto;
+            min-width: 100px;
+            height: auto;
+            padding: 10px 0px;
+            
+            a{
+                text-decoration: none;
+            }
+
+            .buttonBack{
+                width: auto;
+                height: auto;
+                padding: 10px 25px 10px 15px;
+                box-sizing: border-box;
+                border-top-right-radius: 20px;
+                border-bottom-right-radius: 20px;
+                background-color: #1C2D55;
+                border: none;
+                transition: .1s;
+                cursor: pointer;
+
+                @include Flex(row, nowrap, center, start);
+                gap: 15px;
+
+                font-size: 24px;
+                font-weight: bold;
+                text-transform: uppercase;
+                color: #fff;
+
+                &:hover{
+                    background-color: #243a6d;
+                    text-decoration: underline;
+                }
+
+                img{
+                    width: 45px;
+                    height: 45px;
+                    object-fit: contain;
+                    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(358deg) brightness(106%) contrast(101%);
+                }
+            }
+        }
+
+        #div-language{
+            width: auto;
+            height: auto;
+            @include Flex(row, nowrap, center, left);
+            gap: 15px;
+
+            #iconFlag{
+                width: 86px;
+                height: 45px;
+                border-radius: 10px;
+                background-position: center;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-color: #b6b6b6;
+            }
+
+            .flag-br{
+                background-image: url(/images/flag/flag_br.png);
+            }
+
+            .flag-us{
+                background-image: url(/images/flag/flag_us.png);
+            }
+
+            .optionlanguage{
+                font-weight: bold;
+                text-transform: uppercase;
+                background: transparent;
+                border: 0px;
+                color: #fff;
+                font-size: 22px;
+                border-radius: 5px;
+                
+                option{
+                    color: #1a1a1a;
+                    font-size: 15px;
+                }
+            }
+        }
+    }
+
+    .sectionProjectName{
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 10px 10%;
+        box-sizing: border-box;
+        @include Flex(column, nowrap, center, center);
+        gap: 8vh;
+        z-index: 1;
+
+        .div-titileProject{
+            width: 100%;
+            .titleNameProject{
+                font-size: 122px;
+                color: #f1f1f1;
+                font-weight: 900;
+                text-shadow: 0px 0px 10px #fff;
+                text-align: center;
+            }
+        }
+    
+        .div-subtextProject{
+            width: 100%;
+            .pProjectSubText{
+                font-size: 36px;
+                font-weight: lighter;
+                text-align: center;
+                margin: none;
+                color: #fff;
+
+                i{
+                    font-weight: 500;
+                    text-decoration: underline !important;
+                }
+
+                b{
+                    color: #8D89FF;
+                }
+            }
+        }
+    }
+
+    .sectionCuriosity{
+        width: 100%;
+        height: auto;
+        @include Flex(row, nowrap, center, start);
+        gap: 8%;
+        padding: 0px 5%;
+        margin-top: 30px;
+        box-sizing: border-box;
+        z-index: 1;
+
+        .content-blob-curiosity{
+            width: 100%;
+            height: 100%;
+            max-width: 310px;
+            max-height: 400px;
+            min-width: 210px;
+            min-height: 300px;
+            @include Flex(column, nowrap, center, center);
+            position: relative;
+
+            .blobStyle{
+                filter: drop-shadow(0px 0px 15px #556EA7);
+            }
+
+            .content-information-blob{
+                width: 100%;
+                height: 100%;
+                max-width: calc( 310px - 7%);
+                max-height: calc(400px - 5%);
+                min-width: calc(210px - 5%);
+                min-height: calc(300px - 5%);
+
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                right: 0px;
+                margin: auto;
+
+                @include Flex(row, wrap, center, center);
+                align-content: center;
+                row-gap: 10%;
+                gap: 5%;
+
+                .infoText{
+                    font-weight: bolder;
+                    font-size: 20px;
+                    color: #fff;
+                    text-transform: uppercase;
+
+                    &:hover{
+                        text-decoration: underline;
+                        cursor: pointer;
+                    }
+                }
+
+                .languageStyleText{
+                    font-size: 1.6em;
+                }
+
+                .titleBlob{
+                    font-size: 29px;
+                }
+            }
+        }
+    }
+}
+
+
+@keyframes backgrundMoviment {
+    0% {
+        background-position: 0% 0%; 
+    }
+    50% {
+        background-position: 100% 100%; 
+    }
+    100% {
+        background-position: 0% 0%; 
+    }
+}

@@ -61,6 +61,23 @@ export default function Footer({language}:{language:InterfaceFooter}){
                     </div>
                 </div>
             </div>
+            <div className="content-web-information">
+                <Link href={"https://github.com/heliopmart/SyncProfileProjects/tree/main/profileweb"} target="_blank" rel="noopener noreferrer">
+                    <span className='text clickAnimate webInformationText'>This profile in GitHub</span>
+                </Link>
+                |
+                <Link href={"https://github.com/heliopmart/SyncProfileProjects/tree/main/WindowsApp"} target="_blank" rel="noopener noreferrer">
+                    <span className='text clickAnimate webInformationText'>GITHUB Connection Software</span>
+                </Link>
+                |
+                <Link href={"https://undraw.co/illustrations"} target="_blank" rel="noopener noreferrer">
+                    <span className='text clickAnimate webInformationText'>Images reference</span>
+                </Link>
+                |
+                <span className='text webInformationText'>Created in NEXT.TS</span>
+                |
+                <span className='text webInformationText'>Created by Hélio Martins</span>
+            </div>
         </footer>
     )
 }

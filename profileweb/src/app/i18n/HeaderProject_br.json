@@ -1,0 +1,27 @@
+{
+    "header":{
+        "head": {
+            "buttonTitle": "Voltar",
+            "defaultTitle": "PROJETO",
+            "defaultSubText": "POR HÉLIO PERES MARTINS NETO",
+            "selectTittle": "Selecione"
+        },
+        "curiosity": {
+            "createDefaultString": [
+                "Criado em",
+                "mes",
+                "meses"
+            ],
+            "typeProject": [
+                "Projeto Pessoal",
+                "Projeto de aprendizagem",
+                "Projeto de Universidade",
+                "Projeto de produção",
+                "Projeto inovador",
+                "Projeto Piloto",
+                "Projeto de Startup",
+                "Projeto de FORK"
+            ]
+        }
+    }
+}

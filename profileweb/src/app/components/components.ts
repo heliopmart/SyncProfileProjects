@@ -9,4 +9,11 @@ import EnginnerProjects from './components/EnginnerProjects/component'
 import SectionProjectViewImage from './components/SectionProjectViewImage/component'
 import Footer from './components/Footer/component'
 
+// Project/[language]/[type]/[id]/
+
+import HeaderProject from './components/HeaderProject/component'
+import SectionHeaderProjectImage from './components/SectionHeaderProjectImage/component'
+import AboutProject from './components/AboutProject/component'
+
 export {HeaderIndex, SectionHeaderImage, AboutMe, SectionAboutMeImage, SomeSkills, ProjectView, SoftwareProjects, EnginnerProjects, SectionProjectViewImage, Footer}
+export {HeaderProject, SectionHeaderProjectImage, AboutProject}

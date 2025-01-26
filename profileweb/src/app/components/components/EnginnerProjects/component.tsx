@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import {Translate, Firebase, FirebaseMetadataDocument} from '@/app/functions/functions'
 import "./style.scss"
 
-const WithoutImageIcon = "/images/warning_icon.svg"
+// const WithoutImageIcon = "/images/warning_icon.svg"
 
 export default function EnginnerProjects({languageSelect}:{languageSelect:string}){
     const [projects, setProjects] = useState<FirebaseMetadataDocument[]>([])
@@ -37,7 +37,11 @@ export default function EnginnerProjects({languageSelect}:{languageSelect:string
                         {projects.map((key, index) => (
                             <div key={`${key.Name}-${index}-${languageSelect}`} className="projects">
                                 <div className="imageProject">
-                                    <Image src={key.Image ? "" : WithoutImageIcon} alt={key.Name} width={300} height={200}/>
+                                    {key.Image ? (
+                                        <Image src={key.Image} alt={key.Name} width={300} height={200}/>
+                                    ):(
+                                        <div className='text withoutImage'/>
+                                    )}
                                 </div>
                                 <span className='text nameProject'>{key.Name}</span>
                             </div>
