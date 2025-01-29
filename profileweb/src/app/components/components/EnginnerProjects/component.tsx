@@ -1,10 +1,16 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { translateWithCache } from '@/app/utils/cache';
 import { useEffect, useState } from 'react'
 import {Translate, Firebase, FirebaseMetadataDocument} from '@/app/functions/functions'
 import "./style.scss"
 
-// const WithoutImageIcon = "/images/warning_icon.svg"
+const BackgrundImage1 = "/images/Default_background_1.webp"
+const BackgrundImage2 = "/images/Default_background_2.webp"
+
+const selectRandomImage = () => {
+    return Math.floor(Math.random()* 2) == 0 ? BackgrundImage1 : BackgrundImage2
+}
 
 export default function EnginnerProjects({languageSelect}:{languageSelect:string}){
     const [projects, setProjects] = useState<FirebaseMetadataDocument[]>([])
@@ -15,7 +21,7 @@ export default function EnginnerProjects({languageSelect}:{languageSelect:string
           fetchedProjects.map(async (project) => ({
             ...project,
             Name: languageSelect == 'br' ? project.Name : await translateWithCache(project.Name, languageSelect == 'br' ? 'pt': 'en', Translate),
-            // TODO Description: await translateWithCache(project.Description, languageSelect, translateText),
+            Description: languageSelect == 'br' ?  project?.metaDataProject?.description || null : await translateWithCache(project?.metaDataProject?.description || null, languageSelect == 'br' ? 'pt': 'en', Translate),
           }))
         );
         setProjects(translatedProjects);
@@ -35,16 +41,14 @@ export default function EnginnerProjects({languageSelect}:{languageSelect:string
                 {projects && projects.length > 0 && projects[0].Name != null ? (
                     <>
                         {projects.map((key, index) => (
-                            <div key={`${key.Name}-${index}-${languageSelect}`} className="projects">
-                                <div className="imageProject">
-                                    {key.Image ? (
-                                        <Image src={key.Image} alt={key.Name} width={300} height={200}/>
-                                    ):(
-                                        <div className='text withoutImage'/>
-                                    )}
+                            <Link href={`project/${languageSelect}/mechanic/${key.Id}`} key={`${key.Name}-${index}-${languageSelect}`}>
+                                <div className="projects">
+                                    <div className="imageProject">
+                                        <Image src={key.Image || selectRandomImage()} alt={key.Name} width={300} height={200}/>
+                                    </div>
+                                    <span className='text nameProject'>{key?.Description || key.Name}</span>
                                 </div>
-                                <span className='text nameProject'>{key.Name}</span>
-                            </div>
+                            </Link>
                         ))}
                     </>
                 ): ""}

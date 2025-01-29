@@ -1,0 +1,30 @@
+@mixin Flex( $direction, $wrap, $align, $content) {
+    display: flex;
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    align-items: $align;
+    justify-content: $content;
+}
+
+.ProjectPage{
+    width: 100%;
+    height: auto;
+    @include Flex(column, nowrap, center, center);
+    gap: 30px;
+
+    .warningFilesMobile{
+        width: 90%;
+        height: auto;
+        margin: auto;
+        margin-top: 10px;
+        text-align: center;
+        background-color: #293549b4;
+        padding: 10px 15px;
+        box-sizing: border-box;
+        text-transform: uppercase;
+        font-weight: lighter;
+        font-size: 1.1em;
+        color: #fff;
+        border-radius: 5px;
+    }
+}

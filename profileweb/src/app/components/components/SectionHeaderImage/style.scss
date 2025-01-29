@@ -42,6 +42,22 @@
 
 @media (max-width: 1470px) {
     .header_images{
-        top: 0px;
+        width: 100%;
+        padding: 10px;
+        overflow: hidden;
+        top: -60px;
+
+        #software_enginner{
+            max-width: 300px;
+            max-height: 200px;
+            min-width: 200px;
+            min-height: 100px;
+        }
+
+        #lock_data{
+            display: none;
+        }
     }
+
+
 }

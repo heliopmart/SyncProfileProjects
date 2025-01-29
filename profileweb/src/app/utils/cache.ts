@@ -22,7 +22,11 @@ const generateCacheKey = (text: string, targetLanguage: string): string => {
 };
 
 // Função para tradução com cache
-export const translateWithCache = async (text: string, targetLanguage: string, translateFn: (text: string, targetLanguage: string) => Promise<string>) => {
+export const translateWithCache = async (text: string|null, targetLanguage: string, translateFn: (text: string, targetLanguage: string) => Promise<string>) => {
+  if(text == null || text == ""){
+    return text
+  }
+  
   // Se o idioma de destino for português, retorna o texto original sem tradução
   if (targetLanguage === 'pt') {
     return text;

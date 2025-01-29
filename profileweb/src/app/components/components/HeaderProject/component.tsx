@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import UselessBlob from 'useless-blobs/lib/components';
@@ -7,6 +7,7 @@ import "./style.scss"
 import 'animate.css';
 
 import HeaderInterface from '@/app/i18n/HeaderProject'
+import ProjectData from "@/app/interfaces/ProjectData"
 
 const ArrowLeftIcon = "/images/arrowLeftIcon.svg"
 
@@ -15,24 +16,74 @@ type LanguageSelect = (res: string) => void;
 
 const NameProjectComponentAnimation = ({ Text }: { Text: string }) => {
     return (
-      <TypeAnimation
-        sequence={[Text, 1000]}
-        wrapper="h3"
-        cursor={false}
-        key={Text}
-        repeat={0}
-        className={"text titleNameProject"}
-      />
+        <TypeAnimation
+            sequence={[Text, 1000]}
+            wrapper="h3"
+            cursor={false}
+            key={Text}
+            repeat={0}
+            className={"text titleNameProject"}
+        />
     );
 };
 
-export default function HeaderIndex({languageByIndex, languageSelect, language}:{languageByIndex:string, languageSelect:LanguageSelect, language:HeaderInterface}){
-    const [flag, setFlag] = useState<string>(languageByIndex!=null ? languageByIndex : 'br');
+export default function HeaderIndex({isMobile=false, type, languageByIndex, languageSelect, language, project }: { languageByIndex: string, languageSelect: LanguageSelect, language: HeaderInterface, project?: ProjectData, type: 'software' | 'mechanic', isMobile: boolean}) {
+    const [flag, setFlag] = useState<string>(languageByIndex != null ? languageByIndex : 'br');
 
-    const OptionLanguageSelect:OptionLanguageSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const OptionLanguageSelect: OptionLanguageSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const flag = event.target.value
         setFlag(flag)
         languageSelect(flag)
+    }
+
+    const titlePage = (): string => {
+        if (project && type && (project.mechanic || project.software)) {
+            if (type == 'software') {
+                return project.software?.gitHubData.name || language.header.head.defaultTitle
+            } else {
+                return project.mechanic?.name || language.header.head.defaultTitle
+            }
+        } else {
+            return language.header.head.defaultTitle
+        }
+    }
+
+    const languagesUse = (): string[] | null => {
+        if (project && type) {
+            if (type == 'software') {
+                return project.software?.languages || null
+            } else {
+                return []
+            }
+        } else {
+            return null
+        }
+    }
+
+    const typeProject = (): string | null => {
+        if (project && type) {
+            if (type == 'software') {
+                return language.header.curiosity.typeProject[0]
+            } else {
+                return language.header.curiosity.typeProject[1]
+            }
+        } else {
+            return null
+        }
+    }
+
+    const creationTime = () : string => {
+        if (project && type) {
+            if (type == 'software') {
+                const createTime = (project.software?.gitHubData.creationTime ?? 0) < 0 ? ">1" : project.software?.gitHubData.creationTime ?? 0
+                return `${language.header.curiosity.createDefaultString[0]} ${createTime} ${language.header.curiosity.createDefaultString[project.software?.gitHubData.creationTime || 1 > 1 ? 2 : 1]}`
+            } else {
+                const createTime = (project.mechanic?.creationTime ?? 0) < 0 ? ">1" : project.mechanic?.creationTime ?? 0                
+                return `${language.header.curiosity.createDefaultString[0]} ${createTime} ${language.header.curiosity.createDefaultString[project.mechanic?.creationTime || 1 > 1 ? 2 : 1]}`
+            }
+        } else {
+            return "Em criação"
+        }
     }
 
     return (
@@ -41,7 +92,7 @@ export default function HeaderIndex({languageByIndex, languageSelect, language}:
                 <div id="div-button">
                     <Link href={"/"}>
                         <button className='text buttonBack'>
-                            <Image src={ArrowLeftIcon} alt='' width={40} height={40}/>
+                            <Image src={ArrowLeftIcon} alt='' width={40} height={40} />
                             {language.header.head.buttonTitle}
                         </button>
                     </Link>
@@ -58,57 +109,57 @@ export default function HeaderIndex({languageByIndex, languageSelect, language}:
             </section>
             <section className='sectionProjectName'>
                 <div className="div-titileProject">
-                    <NameProjectComponentAnimation key={"Text-Version"+flag} Text={language.header.head.defaultTitle}/>
+                    <NameProjectComponentAnimation key={"Text-Version" + flag} Text={titlePage()} />
                 </div>
                 <div className="div-subtextProject">
-                    <h1 className='text pProjectSubText' dangerouslySetInnerHTML={{ __html: language.header.head.defaultSubText}}/>
+                    <h1 className='text pProjectSubText' dangerouslySetInnerHTML={{ __html: language.header.head.defaultSubText }} />
                 </div>
             </section>
             <section className='sectionCuriosity'>
-               <div className="content-blob-curiosity animate__animated animate__fadeInUp">
+                {languagesUse() && languagesUse()!.length > 1 ? (
+                    <div className="content-blob-curiosity animate__animated animate__fadeInUp">
+                        <UselessBlob
+                            fill='#556EA7'
+                            stroke='none'
+                            verts={3}
+                            height={isMobile ? 280 : 310}
+                            width={isMobile ? 300 : 400}
+                            irregularity={0}
+                            spikiness={0.2}
+                            boundingShape='rectangle'
+                            className='blobStyle'
+                        />
+                        <div className="languages-style content-information-blob">
+                            {languagesUse()?.map((key, index) => (
+                                <span key={`${key}-${index}`} className='text languageStyleText infoText'>{key}</span>
+                            ))}
+                        </div>
+                    </div>
+                ) : ""}
+
+                <div className="content-blob-curiosity animate__animated animate__fadeInUp">
                     <UselessBlob
                         fill='#556EA7'
                         stroke='none'
                         verts={3}
-                        height={310}
-                        width={400}
+                        height={isMobile ? 280 : 310}
+                        width={isMobile ? 300 : 400}
                         irregularity={0}
                         spikiness={0.2}
                         boundingShape='rectangle'
                         className='blobStyle'
                     />
                     <div className="languages-style content-information-blob">
-                        <span className='text languageStyleText infoText'>C#</span>
-                        <span className='text languageStyleText infoText'>NEXT</span>
-                        <span className='text languageStyleText infoText'>TypeScript</span>
-                        <span className='text languageStyleText infoText'>Firebase</span>
-                        <span className='text languageStyleText infoText'>Azure</span>
+                        <span className='text titleBlob infoText'>{typeProject()}</span>
                     </div>
-               </div>
-               <div className="content-blob-curiosity animate__animated animate__fadeInUp">
+                </div>
+                <div className="content-blob-curiosity animate__animated animate__fadeInUp">
                     <UselessBlob
                         fill='#556EA7'
                         stroke='none'
                         verts={3}
-                        height={310}
-                        width={400}
-                        irregularity={0}
-                        spikiness={0.2}
-                        boundingShape='rectangle'
-                        className='blobStyle'
-                    />
-                    <div className="languages-style content-information-blob">
-                        {/* TODO: Tipo de projeto */}
-                        <span className='text titleBlob infoText'>{language.header.curiosity.typeProject[0]}</span>
-                    </div>
-               </div>
-               <div className="content-blob-curiosity animate__animated animate__fadeInUp">
-                    <UselessBlob
-                        fill='#556EA7'
-                        stroke='none'
-                        verts={3}
-                        height={310}
-                        width={400}
+                        height={isMobile ? 280 : 310}
+                        width={isMobile ? 300 : 400}
                         irregularity={0}
                         spikiness={0.2}
                         boundingShape='rectangle'
@@ -116,11 +167,10 @@ export default function HeaderIndex({languageByIndex, languageSelect, language}:
                     />
                     <div className="languages-style content-information-blob">
                         <span className='text titleBlob infoText'>
-                            {/* TODO: adicionar tempo de projeto */}
-                            {language.header.curiosity.createDefaultString[0]} 2 {language.header.curiosity.createDefaultString[2]}
+                            {creationTime()}
                         </span>
                     </div>
-               </div>
+                </div>
             </section>
         </header>
     );

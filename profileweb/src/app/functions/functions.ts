@@ -1,6 +1,5 @@
 import Firebase from './functions/firebase/firebase'
-import {FirebaseMetadataDocument} from './functions/firebase/firebase'
 import Translate from './functions/azure/translate'
+import isNewUser from './functions/intern/isNewUser'
 
-export {Firebase, Translate}
-export type {FirebaseMetadataDocument}
+export {Firebase, Translate, isNewUser}

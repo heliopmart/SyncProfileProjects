@@ -143,3 +143,92 @@
         }
     }
 }
+
+@media (max-width: 1400px) {
+    .section-skills{
+        margin-top: 70px;
+        padding: 20px 3%;
+        gap: 30px;
+
+        .div-title{
+            min-height: 50px;
+            padding: 15px 0% 20px 2%;
+            .titleSkills{
+                font-size: 1.3em;
+            }
+        }
+
+        .content-informationSkills{
+            width: 100%;
+            height: auto;
+            padding: 20px 3% 20px 0px;
+            @include Flex(column, nowrap, start, start);
+            gap: 40px;
+    
+            .contentClassSkills{
+                width: 100%;
+                gap: 30px;
+                .titleContent{
+                    font-size: 15px;
+                }
+    
+                .contentSkilss{
+                    width: 100%;
+                    height: auto;
+                    @include Flex(column, nowrap, start, center);
+                    gap: 15px;
+    
+                    .contentSpanSkills{
+                        min-height: 35px;
+                        font-size: 14px;
+                    }
+                }
+    
+                .content-nav-button{
+                    width: 100%;
+                    height: auto;
+                    box-sizing: border-box;
+                    @include Flex(row, nowrap, center, space-around);
+                    gap: 20px;
+    
+                    #btn-software-back{
+                        margin-right: auto;
+                        &:hover{
+                            background-color: #e4e4e4;
+                        }
+                    }
+    
+                    #btn-software-next{
+                        margin-left: auto;
+                    }
+    
+                    .buttonNavSkills{
+                        width: auto;
+                        height: auto;
+                        padding: 8px 15px;
+                        box-sizing: border-box;
+                        background-color: #fcfcfc;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        transition: .2s ease-in-out;
+        
+                        font-size: 1em;
+                        font-weight: bold;
+                        font-style: italic;
+                        color: #222D41;
+                        text-transform: uppercase;
+                        
+        
+                        &:hover{
+                            background-color: #f3f3f3;
+                            text-decoration: underline;
+                        }
+                    }
+                }
+    
+            }
+        }
+    }
+
+}

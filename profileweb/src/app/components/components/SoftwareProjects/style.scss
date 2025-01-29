@@ -139,12 +139,62 @@
 
 @media (max-width: 1470px) {
     .SoftwareProjects{
+        margin-bottom: 50px;
+
+        .LineLeft{
+            width: 10px;    
+            position: absolute;
+            left: 1%;
+        }
+    
         .content-projects{
             flex-direction: column;
             justify-content: center !important;
             align-items: center;
-            padding-left: 10% !important;
+            padding-left: 3% !important;
+    
+            .project{
+                width: 100%;
+                height: 100%;
+                max-width: 332px; // 770
+                min-width: 190px;
+                max-height: 560px;
+                min-height: 150px;
+                gap: 25px ;
+                padding: 15px;
+                flex: auto;
+
+                .content-tags{
+                    gap: 5%;
+                    .tagProject{
+                        min-width: 35px;
+                        height: 35px;
+    
+                        span{
+                            font-size: .8em;
+                            line-height: 35px;
+                        }
+    
+                        img{
+                            width: 35px;
+                            height: 35px;
+                            object-fit: contain;
+                        }
+                    }
+                }
+            }
+        }    
+
+    }
+}
+
+@media (max-width: 800px) {
+    .SoftwareProjects{
+        .content-projects{
+            @include Flex(column, wrap, center, start);
+            column-gap: 5%;
+            padding-left: 14%;
+            row-gap: 20px;
         }
-        margin-bottom: 50px;
     }
 }

@@ -1,0 +1,133 @@
+@mixin Flex($direction, $wrap, $align, $content) {
+    display: flex;
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    align-items: $align;
+    justify-content: $content;
+}
+
+#fileAndProject {
+    width: 100%;
+    height: auto;
+    margin-top: -160px;
+
+    .content-title {
+        width: 65%;
+        height: auto;
+        padding: 10px 5% 10px 40px;
+        box-sizing: border-box;
+        @include Flex(row, nowrap, center, start);
+        gap: 30px;
+
+        img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .titleAboutProject {
+            font-size: 3.5em;
+            font-weight: 900;
+            color: #222D41;
+            text-transform: uppercase;
+            text-align: left;
+        }
+    }
+
+    .sectionFiles {
+        width: 100%;
+        height: auto;
+        margin-top: 70px;
+        padding: 20px 30px;
+        box-sizing: border-box;
+        @include Flex(column, nowrap, start, start);
+        gap: 5%;
+
+        .warningText{
+            color: #5b75a8;
+            text-transform: uppercase;
+        }
+
+        .sectionTitle{
+            font-size: 30px;
+            font-weight: bold;
+            color: #222D41;
+            text-transform: uppercase;
+        }
+
+        .content-files{
+            width: 100%;
+            height: auto;
+            @include Flex(column, nowrap, start, start);
+            gap: 5%;
+            margin-top: 50px;
+
+            .contentFile{
+                width: 100%;
+                height: auto;
+                @include Flex(row, nowrap, center, start);
+                gap: 20px;
+
+                .fileName{
+                    width: auto;
+                    min-height: 90px;
+                    min-width: 60%;
+                    padding: 15px 8% 15px 20px;
+                    box-sizing: border-box;
+                    border-radius: 5px;
+                    background-color: #1D273B;
+                    
+                    font-size: 25px;
+                    color: #fff;
+                    font-weight: lighter;
+                    line-height: 55px;
+                }
+
+                .fileType{
+                    width: auto;
+                    min-height: 90px;
+                    padding: 15px 2%;
+                    box-sizing: border-box;
+                    border-radius: 5px;
+                    background-color: #1D273B;
+                    
+                    font-size: 25px;
+                    color: #fff;
+                    font-weight: bold;
+                    text-shadow: 0px 0px 10px #fff;
+                    line-height: 55px;
+                }
+
+                a{
+                    width: auto;
+                    height: auto;
+                    text-decoration: none;
+                }
+
+                .buttonDownload{
+                    width: auto;
+                    min-width: 130px;
+                    min-height: 90px;
+                    padding: 15px 2%;
+                    box-sizing: border-box;
+                    border-radius: 5px;
+                    background-color: #425885;
+                    transition: .1s;
+                    cursor: pointer;
+                    border: none;
+
+                    font-size: 25px;
+                    color: #fff;
+                    font-weight: bold;
+
+
+                    &:hover{
+                        background-color: #5b75a8;
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+
+}

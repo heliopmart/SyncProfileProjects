@@ -14,6 +14,8 @@ import Footer from './components/Footer/component'
 import HeaderProject from './components/HeaderProject/component'
 import SectionHeaderProjectImage from './components/SectionHeaderProjectImage/component'
 import AboutProject from './components/AboutProject/component'
+import SectionAboutProjectImage from './components/SectionAboutProjectImage/component'
+import FileAndProject from './components/FileAndProject/component'
 
 export {HeaderIndex, SectionHeaderImage, AboutMe, SectionAboutMeImage, SomeSkills, ProjectView, SoftwareProjects, EnginnerProjects, SectionProjectViewImage, Footer}
-export {HeaderProject, SectionHeaderProjectImage, AboutProject}
+export {HeaderProject, SectionHeaderProjectImage, AboutProject, SectionAboutProjectImage, FileAndProject}

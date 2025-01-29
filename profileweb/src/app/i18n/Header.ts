@@ -4,7 +4,7 @@ export default interface Language {
         name: string;
         selectTittle: string;
       };
-      wellcome: {
+      Welcome: {
         titleFirstAcess: string[];
         title: string[];
         subtitle: string;
@@ -18,7 +18,7 @@ export default interface Language {
         story: string[];
         recruiter: string[];
         just: string[];
-        imageWellcome: string[];
+        imageWelcome: string[];
         "div-name": string[];
       };
     };

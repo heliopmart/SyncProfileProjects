@@ -102,3 +102,38 @@
         }
     }
 }
+
+@media (max-width: 1400px) {
+    #main_AboutMe{
+        gap: 20px;
+
+        .div-titleAboutMe{
+            padding: 10px 3%;
+            gap: 15px;
+    
+            .image_AboutMe{
+                width: 43px;
+                height: 43px;
+                object-fit: contain;
+            }
+    
+            .titleAboutMe{
+                font-size: 1.6em;
+            }
+        }
+
+        .content_aboutMe{
+            width: 100%;
+            padding: 3%;
+    
+            .content_images_AboutMe{
+                display: none;
+            }
+
+            .paragraphAboutMe{
+                width: 100%;
+                font-size: 1.3em;
+            }
+        }
+    }
+}

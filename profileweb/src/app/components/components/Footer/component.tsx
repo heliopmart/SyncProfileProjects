@@ -12,7 +12,7 @@ const email = 'helioperesmartinsneto@gmail.com'
 const subject = 'PROFILE LINK | <Seu assunto aqui>'
 const body = 'Olá Hélio! \n <seu assunto aqui>'
 
-export default function Footer({language}:{language:InterfaceFooter}){
+export default function Footer({language, isMobile=false}:{language:InterfaceFooter, isMobile?: boolean}){
     return (
         <footer>
             <div className="content-title">
@@ -48,8 +48,8 @@ export default function Footer({language}:{language:InterfaceFooter}){
                             fill='#6380B0'
                             stroke='none'
                             verts={12}
-                            height={450}
-                            width={400}
+                            height={isMobile ? 350 : 450}
+                            width={isMobile ? 300 : 400}
                             irregularity={0.1}
                             spikiness={0.3  }
                             boundingShape='rectangle'

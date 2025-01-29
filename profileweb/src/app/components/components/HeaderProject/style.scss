@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @mixin Flex( $direction, $wrap, $align, $content) {
     display: flex;
     flex-direction: $direction;
@@ -23,7 +25,7 @@
 
     $s: 19px;
     $w: 13em;
-    $f: 19/13;
+    $f: math.div(19, 13);
     $g: 1em;
     $n: 7;
     $c: #24354F;  
@@ -244,6 +246,7 @@
                 }
 
                 .titleBlob{
+                    text-align: center;
                     font-size: 29px;
                 }
             }
@@ -261,5 +264,104 @@
     }
     100% {
         background-position: 0% 0%; 
+    }
+}
+
+@media (max-width: 1400px) {
+    #headerProject{
+        gap: 30px;
+        padding: 10px 10px 115px 10px;
+    
+        .sectionHead{
+            min-height: 50px;
+            height: auto;
+            padding: 5px 2%;
+
+            #div-button{
+                padding: 10px 0px;
+
+                .buttonBack{
+                    gap: 10px;    
+                    font-size: 18px;
+
+                    img{
+                        width: 35px;
+                        height: 35px;
+                    }
+                }
+            }
+
+            #div-language{
+                #iconFlag{
+                    width: 65px;
+                    height: 35px;
+                    border-radius: 10px;
+                    background-position: center;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-color: #b6b6b6;
+                }
+            }
+
+            .optionlanguage{
+                display: none;
+            }
+        }
+        
+        .sectionProjectName{
+            width: 100%;
+            padding: 10px 10px;
+            gap: 5vh;
+
+            .div-titileProject{
+                width: 100%;
+                .titleNameProject{
+                    font-size: 2.3em;
+                }
+            }
+        
+            .div-subtextProject{
+                width: 100%;
+                .pProjectSubText{
+                    font-size: 1.3em;
+                }
+            }
+        }
+
+        .sectionCuriosity{
+            gap: 8%;
+            padding: 0 5%;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            column-gap: 12%;
+            row-gap: 40px;
+            @include Flex(row, wrap, center, center);
+
+            .content-blob-curiosity{
+                height: 100%;
+                max-width: calc(280px - 7%);
+                max-height: calc(300px - 5%);
+                min-width: calc(200px - 5%);
+                min-height: calc(230px - 5%);
+
+                row-gap: 10%;
+                gap: 5%;
+
+                .content-information-blob{
+                    .infoText{
+                        font-size: 1em; 
+                    }
+    
+                    .languageStyleText{
+                        font-size: 1em;
+                    }
+    
+                    .titleBlob{
+                        font-size: 1.3em;
+                    }
+                }
+
+            }
+        }
     }
 }

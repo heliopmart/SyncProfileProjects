@@ -1,4 +1,8 @@
 @mixin Flex( $direction, $wrap, $align, $content) {
+    display: -webkit-box; 
+    display: -moz-box;
+    display: -ms-flexbox; 
+    display: -webkit-flex; 
     display: flex;
     flex-direction: $direction;
     flex-wrap: $wrap;
@@ -218,5 +222,128 @@ footer{
     }
     100% {
         background-position: 0% 0%; 
+    }
+}
+
+@media (max-width: 1400px) {
+    footer{
+        padding: 30px 10px 30px 10px;
+        margin-top: 40px;
+        gap: 30px;
+    
+        .content-title{
+            margin-top: 10px;
+    
+            .footerTitle{
+                font-size: 2.6em;
+            }
+        }
+    
+        .content-subtitle{
+            width: 100%;
+            min-width: 100%;
+            margin-top: 15px;
+    
+            .footerParagraph{
+                font-size: 1.5em;
+            }
+        }
+    
+        .content{
+            margin-top: 30px;
+            padding: 0px;
+
+            @include Flex(column, nowrap, start, start);
+            gap: 30px;
+    
+            .content-social-information{
+                width: 100%;
+                @include Flex(column, nowrap, start, start);
+                gap: 30px;
+
+
+                .content-information{
+                    @include Flex(row, nowrap, center, start);
+                    gap: 5%;
+    
+                    img{
+                        max-width: 40px;
+                        max-height: 30px;
+                        min-width: 30px;
+                        min-height: 30px;
+                    }
+    
+                    .informationText{
+                        min-width: 70%;
+                        padding: 20px 15px;
+                        font-size: 1.1em;                
+                    }
+                }
+            }
+    
+            .content-resume{
+                width: 100%;
+                @include Flex(row, nowrap, center, center);
+    
+                .resume{
+                    max-width: 350px;
+                    max-height: 350px;
+                    margin-top: 40px;
+                    @include Flex(row, nowrap, center, center);
+
+                    svg{
+                        margin: auto;
+                    }
+
+                    .content-resume{
+                        width: 65%;
+                        min-width: auto;
+                        @include Flex(column, nowrap, center, center);
+                        gap: 60px;    
+                    }
+    
+                    .resumeTitle{
+                        font-size: 1.5em;
+                    }
+    
+                    .buttonResume{
+                        width: 100%;
+                        max-width: 180px;
+                        min-width: 100px;
+                        height: 60px;
+                        font-size: 1.2em;
+                    }
+                }
+            }
+        }
+    
+        .content-web-information{
+            margin-top: 30px;
+            width: 100%;
+            height: auto;
+            min-height: 40px;
+            padding: 10px;
+            box-sizing: border-box;
+            @include Flex(row, wrap, center, start);
+            gap: 20px;
+    
+            a{
+                text-decoration: none;
+            }
+    
+            .clickAnimate{
+                &:hover{
+                    text-decoration: underline;   
+                }
+            }
+    
+            .webInformationText{
+                font-size: 1em;
+                color: #fff;
+                font-weight: 400;
+                text-transform: uppercase;        
+                cursor: pointer;    
+            }
+        }
     }
 }

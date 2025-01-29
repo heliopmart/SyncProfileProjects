@@ -1,16 +1,7 @@
 import {collection, getDocs, doc, getDoc} from "firebase/firestore";
-import db, {analytics, auth, remoteConfig, storage} from '@/app/api/firebase/Auth'
+import db from '@/app/api/firebase/Auth'
 
-export interface FirebaseMetadataDocument{
-    AsyncTime: string,
-    DateTime: string,
-    Device: string,
-    FolderId: string,
-    Id: string,
-    Name: string,
-    Status: number
-    Image: string | null
-}
+import {FirebaseMetadataDocument} from '@/app/interfaces/ProjectData'
 
 export default class Firebase{
     constructor(){
@@ -30,8 +21,13 @@ export default class Firebase{
                         FolderId: doc.data().FolderId,
                         Name: doc.data().Name,
                         Status: doc.data().Status,
-                        Image: null
-                    })
+                        url_readme: doc.data()?.url_readme || "",
+                        metaDataProject: {
+                            description: doc.data().metaDataProject?.description || "",
+                            public_files: doc.data().metaDataProject?.public_files || "",
+                            url_image: doc.data().metaDataProject?.url_image || ""
+                        }
+                    } as FirebaseMetadataDocument)
                 })
                 resolve(returnData)
             }catch(ex){
@@ -42,9 +38,9 @@ export default class Firebase{
         })
     }
 
-    async getById(id:string){
-        if(id!=null){
-            return false
+    async getById(id:string):Promise<FirebaseMetadataDocument | null>{
+        if(id==null){
+            return null
         }
 
         return new Promise( async (resolve, reject) => {
@@ -61,7 +57,12 @@ export default class Firebase{
                         FolderId: docSnap.data().FolderId,
                         Name: docSnap.data().Name,
                         Status: docSnap.data().Status,
-                        Image: null
+                        url_readme: docSnap.data().url_readme,
+                        metaDataProject: {
+                            description: docSnap.data().metaDataProject?.description || "",
+                            public_files: docSnap.data().metaDataProject?.public_files || "",
+                            url_image: docSnap.data().metaDataProject?.url_image || ""
+                        }
                     }
                     resolve(returnData)
                 } else {

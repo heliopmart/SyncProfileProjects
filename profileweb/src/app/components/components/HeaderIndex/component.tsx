@@ -1,7 +1,7 @@
 'use client'
-// TODO: REFATORAR HEADER COMPONENT
 import React, {useEffect, useState} from 'react'
 import { TypeAnimation } from 'react-type-animation';
+import {isNewUser} from '@/app/functions/functions'
 import 'animate.css';
 import "./style.scss"
 
@@ -29,7 +29,7 @@ interface CuriosityWriterProps {
     resIsWrite: ResIsWriteFunction;
 }
 
-const WellcomeComponentAnimation = ({ Text }: { Text: string }) => {
+const WelcomeComponentAnimation = ({ Text }: { Text: string }) => {
     return (
       <TypeAnimation
         sequence={[Text, 1000]}
@@ -37,7 +37,7 @@ const WellcomeComponentAnimation = ({ Text }: { Text: string }) => {
         cursor={true}
         key={Text}
         repeat={0}
-        className={"text titleWellcome"}
+        className={"text titleWelcome"}
       />
     );
 };
@@ -80,13 +80,13 @@ const CuriosityWriter: React.FC<CuriosityWriterProps> = ({sentence, isWriting, s
             wrapper="p"
             cursor={true}
             repeat={0}
-            className={"text pWellcome"}
+            className={"text pWelcome"}
             key={sentence+direction+speed}
         />
     )
 }
 
-export default function HeaderIndex({optionSelect, languageSelect}:{optionSelect:OptionSelect, languageSelect:LanguageSelect}){
+export default function HeaderIndex({optionSelect, languageSelect, isMobile=false}:{optionSelect:OptionSelect, languageSelect:LanguageSelect, isMobile:boolean}){
     const [flag, setFlag] = useState<string>("br");
     const [sentence, setSentence] = useState<Sentence>(null);
     const [creatingSentence, setCreatingSentence] = useState<ArrSentence>([]);
@@ -131,7 +131,6 @@ export default function HeaderIndex({optionSelect, languageSelect}:{optionSelect
         }
     }
 
-    // TODO: Funciona, porém eu queria que ele apagasse oque escreveu para começara escrever outra coisa
     const handleMouseButton = (event : React.MouseEvent<HTMLButtonElement>) => {
         const id = event.currentTarget.id;
         CallCuriosityWriter(id);
@@ -139,6 +138,18 @@ export default function HeaderIndex({optionSelect, languageSelect}:{optionSelect
     const handleMouseDiv = (event : React.MouseEvent<HTMLDivElement>) => {
         const id = event.currentTarget.id;
         CallCuriosityWriter(id);
+    }
+    const setWelcomeTest = ():string => {
+        const choosingText = isNewUser() ? language.header.Welcome.titleFirstAcess : language.header.Welcome.title;
+        return choosingText[Math.floor(Math.random() * choosingText.length)];
+    }
+
+    function changeLanguageByTouch(){
+        if(isMobile){
+            const _changedFlag = flag == 'br' ? 'us' : 'br'
+            setFlag(_changedFlag)
+            languageSelect(_changedFlag)
+        }
     }
 
     useEffect(() => {
@@ -174,7 +185,7 @@ export default function HeaderIndex({optionSelect, languageSelect}:{optionSelect
                 </div>
                 <div id="div-language">
                     <label htmlFor="optionlanguage">
-                        <div id="iconFlag" className={flag == "br" ? "flag-br" : "flag-us"}></div>
+                        <div id="iconFlag" onClick={changeLanguageByTouch} className={flag == "br" ? "flag-br" : "flag-us"}></div>
                     </label>
                     <select id="optionlanguage" onChange={OptionLanguageSelect} title={language.header.head.selectTittle} className='spantext optionlanguage'>
                         <option value={'br'}>Português</option>
@@ -182,21 +193,21 @@ export default function HeaderIndex({optionSelect, languageSelect}:{optionSelect
                     </select>
                 </div>
             </section>
-            <section className='animationSectionWellcome sectionWellcome'>
+            <section className='animationSectionWelcome sectionWelcome'>
                 <div className="div-left">
-                    <div className="div-titileWellcome">
-                        <WellcomeComponentAnimation key={"Text-Version"+flag} Text={language.header.wellcome.titleFirstAcess[0]}/>
+                    <div className="div-titileWelcome">
+                        <WelcomeComponentAnimation key={"Text-Version"+flag} Text={setWelcomeTest()}/>
                     </div>
-                    <div className="div-subtextWellcome">
+                    <div className="div-subtextWelcome">
                         {sentence != null ? (
-                            <CuriosityWriter sentence={sentence} direction={direction} isWriting={isWriting} speed={speed} key={"CuriosityWriter_Wellcome"+flag} resIsWrite={updateIsWrite} resCreatingSentence={updateCreatingSentence}/>
+                            <CuriosityWriter sentence={sentence} direction={direction} isWriting={isWriting} speed={speed} key={"CuriosityWriter_Welcome"+flag} resIsWrite={updateIsWrite} resCreatingSentence={updateCreatingSentence}/>
                         ):(
-                            <p className='text pWellcome' dangerouslySetInnerHTML={{ __html: language.header.wellcome.subtitle}}/>
+                            <p className='text pWelcome' dangerouslySetInnerHTML={{ __html: language.header.Welcome.subtitle}}/>
                         )}
                     </div>
                 </div>
                 <div className="div-right">
-                    <div className="imageWellcome" id="imageWellcome" onMouseEnter={handleMouseDiv}></div>
+                    <div className="imageWelcome" id="imageWelcome" onMouseEnter={handleMouseDiv}></div>
                 </div>
             </section>
             <section className='sectionButtons'>

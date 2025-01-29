@@ -1,4 +1,4 @@
-@mixin Flex( $direction, $wrap, $align, $content) {
+@mixin Flex($direction, $wrap, $align, $content) {
     display: flex;
     flex-direction: $direction;
     flex-wrap: $wrap;
@@ -6,12 +6,12 @@
     justify-content: $content;
 }
 
-#aboutProject{
+#aboutProject {
     width: 100%;
     height: auto;
     margin-top: -235px;
 
-    .content-title{
+    .content-title {
         width: 80%;
         height: auto;
         padding: 10px 5% 10px 40px;
@@ -19,14 +19,14 @@
         @include Flex(row, nowrap, center, start);
         gap: 30px;
 
-        img{
+        img {
             width: 100px;
             height: 100px;
             object-fit: contain;
         }
 
-        .titleAboutProject{
-            font-size: 3.5em    ;
+        .titleAboutProject {
+            font-size: 3.5em;
             font-weight: 900;
             color: #222D41;
             text-transform: uppercase;
@@ -34,22 +34,233 @@
         }
     }
 
-    .section-aboutProject{
+    .section-aboutProject {
         width: 75%;
         min-width: 1000px;
         height: auto;
         min-height: 20vh;
         margin: auto;
         margin-top: 7vh !important;
-        
-        .content_readme{
+
+        .content_readme {
             width: 100%;
             height: auto;
             min-height: 20vh;
-            padding: 30px;
+            padding: 30px 10%;
             box-sizing: border-box;
             border-radius: 10px;
             background: linear-gradient(45deg, #131D31, #324055);
+
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+            line-height: 1.6;
         }
+    }
+
+    /* Cabeçalhos com linha abaixo */
+    .content_readme h1,
+    .content_readme h2,
+    .content_readme h3,
+    .content_readme h4,
+    .content_readme h5,
+    .content_readme h6 {
+        font-weight: 600;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+        border-bottom: 2px solid #e1e4e8d2;
+        /* Linha suave abaixo do título */
+        padding-bottom: 0.3em;
+        /* Espaço entre o título e a linha */
+        color: #fff;
+    }
+
+    .content_readme h1 {
+        font-size: 2.2em;
+    }
+
+    .content_readme h2 {
+        font-size: 1.75em;
+    }
+
+    .content_readme h3 {
+        font-size: 1.5em;
+    }
+
+    .content_readme h4,
+    .content_readme h5,
+    .content_readme h6 {
+        font-size: 1.25em;
+    }
+
+    /* Parágrafos */
+    .content_readme p {
+        margin-bottom: 1em;
+        font-size: 1em;
+        color: #fff;
+        /* Cor do texto */
+    }
+
+    /* Listas */
+    .content_readme ul,
+    .content_readme ol {
+        margin-left: 2em;
+        margin-bottom: 1em;
+    }
+
+    .content_readme li {
+        margin-bottom: 0.5em;
+        color: #fff;
+        /* Cor do texto */
+    }
+
+    /* Links */
+    .content_readme a {
+        color: #e6b928;
+        /* Cor azul padrão para links */
+        text-decoration: none;
+    }
+
+    .content_readme a:hover {
+        text-decoration: underline;
+    }
+
+    /* Código inline */
+    .content_readme code {
+        background-color: #f6f8fa;
+        /* Fundo claro */
+        padding: 0.2em 0.4em;
+        border-radius: 3px;
+        font-size: 0.9em;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    /* Blocos de código */
+    .content_readme pre {
+        background-color: #f6f8fa;
+        padding: 16px;
+        border-radius: 6px;
+        overflow: auto;
+        font-size: 0.9em;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .content_readme pre code {
+        background: none;
+        padding: 0;
+        font-size: 1em;
+        color: #24292f;
+    }
+
+    /* Citações */
+    .content_readme blockquote {
+        margin-left: 1em;
+        padding-left: 1em;
+        border-left: 4px solid #dfe2e5;
+        color: #fff;
+        font-style: italic;
+    }
+
+    /* Tabelas */
+    .content_readme table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1em;
+    }
+
+    .content_readme table,
+    .content_readme th,
+    .content_readme td {
+        border: 1px solid #e1e4e8;
+    }
+
+    .content_readme th,
+    .content_readme td {
+        padding: 8px;
+        text-align: left;
+    }
+
+    .content_readme th {
+        background-color: #f6f8fa;
+        /* Fundo leve no cabeçalho da tabela */
+        font-weight: 600;
+    }
+
+    /* Imagens */
+    .content_readme img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 1em 0;
+    }
+
+
+}
+
+@media (max-width: 1400px) {
+    #aboutProject {
+        margin-top: -110px;
+
+        .content-title {
+            width: 100%;
+            padding: 10px 2% 10px 20px;
+            gap: 15px;
+
+            img {
+                width: 45px;
+                height: 45px;
+            }
+
+            .titleAboutProject {
+                font-size: 1.4em;
+            }
+        }
+
+        .section-aboutProject {
+            width: 95%;
+            min-width: 350px;
+            min-height: 20vh;
+            margin-top: 7vh !important;
+
+            .content_readme {
+                min-height: 20vh;
+                padding: 18px 2%;
+                line-height: 1.6;
+            }
+        }
+
+        .content_readme h1 {
+            font-size: 1.8em;
+        }
+
+        .content_readme h2 {
+            font-size: 1.35em;
+        }
+
+        .content_readme h3 {
+            font-size: 1.1em;
+        }
+
+        .content_readme h4,
+        .content_readme h5,
+        .content_readme h6 {
+            font-size: .95em;
+        }
+
+        .content_readme p {
+            font-size: .9em;
+        }
+        .content_readme code {
+            font-size: 0.9em;
+        }
+
+        .content_readme pre {
+            padding: 16px;
+            font-size: 0.9em;
+        }
+
+        .content_readme pre code {
+            font-size: 1em;
+        }
+
     }
 }

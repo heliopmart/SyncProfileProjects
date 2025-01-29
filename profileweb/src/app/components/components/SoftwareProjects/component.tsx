@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Image from 'next/image'
@@ -20,18 +21,21 @@ interface InformationProject {
 
 export default function SoftwareProjects({ languageSelect }: { languageSelect: string }) {
     const [projects, setProjects] = useState<InformationProject[]>([]);
-
+    const router = useRouter();
+    
     function generateProjectLink(id: string) {
-        return `/project/page/${id}`
+        return `/project/${languageSelect}/software/${id}`
     }
-
+    
     function openProject(id: string) {
         const link = generateProjectLink(id);
         console.log(link)
+        router.push(link);
     }
 
     function shareProjetc(id: string) {
         const link = generateProjectLink(id);
+        // TODO copy link
         console.log(link)
     }
 

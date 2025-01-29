@@ -4,7 +4,7 @@
         "name": "Hélio Peres Martins Neto",
         "selectTittle": "Selecionar Linguagem"
         },
-        "wellcome":{
+        "Welcome":{
             "titleFirstAcess": [
                 "Bem Vindo!",
                 "Seja muito bem vindo!",
@@ -42,7 +42,7 @@
                 "O equilibrio é muito bom.",
                 "Aperte para mesclar suas experiências!"
             ],
-            "imageWellcome": [
+            "imageWelcome": [
                 "Admito! parecia faltar alguma coisa aí, então adicionei essa imagem",
                 "Eu ia trocar essa imagem, mas achei que combinou"
             ],

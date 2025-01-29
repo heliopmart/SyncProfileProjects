@@ -45,6 +45,22 @@
 
 @media (max-width: 1470px) {
     .headerProject_images{
-        bottom: 176px;
+        bottom: 110px;
+        @include Flex(row, nowrap, center, center);
+        gap: 10%;
+        padding: 10px 1%;
+
+        #forder_file_man{
+            left: 0px;
+            max-width: 300px;
+            max-height: 250px;
+            min-width: 200px;
+            min-height: 150px;
+        }
+
+        #team_up{
+            display: none;
+        }
     }
+
 }
