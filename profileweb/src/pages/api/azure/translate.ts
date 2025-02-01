@@ -47,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.error('Erro na tradução:', error);
             return res.status(500).json({ error: 'Erro ao traduzir o texto.' });
         }
-    } else {
+    } else {    
         return res.status(405).json({ error: 'Método não permitido.' });
     }
 }

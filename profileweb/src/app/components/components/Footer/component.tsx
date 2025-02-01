@@ -4,6 +4,8 @@ import Link from 'next/link'
 import InterfaceFooter from "@/app/i18n/Footer"
 import "./style.scss"
 
+type downloadResume = () => void;
+
 const LinkedinIcon = "/images/linkedin_icon.svg"
 const MailIcon = "/images/mail_icon.svg"
 const GithubIcon = "/images/github_icon.svg"
@@ -12,7 +14,7 @@ const email = 'helioperesmartinsneto@gmail.com'
 const subject = 'PROFILE LINK | <Seu assunto aqui>'
 const body = 'Olá Hélio! \n <seu assunto aqui>'
 
-export default function Footer({language, isMobile=false}:{language:InterfaceFooter, isMobile?: boolean}){
+export default function Footer({language, isMobile=false, downloadResume}:{language:InterfaceFooter, isMobile?: boolean, downloadResume:downloadResume}){
     return (
         <footer>
             <div className="content-title">
@@ -56,7 +58,7 @@ export default function Footer({language, isMobile=false}:{language:InterfaceFoo
                         />
                         <div className="content-resume">
                             <h3 className='text title resumeTitle'>{language.resumeTitle}</h3>
-                            <button className='text buttonResume' title={language.resumeButton}>{language.resumeButton}</button>
+                            <button onClick={downloadResume} className='text buttonResume' title={language.resumeButton}>{language.resumeButton}</button>
                         </div>
                     </div>
                 </div>

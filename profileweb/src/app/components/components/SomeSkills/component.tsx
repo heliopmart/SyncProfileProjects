@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import InterfaceSomeSkills  from '@/app/i18n/SomeSkills'
+import {Analytics} from '@/app/functions/functions'
 import Skills from '../SkillsComponent/component'
 import "./style.scss"
 
@@ -9,6 +10,9 @@ export default function SomeSkills({language} : {language:InterfaceSomeSkills}){
     function updateLineSoftware(btn:React.MouseEvent<HTMLButtonElement>){
         const typeById = btn.currentTarget.id
         if(typeById == "btn-software-next"){
+            if(count == 0){
+                new Analytics().actionScrolSkills('software')
+            }
             setCount(count+6 < language.software.skills.length ? count+6 : count)
         }else
             setCount(count <= 6 ? 0 : count-6)

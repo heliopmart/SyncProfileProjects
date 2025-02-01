@@ -3,6 +3,7 @@
 /.env.local
 
 # dependencies
+/.firebase/heliopmart
 /node_modules
 /.pnp
 .pnp.*

@@ -2,7 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { translateWithCache } from '@/app/utils/cache';
 import { useEffect, useState } from 'react'
-import {Translate, Firebase, FirebaseMetadataDocument} from '@/app/functions/functions'
+import {Translate, Firebase} from '@/app/functions/functions'
+import {FirebaseMetadataDocument} from '@/app/interfaces/ProjectData'
 import "./style.scss"
 
 const BackgrundImage1 = "/images/Default_background_1.webp"
@@ -24,7 +25,7 @@ export default function EnginnerProjects({languageSelect}:{languageSelect:string
             Description: languageSelect == 'br' ?  project?.metaDataProject?.description || null : await translateWithCache(project?.metaDataProject?.description || null, languageSelect == 'br' ? 'pt': 'en', Translate),
           }))
         );
-        setProjects(translatedProjects);
+        setProjects(translatedProjects as FirebaseMetadataDocument[]);
     }
     
     useEffect(() => {
@@ -44,9 +45,9 @@ export default function EnginnerProjects({languageSelect}:{languageSelect:string
                             <Link href={`project/${languageSelect}/mechanic/${key.Id}`} key={`${key.Name}-${index}-${languageSelect}`}>
                                 <div className="projects">
                                     <div className="imageProject">
-                                        <Image src={key.Image || selectRandomImage()} alt={key.Name} width={300} height={200}/>
+                                        <Image src={key.metaDataProject?.url_image || selectRandomImage()} alt={key.Name} width={300} height={200}/>
                                     </div>
-                                    <span className='text nameProject'>{key?.Description || key.Name}</span>
+                                    <span className='text nameProject'>{key.Description || key.Name}</span>
                                 </div>
                             </Link>
                         ))}

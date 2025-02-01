@@ -1,6 +1,6 @@
 'use client'
 import {useEffect, useState} from 'react'
-import {Firebase} from '@/app/functions/functions'
+import {Firebase, Analytics} from '@/app/functions/functions'
 import { useParams } from 'next/navigation'; 
 import './style.scss';
 
@@ -65,7 +65,6 @@ async function getFirebaseProjectById(id:string){
                 }
             ]
     */
-    console.log(data)
     if(data){
         return {
             id: id,
@@ -115,8 +114,15 @@ export default function Project() {
     const getId = params?.id as string;
 
     const getSelectedLanguage = (res:string) => {
-      setLanguage(res)
+        new Analytics().actionLanguageSelect(res)
+        setLanguage(res)
     }
+    
+    const downloadResume = async () => {
+        new Analytics().actionResumeDownload()
+        window.open(await new Analytics().getRemoteResumeLink(), '_blank');
+    }
+
 
     async function construcProjectParams(){
         let data;
@@ -141,10 +147,16 @@ export default function Project() {
     }
 
     const isMobile = (): boolean => {
-        const userAgent = navigator.userAgent.toLowerCase();
-        if (window.matchMedia("(max-width: 1400px)").matches || /iphone|ipod|android|blackberry|windows phone|mobile|opera mini/.test(userAgent)) {
-            return true;
-        } else {
+        if(typeof window !== 'undefined'){
+            const userAgent = navigator.userAgent.toLowerCase();
+            if (window.matchMedia("(max-width: 1400px)").matches || /iphone|ipod|android|blackberry|windows phone|mobile|opera mini/.test(userAgent)) {
+                new Analytics().actionDeviceTypeAccess('mobile')
+                return true;
+            } else {
+                new Analytics().actionDeviceTypeAccess('desktop')
+                return false;
+            }
+        }else{
             return false;
         }
     }
@@ -173,7 +185,7 @@ export default function Project() {
             )}
 
 
-            <Footer isMobile={isMobile()} language={language == 'br' ? LanguagesFooterBr : LanguagesFooterUs}/>
+            <Footer downloadResume={downloadResume} isMobile={isMobile()} language={language == 'br' ? LanguagesFooterBr : LanguagesFooterUs}/>
         </div>
     );
 }

@@ -48,6 +48,7 @@ export interface FirebaseMetadataDocument{
     AsyncTime: string,
     DateTime: string,
     Device: string,
+    Description?: string | null
     FolderId: string,
     url_readme: string,
     Id: string,

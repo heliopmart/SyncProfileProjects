@@ -91,10 +91,10 @@ export default function HeaderIndex({optionSelect, languageSelect, isMobile=fals
     const [sentence, setSentence] = useState<Sentence>(null);
     const [creatingSentence, setCreatingSentence] = useState<ArrSentence>([]);
     const [isWriting, setIsWriting] = useState<isWriting>(false);
-    const [coolDown, setCoolDown] = useState<boolean>(true);
     const [speed, setSpeed] = useState<speed>(5);
     const [direction, setDirection] = useState<direction>('right');
     const [language, setLanguage] = useState<HeaderInterface>(languageBr);
+    const [titleWelcome, setTitleWelcome] = useState<string>("");
 
     const updateIsWrite:ResIsWriteFunction = (res:isWriting) => {
         setIsWriting(res);
@@ -110,9 +110,6 @@ export default function HeaderIndex({optionSelect, languageSelect, isMobile=fals
     }
 
     function CallCuriosityWriter(_id:string){
-        if(coolDown){
-            return;
-        }
         const id = _id as keyof typeof language.header.curiosity
         const randomKeyCuriosity = Math.floor(Math.random() * ((language.header.curiosity[id].length)));
         if(isWriting){
@@ -139,10 +136,6 @@ export default function HeaderIndex({optionSelect, languageSelect, isMobile=fals
         const id = event.currentTarget.id;
         CallCuriosityWriter(id);
     }
-    const setWelcomeTest = ():string => {
-        const choosingText = isNewUser() ? language.header.Welcome.titleFirstAcess : language.header.Welcome.title;
-        return choosingText[Math.floor(Math.random() * choosingText.length)];
-    }
 
     function changeLanguageByTouch(){
         if(isMobile){
@@ -152,17 +145,10 @@ export default function HeaderIndex({optionSelect, languageSelect, isMobile=fals
         }
     }
 
-    useEffect(() => {
-        const handleLoad = () => {
-            setCoolDown(false);
-        };
-    
-        if (document.readyState === 'complete') {
-          handleLoad();
-        } else {
-          window.onload = handleLoad;
-        }
-    },[coolDown])
+    function setWelcomeTest (){
+        const choosingText = isNewUser() ? language.header.Welcome.titleFirstAcess : language.header.Welcome.title;
+        setTitleWelcome(choosingText[Math.floor(Math.random() * choosingText.length)])
+    }
 
     useEffect(() => {
         switch(flag){
@@ -174,8 +160,11 @@ export default function HeaderIndex({optionSelect, languageSelect, isMobile=fals
                 break;
         }
         setSentence(null);
-        
     },[flag])
+    
+    useEffect(() => {
+        setWelcomeTest()
+    },[flag, titleWelcome])
 
     return (
         <header>
@@ -196,7 +185,7 @@ export default function HeaderIndex({optionSelect, languageSelect, isMobile=fals
             <section className='animationSectionWelcome sectionWelcome'>
                 <div className="div-left">
                     <div className="div-titileWelcome">
-                        <WelcomeComponentAnimation key={"Text-Version"+flag} Text={setWelcomeTest()}/>
+                        <WelcomeComponentAnimation key={"Text-Version"+flag+titleWelcome} Text={titleWelcome}/>
                     </div>
                     <div className="div-subtextWelcome">
                         {sentence != null ? (

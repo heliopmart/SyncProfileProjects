@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react';
+import {Analytics} from '@/app/functions/functions'
 
 // component
 
@@ -30,19 +31,32 @@ const HomePage: React.FC = () => {
     const [siteExperience, setSiteExperience] = useState<string>('story');
 
     const getLanguage = (res: string) => {
+        new Analytics().actionLanguageSelect(res)
         setLanguage(res)
     }
-    const getSiteExperience = (res: React.MouseEvent<HTMLButtonElement>) => {
+    const getSiteExperience = async (res: React.MouseEvent<HTMLButtonElement>) => {
+        new Analytics().actionChangeLayoutLog(res.currentTarget.id)
         setSiteExperience(res.currentTarget.id)
+    }
+    const downloadResume = async () => {
+        new Analytics().actionResumeDownload()
+        window.open(await new Analytics().getRemoteResumeLink(), '_blank');
     }
 
     const isMobile = (): boolean => {
-        const userAgent = navigator.userAgent.toLowerCase();
-        if (window.matchMedia("(max-width: 1400px)").matches || /iphone|ipod|android|blackberry|windows phone|mobile|opera mini/.test(userAgent)) {
-            return true;
-        } else {
-            return false;
+        if(typeof window !== 'undefined'){
+            const userAgent = navigator.userAgent.toLowerCase();
+            if (window.matchMedia("(max-width: 1400px)").matches || /iphone|ipod|android|blackberry|windows phone|mobile|opera mini/.test(userAgent)) {
+                new Analytics().actionDeviceTypeAccess('mobile')
+                return true;
+            } else {
+                new Analytics().actionDeviceTypeAccess('desktop')
+                return false;
+            }
+        }else{
+            return false
         }
+
     }
 
     return (
@@ -55,7 +69,7 @@ const HomePage: React.FC = () => {
             <ProjectView type='software' languageSelect={language} language={language == 'br' ? LanguagesProjectView_br as InterfaceProjectView : LanguagesProjectView__us as InterfaceProjectView} />
             <SectionProjectViewImage />
             <ProjectView type='enginner' key={"enginner-Project_view" + language} languageSelect={language} language={language == 'br' ? LanguagesProjectView_br as InterfaceProjectView : LanguagesProjectView__us as InterfaceProjectView} />
-            <Footer isMobile={isMobile()} language={language == 'br' ? LanguagesFooter_br as InterfaceFooter : LanguagesFooter__us as InterfaceFooter} key={'footer' + language} />
+            <Footer downloadResume={downloadResume} isMobile={isMobile()} language={language == 'br' ? LanguagesFooter_br as InterfaceFooter : LanguagesFooter__us as InterfaceFooter} key={'footer' + language} />
         </div>
     );
 };
