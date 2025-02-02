@@ -4,6 +4,7 @@ import { translateWithCache } from '@/app/utils/cache';
 import { useEffect, useState } from 'react'
 import {Translate, Firebase} from '@/app/functions/functions'
 import {FirebaseMetadataDocument} from '@/app/interfaces/ProjectData'
+import {useAuth} from '@/app/hooks/useAuth'
 import "./style.scss"
 
 const BackgrundImage1 = "/images/Default_background_1.webp"
@@ -14,15 +15,18 @@ const selectRandomImage = () => {
 }
 
 export default function EnginnerProjects({languageSelect}:{languageSelect:string}){
+    const {login} = useAuth()
     const [projects, setProjects] = useState<FirebaseMetadataDocument[]>([])
 
     async function fetchProjects() {
+        const token = await login()
+
         const fetchedProjects = await new Firebase().get();
         const translatedProjects = await Promise.all(
           fetchedProjects.map(async (project) => ({
             ...project,
-            Name: languageSelect == 'br' ? project.Name : await translateWithCache(project.Name, languageSelect == 'br' ? 'pt': 'en', Translate),
-            Description: languageSelect == 'br' ?  project?.metaDataProject?.description || null : await translateWithCache(project?.metaDataProject?.description || null, languageSelect == 'br' ? 'pt': 'en', Translate),
+            Name: languageSelect == 'br' ? project.Name : await translateWithCache(token, project.Name, languageSelect == 'br' ? 'pt': 'en', Translate),
+            Description: languageSelect == 'br' ?  project?.metaDataProject?.description || null : await translateWithCache(token, project?.metaDataProject?.description || null, languageSelect == 'br' ? 'pt': 'en', Translate),
           }))
         );
         setProjects(translatedProjects as FirebaseMetadataDocument[]);

@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {useAuth} from '@/app/hooks/useAuth'
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Image from 'next/image'
@@ -20,6 +21,7 @@ interface InformationProject {
 }
 
 export default function SoftwareProjects({ languageSelect }: { languageSelect: string }) {
+    const {login, setRefreshedToken} = useAuth()
     const [projects, setProjects] = useState<InformationProject[]>([]);
     const router = useRouter();
     
@@ -64,14 +66,26 @@ export default function SoftwareProjects({ languageSelect }: { languageSelect: s
 
     useEffect(() => {
         async function fetchProjects() {
-            const res = await fetch("/api/github/getRepos");
+            const token = await login()
+
+            const res = await fetch("https://syncprofilewebbackend-production.up.railway.app/github/repo", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
             const data = await res.json();
 
-            if(data.error){
+            if(data.refreshed){
+                setRefreshedToken(data.token)
+            }
+
+            if(!data.status){
                 console.error("GitHub Api 100% used")
                 return 
             }
-            FilterInformation(data);
+            FilterInformation(data.data);
         }
         fetchProjects();
     }, []);

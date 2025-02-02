@@ -1,12 +1,15 @@
 'use client'
 import {useEffect, useState} from 'react'
 import {Firebase, Analytics} from '@/app/functions/functions'
+import {useAuth} from '@/app/hooks/useAuth'
 import { useParams } from 'next/navigation'; 
 import './style.scss';
 
 // interface
 
 type Type = 'software' | 'mechanic'
+type Token = string |null
+type RefreshToken = (token:string)=>void
 
 // import component
 import {HeaderProject, SectionHeaderProjectImage, AboutProject, SectionAboutProjectImage, Footer, FileAndProject} from '@/app/components/components'
@@ -28,26 +31,77 @@ import LanguagesFileAndProjectUs from '@/app/i18n/FileAndProject_us.json'
 const LanguageWarningMobile = {br: {text: "O gerencimento dos arquivos não estão disponiveis no mobile"}, us: {text: "File management is not available on mobile"}}
 
 // get github project by id
-async function getGitHubProjectById(id:string){
-    const response = await fetch(`/api/github/getReposById?repo_id=${id}`);
-    const data = await response.json();
-    return {
-        name: data.name,
-        description: data.description,
-        download_url: data.download_url,
-        html_url: data.html_url,
-        languages_url: data.languages_url,
-        created_at: data.created_at,
-        pushed_at: data.pushed_at,
-        creationTime: differenceMonth(data.created_at,  data.pushed_at)
-    } as GithubData
+async function getGitHubProjectById(token:Token, refresh:RefreshToken, id:string){    
+    try{
+        const res = await fetch("https://syncprofilewebbackend-production.up.railway.app/github/repo/id", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                repoId: id
+            })
+        });
+        const data = await res.json();
 
+        if(data.refreshed){
+            refresh(data.token)
+        }
+
+        if(!data.status){
+            console.error("Error: ", data.message)
+            return null
+        }
+
+        const informationProject = data.data
+
+        return {
+            name: informationProject.name,
+            description: informationProject.description,
+            download_url: informationProject.download_url,
+            html_url: informationProject.html_url,
+            languages_url: informationProject.languages_url,
+            created_at: informationProject.created_at,
+            pushed_at: informationProject.pushed_at,
+            creationTime: differenceMonth(informationProject.created_at,  informationProject.pushed_at)
+        } as GithubData
+
+    }catch(error){
+        console.error("getGithubProjectById Error: ", error)
+        return null
+    }
 }
 
-async function getLanguagesUsed(languages_url:string): Promise<string[] | null>{
-    const response = await fetch(`/api/github/getLanguagesRepo?url=${languages_url}`);
-    const data = await response.json();
-    return data
+async function getLanguagesUsed(token:Token, refresh:RefreshToken, languages_url:string): Promise<string[] | null>{    
+    try{
+        const res = await fetch("https://syncprofilewebbackend-production.up.railway.app/github/repo/languages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                url: languages_url
+            })
+        });
+        const data = await res.json();
+
+        if(data.refreshed){
+            refresh(data.token)
+        }
+
+        if(!data.status){
+            console.error("Error: ", data.message)
+            return null
+        }
+
+        return data.data
+
+    }catch(error){
+        console.error("getGithubProjectById Error: ", error)
+        return null
+    }
 }
 
 // get firebase project by id
@@ -105,6 +159,7 @@ function differenceMonth(create:string, push:string){
 
 
 export default function Project() {
+    const {login, setRefreshedToken} = useAuth()
     const [language, setLanguage] = useState<string>('br');
     const [project, setProject] = useState<ProjectData>()
     const params = useParams();
@@ -125,11 +180,18 @@ export default function Project() {
 
 
     async function construcProjectParams(){
+        const token = await login()
+
         let data;
 
         if(getType == 'software'){
-            const githubProject = await getGitHubProjectById(getId)            
-            const languages = await getLanguagesUsed(githubProject.languages_url)
+            const githubProject = await getGitHubProjectById(token, setRefreshedToken, getId)   
+            
+            if(!githubProject){
+                return 
+            }
+            
+            const languages = await getLanguagesUsed(token, setRefreshedToken, githubProject.languages_url)
             data = {
                 repo_id: getId,
                 gitHubData: githubProject,
